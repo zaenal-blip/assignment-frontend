@@ -1,6 +1,7 @@
 import { LayoutDashboard, FolderKanban, ClipboardList, Users, ClipboardCheck } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router";
+import tpsLogo from "@/assets/tps3.png";
 import {
     Sidebar,
     SidebarContent,
@@ -32,18 +33,18 @@ export function AppSidebar() {
             <SidebarHeader className="p-4">
                 {!collapsed ? (
                     <div className="flex items-center gap-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-accent">
-                            <FolderKanban className="h-4 w-4 text-sidebar-foreground" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1F3556] p-1">
+                            <img src={tpsLogo} alt="TPS logo" className="h-full w-full object-contain" />
                         </div>
                         <div>
-                            <h2 className="text-sm font-bold text-sidebar-foreground">TPS Board</h2>
+                            <h2 className="text-sm font-bold text-sidebar-foreground uppercase tracking-tight">TPS Board</h2>
                             <p className="text-[10px] text-sidebar-foreground/60">Assignment System</p>
                         </div>
                     </div>
                 ) : (
                     <div className="flex justify-center">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-accent">
-                            <FolderKanban className="h-4 w-4 text-sidebar-foreground" />
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-white p-1">
+                            <img src={tpsLogo} alt="TPS logo" className="h-full w-full object-contain" />
                         </div>
                     </div>
                 )}
