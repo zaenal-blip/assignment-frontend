@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EventCard } from "@/components/EventCard";
@@ -18,12 +18,12 @@ export function CalendarBoard({ events }: CalendarBoardProps) {
     const [isTablet, setIsTablet] = useState(false);
 
     // Simple tablet detection
-    useState(() => {
+    useEffect(() => {
         const check = () => setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024);
         check();
         window.addEventListener("resize", check);
         return () => window.removeEventListener("resize", check);
-    });
+    }, []);
 
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth();

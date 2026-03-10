@@ -15,11 +15,11 @@ export const users: User[] = [
 export const currentUser = users[4]; // Eka Prasetya, Member
 
 export const projects: Project[] = [
-    { id: "p1", name: "Engine Block Assembly Line", ownerId: "u2", description: "Complete engine block assembly line optimization project", status: "Active", createdAt: "2026-01-15" },
-    { id: "p2", name: "Cylinder Head Quality Control", ownerId: "u3", description: "Cylinder head QC process improvement", status: "Active", createdAt: "2026-02-01" },
-    { id: "p3", name: "Transmission Housing Upgrade", ownerId: "u2", description: "Transmission housing production line upgrade", status: "On Hold", createdAt: "2026-01-20" },
-    { id: "p4", name: "Painting Line Automation", ownerId: "u8", description: "Automated painting line installation", status: "Active", createdAt: "2026-02-10" },
-    { id: "p5", name: "Final Inspection System", ownerId: "u3", description: "Digital final inspection system implementation", status: "Completed", createdAt: "2025-11-01" },
+    { id: "p1", name: "Engine Block Assembly Line", ownerId: "u2", description: "Complete engine block assembly line optimization project", status: "Active", startDate: "2026-01-15", endDate: "2026-03-15", createdAt: "2026-01-15" },
+    { id: "p2", name: "Cylinder Head Quality Control", ownerId: "u3", description: "Cylinder head QC process improvement", status: "Active", startDate: "2026-02-01", endDate: "2026-03-20", createdAt: "2026-02-01" },
+    { id: "p3", name: "Transmission Housing Upgrade", ownerId: "u2", description: "Transmission housing production line upgrade", status: "On Hold", startDate: "2026-01-20", endDate: "2026-04-10", createdAt: "2026-01-20" },
+    { id: "p4", name: "Painting Line Automation", ownerId: "u8", description: "Automated painting line installation", status: "Active", startDate: "2026-02-10", endDate: "2026-03-25", createdAt: "2026-02-10" },
+    { id: "p5", name: "Final Inspection System", ownerId: "u3", description: "Digital final inspection system implementation", status: "Completed", startDate: "2025-11-01", endDate: "2026-02-28", createdAt: "2025-11-01" },
 ];
 
 const today = new Date();

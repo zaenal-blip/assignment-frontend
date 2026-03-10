@@ -43,6 +43,8 @@ export interface Project {
     ownerId: string;
     description: string;
     status: "Active" | "On Hold" | "Completed";
+    startDate: string;
+    endDate: string;
     createdAt: string;
 }
 
