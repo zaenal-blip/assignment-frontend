@@ -1,4 +1,3 @@
-import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,31 +5,42 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import { ChecklistItemComponent } from "@/components/ChecklistItemComponent";
-import {
-    getPersonalJobById,
-    getUserAssignedJobsAsPersonalJobs,
-    getUserById,
-    currentUser,
-} from "@/data/mockData";
-import { calculatePersonalJobProgress, type PersonalJob } from "@/types";
+import { calculatePersonalJobProgress } from "@/types";
 import { ArrowLeft, Calendar, Flag, FileText } from "lucide-react";
+import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPersonalJobById, updateTaskActivity, getUsers } from "@/lib/api";
 
 export default function PersonalJobDetailPage() {
     const { jobId } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
 
-    const initialJob = useMemo(() => {
-        // Check personal jobs first, then assigned
-        let job = getPersonalJobById(jobId || "");
-        if (!job) {
-            job = getUserAssignedJobsAsPersonalJobs(currentUser.id).find((j) => j.id === jobId);
+    const { data: job, isLoading } = useQuery({
+        queryKey: ["personal-job", jobId],
+        queryFn: () => getPersonalJobById(jobId || ""),
+        enabled: !!jobId,
+    });
+
+    const { data: usersList = [] } = useQuery({
+        queryKey: ["users"],
+        queryFn: getUsers,
+    });
+
+    const toggleMutation = useMutation({
+        mutationFn: ({ activityId, completed }: { activityId: string; completed: boolean }) =>
+            updateTaskActivity(jobId || "", activityId, completed),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["personal-job", jobId] });
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to update item.");
         }
-        return job;
-    }, [jobId]);
+    });
 
-    const [job, setJob] = useState<PersonalJob | undefined>(
-        initialJob ? { ...initialJob, checklist: initialJob.checklist.map((c) => ({ ...c })) } : undefined
-    );
+    if (isLoading) {
+        return <div className="flex items-center justify-center min-h-[400px]">Loading job details...</div>;
+    }
 
     if (!job) {
         return (
@@ -43,24 +53,19 @@ export default function PersonalJobDetailPage() {
         );
     }
 
-    const pic = getUserById(job.picId);
+    const pic = usersList.find(u => String(u.id) === String(job.picId));
     const progress = calculatePersonalJobProgress(job);
 
-    const toggleChecklist = (checklistId: string) => {
-        setJob((prev) => {
-            if (!prev) return prev;
-            return {
-                ...prev,
-                checklist: prev.checklist.map((c) =>
-                    c.id === checklistId ? { ...c, completed: !c.completed } : c
-                ),
-            };
-        });
+    const toggleChecklist = (activityId: string) => {
+        const item = job.checklist.find(c => c.id === activityId);
+        if (item) {
+            toggleMutation.mutate({ activityId, completed: !item.completed });
+        }
     };
 
     const priorityColor = (p: string) => {
-        if (p === "High") return "text-destructive";
-        if (p === "Medium") return "text-warning";
+        if (p === "High" || p === "HIGH") return "text-destructive";
+        if (p === "Medium" || p === "MEDIUM") return "text-warning";
         return "text-muted-foreground";
     };
 

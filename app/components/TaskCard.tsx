@@ -3,8 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ProgressBar";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import { StatusBadge } from "@/components/StatusBadge";
-import { getUserById } from "@/data/mockData";
-import type { Task } from "@/types";
+import type { Task, User } from "@/types";
 import { calculateTaskProgress } from "@/types";
 import { Calendar } from "lucide-react";
 
@@ -14,7 +13,15 @@ interface TaskCardProps {
 
 export function TaskCard({ task }: TaskCardProps) {
     const navigate = useNavigate();
-    const pic = getUserById(task.picId);
+    const pic: User = {
+        id: task.picId,
+        name: "",
+        email: "",
+        phone: "",
+        role: "Member",
+        avatar: task.name.charAt(0).toUpperCase(),
+        status: "Active",
+    };
     const progress = calculateTaskProgress(task);
 
     return (

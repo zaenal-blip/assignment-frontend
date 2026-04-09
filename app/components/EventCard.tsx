@@ -2,20 +2,18 @@ import { useNavigate } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ProgressBar";
 import { AvatarBadge } from "@/components/AvatarBadge";
-import { getUserById, getEventTasks } from "@/data/mockData";
-import type { Event } from "@/types";
-import { calculateEventProgress } from "@/types";
+import type { Event, User } from "@/types";
 
 interface EventCardProps {
     event: Event;
+    progress?: number;
+    taskCount?: number;
     compact?: boolean;
 }
 
-export function EventCard({ event, compact }: EventCardProps) {
+export function EventCard({ event, progress = 0, taskCount = 0, compact }: EventCardProps) {
     const navigate = useNavigate();
-    const pic = getUserById(event.picId);
-    const eventTasks = getEventTasks(event.id);
-    const progress = calculateEventProgress(eventTasks);
+    const pic: User = { id: event.picId, name: "", email: "", phone: "", role: "Member", avatar: event.picId ? event.name.charAt(0).toUpperCase() : "?", status: "Active" };
 
     if (compact) {
         return (
@@ -37,9 +35,9 @@ export function EventCard({ event, compact }: EventCardProps) {
                 <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                         <h3 className="font-semibold text-foreground truncate tv:text-tv-base">{event.name}</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">{eventTasks.length} tasks</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{taskCount} tasks</p>
                     </div>
-                    {pic && <AvatarBadge user={pic} size="sm" />}
+                    <AvatarBadge user={pic} size="sm" />
                 </div>
                 <ProgressBar value={progress} size="sm" className="mt-3" />
             </CardContent>

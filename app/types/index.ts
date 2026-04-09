@@ -10,6 +10,14 @@ export interface User {
     status: "Active" | "Inactive";
 }
 
+export interface AppNotification {
+    id: string;
+    message: string;
+    isRead: boolean;
+    type?: string;
+    createdAt: string;
+}
+
 export interface ChecklistItem {
     id: string;
     label: string;
@@ -20,10 +28,15 @@ export interface Task {
     id: string;
     name: string;
     eventId: string;
+    projectId?: string;
     picId: string;
     dueDate: string;
     checklist: ChecklistItem[];
     status: "Not Started" | "In Progress" | "Completed";
+    date?: string;
+    startTime?: string;
+    endTime?: string;
+    priority?: string;
 }
 
 export interface Event {

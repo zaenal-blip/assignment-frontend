@@ -1,89 +1,217 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Shield } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { register } from "@/lib/api";
 
-const roles = ["Admin", "Leader", "SPV", "DPH", "Member"] as const;
+export default function Register() {
+  const [name, setName] = useState("");
+  const [noReg, setNoReg] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const navigate = useNavigate();
+  const { toast } = useToast();
 
-export default function RegisterPage() {
-    const navigate = useNavigate();
-    const [form, setForm] = useState({
-        name: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirmPassword: "",
-        role: "",
-    });
+  const handleNoRegChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow numeric input and limit to 7 digits
+    const value = e.target.value.replace(/\D/g, "").slice(0, 7);
+    setNoReg(value);
+    
+    // Clear noReg error when user enters 7 digits
+    if (errors.noReg && value.length === 7) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.noReg;
+        return newErrors;
+      });
+    }
+  };
 
-    const handleChange = (field: string, value: string) => {
-        setForm((prev) => ({ ...prev, [field]: value }));
-    };
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Only allow numeric input
+    const value = e.target.value.replace(/\D/g, "");
+    setPhone(value);
+    
+    // Clear phone error when user corrects it
+    if (errors.phone && value.length >= 10) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors.phone;
+        return newErrors;
+      });
+    }
+  };
 
-    const handleRegister = (e: React.FormEvent) => {
-        e.preventDefault();
-        navigate("/login");
-    };
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
 
-    return (
-        <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-[hsl(213,52%,24%)] via-[hsl(213,52%,18%)] to-[hsl(220,26%,14%)]">
-            <Card className="w-full max-w-md shadow-2xl border-0">
-                <CardHeader className="text-center space-y-4 pb-2">
-                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
-                        <Shield className="h-8 w-8" />
-                    </div>
-                    <div>
-                        <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-                        <CardDescription className="mt-1">Register for TPS Board</CardDescription>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleRegister} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="name">Full Name</Label>
-                            <Input id="name" placeholder="Ahmad Rizki" value={form.name} onChange={(e) => handleChange("name", e.target.value)} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="reg-email">Email</Label>
-                            <Input id="reg-email" type="email" placeholder="you@company.com" value={form.email} onChange={(e) => handleChange("email", e.target.value)} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="phone">Phone Number</Label>
-                            <Input id="phone" type="tel" placeholder="+62 812 3456 7890" value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="reg-password">Password</Label>
-                            <Input id="reg-password" type="password" placeholder="••••••••" value={form.password} onChange={(e) => handleChange("password", e.target.value)} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="confirm-password">Confirm Password</Label>
-                            <Input id="confirm-password" type="password" placeholder="••••••••" value={form.confirmPassword} onChange={(e) => handleChange("confirmPassword", e.target.value)} required />
-                        </div>
-                        <div className="space-y-2">
-                            <Label>Role</Label>
-                            <Select value={form.role} onValueChange={(v) => handleChange("role", v)}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select role" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {roles.map((r) => (
-                                        <SelectItem key={r} value={r}>{r}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <Button type="submit" className="w-full h-11">Register</Button>
-                        <p className="text-center text-sm text-muted-foreground">
-                            Already have an account?{" "}
-                            <Link to="/login" className="text-primary font-medium hover:underline">Back to Login</Link>
-                        </p>
-                    </form>
-                </CardContent>
-            </Card>
-        </div>
-    );
+    if (!name.trim()) newErrors.name = "Nama harus diisi";
+    if (noReg.length !== 7) newErrors.noReg = "Nomor registrasi harus 7 angka";
+    if (!email.trim()) newErrors.email = "Email harus diisi";
+    if (phone.length < 10) newErrors.phone = "Nomor telepon harus minimal 10 angka";
+    if (password.length < 6) newErrors.password = "Password harus minimal 6 karakter";
+    if (password !== confirmPassword) newErrors.confirmPassword = "Password tidak cocok";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      await register({
+        name,
+        email,
+        noReg,
+        noHp: phone,
+        role: "MEMBER",
+        password,
+        confirmPassword,
+      });
+      toast({ title: "Registrasi berhasil", description: "Silakan login dengan akun Anda" });
+      navigate("/login");
+    } catch (error: any) {
+      // Extract error message from backend response
+      let errorMessage = "Terjadi kesalahan saat mendaftar";
+      
+      if (error?.message) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      }
+      
+      console.error("Registration error:", error);
+      toast({ title: "Registrasi gagal", description: errorMessage, variant: "destructive" });
+    }
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <Card className="w-full max-w-md shadow-lg">
+        <CardHeader className="space-y-2 text-center">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-primary">
+            <UserPlus className="h-7 w-7 text-primary-foreground" />
+          </div>
+          <CardTitle className="text-2xl font-bold">Buat Akun Baru</CardTitle>
+          <CardDescription>Daftar untuk mengakses TPS Assignment Board</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nama Lengkap</Label>
+              <Input
+                id="name"
+                placeholder="Nama lengkap Anda"
+                value={name}
+                onChange={(e) => setName(e.target.value.toUpperCase())}
+                required
+                className={errors.name ? "border-red-500" : ""}
+              />
+              {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="noReg">Nomor Registrasi (7 Angka)</Label>
+              <Input
+                id="noReg"
+                type="text"
+                inputMode="numeric"
+                placeholder="2538600"
+                maxLength={7}
+                value={noReg}
+                onChange={handleNoRegChange}
+                required
+                className={errors.noReg ? "border-red-500" : ""}
+              />
+              {errors.noReg && <p className="text-sm text-red-500">{errors.noReg}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reg-email">Email</Label>
+              <Input
+                id="reg-email"
+                type="email"
+                placeholder="nama@perusahaan.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className={errors.email ? "border-red-500" : ""}
+              />
+              {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Nomor Telepon</Label>
+              <Input
+                id="phone"
+                type="text"
+                inputMode="numeric"
+                placeholder="628123456789"
+                maxLength={15}
+                value={phone}
+                onChange={handlePhoneChange}
+                required
+                className={errors.phone ? "border-red-500" : ""}
+              />
+              {errors.phone && <p className="text-sm text-red-500">{errors.phone}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reg-password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="reg-password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className={errors.password ? "border-red-500" : ""}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {errors.password && <p className="text-sm text-red-500">{errors.password}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Konfirmasi Password</Label>
+              <Input
+                id="confirm-password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className={errors.confirmPassword ? "border-red-500" : ""}
+              />
+              {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword}</p>}
+            </div>
+            <Button type="submit" className="w-full">
+              Daftar
+            </Button>
+          </form>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Sudah punya akun?{" "}
+            <Link to="/login" className="font-medium text-primary hover:underline">
+              Masuk di sini
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }

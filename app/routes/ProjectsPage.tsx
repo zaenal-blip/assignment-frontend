@@ -1,11 +1,17 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Plus, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-    Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
 } from "@/components/ui/table";
 import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -17,14 +23,16 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import {
-    Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select";
-import {
-    projects, events, tasks, users, getUserById, getProjectEvents,
-} from "@/data/mockData";
-import { calculateProjectProgress } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
+import { getProjects, getTasks, getUsers } from "@/lib/api";
+import type { Project, Task, User } from "@/types";
 
 function getDeadlineBadge(endDate: string, status: string) {
     if (status === "Completed") return null;
@@ -46,41 +54,57 @@ export default function ProjectsPage() {
     const [ownerFilter, setOwnerFilter] = useState<string>("All");
     const [deadlineFilter, setDeadlineFilter] = useState<string>("All");
 
+    const { data: projects = [] } = useQuery<Project[]>({ queryKey: ["projects"], queryFn: getProjects });
+    const { data: tasks = [] } = useQuery<Task[]>({ queryKey: ["project-tasks"], queryFn: () => getTasks("PROJECT") });
+    const { data: users = [] } = useQuery({ queryKey: ["users"], queryFn: getUsers });
+
     const projectsData = useMemo(() => {
         const now = new Date();
         now.setHours(0, 0, 0, 0);
 
-        let data = projects.map((p) => {
-            const pEvents = getProjectEvents(p.id);
-            const progress = calculateProjectProgress(pEvents, tasks);
-            const owner = getUserById(p.ownerId);
-            return { ...p, events: pEvents, progress, ownerName: owner?.name || "" };
+        const data = projects.map((project) => {
+            const projectTasks = tasks.filter((task) => task.projectId === project.id);
+            const totalChecklist = projectTasks.reduce((sum, task) => sum + task.checklist.length, 0);
+            const completedChecklist = projectTasks.reduce(
+                (sum, task) => sum + task.checklist.filter((item) => item.completed).length,
+                0
+            );
+            const progress = totalChecklist === 0 ? 0 : Math.round((completedChecklist / totalChecklist) * 100);
+            const owner = users.find((user) => user.id === project.ownerId);
+            return {
+                ...project,
+                tasks: projectTasks,
+                progress,
+                ownerName: owner?.name || "",
+            };
         });
 
-        // Filters
-        if (statusFilter !== "All") data = data.filter((p) => p.status === statusFilter);
-        if (ownerFilter !== "All") data = data.filter((p) => p.ownerId === ownerFilter);
-        if (deadlineFilter === "Ending Soon") {
-            const soon = new Date(now);
-            soon.setDate(soon.getDate() + 7);
-            data = data.filter((p) => new Date(p.endDate) <= soon && p.status !== "Completed");
-        }
+        return data
+            .filter((project) => statusFilter === "All" || project.status === statusFilter)
+            .filter((project) => ownerFilter === "All" || project.ownerId === ownerFilter)
+            .filter((project) => {
+                if (deadlineFilter !== "Ending Soon") return true;
+                const end = new Date(project.endDate);
+                const soon = new Date(now);
+                soon.setDate(soon.getDate() + 7);
+                return end <= soon && project.status !== "Completed";
+            })
+            .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
+    }, [projects, tasks, users, statusFilter, ownerFilter, deadlineFilter]);
 
-        // Sort by endDate ascending
-        data.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
-        return data;
-    }, [statusFilter, ownerFilter, deadlineFilter]);
-
-    const owners = [...new Map(projects.map((p) => {
-        const u = getUserById(p.ownerId);
-        return [p.ownerId, { id: p.ownerId, name: u?.name || "" }];
-    })).values()];
+    const owners = useMemo(
+        () => users.map((user) => ({ id: user.id, name: user.name })),
+        [users]
+    );
 
     const formatDate = (d: string) => {
-        try { return format(new Date(d), "MMM dd, yyyy"); } catch { return d; }
+        try {
+            return format(new Date(d), "MMM dd, yyyy");
+        } catch {
+            return d;
+        }
     };
 
-    // Mobile card layout
     if (isMobile) {
         return (
             <div className="space-y-4">
@@ -91,7 +115,6 @@ export default function ProjectsPage() {
                     </Button>
                 </div>
 
-                {/* Filters */}
                 <div className="flex gap-2 flex-wrap">
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
                         <SelectTrigger className="w-[120px] h-9"><SelectValue /></SelectTrigger>
@@ -111,22 +134,22 @@ export default function ProjectsPage() {
                     </Select>
                 </div>
 
-                {projectsData.map((p) => {
-                    const badge = getDeadlineBadge(p.endDate, p.status);
+                {projectsData.map((project) => {
+                    const badge = getDeadlineBadge(project.endDate, project.status);
                     return (
-                        <Card key={p.id} className="cursor-pointer" onClick={() => navigate(`/projects/${p.id}`)}>
+                        <Card key={project.id} className="cursor-pointer" onClick={() => navigate(`/projects/${project.id}`)}>
                             <CardContent className="p-4 space-y-2">
                                 <div className="flex justify-between items-start gap-2">
-                                    <h3 className="font-semibold">{p.name}</h3>
-                                    <StatusBadge status={p.status} />
+                                    <h3 className="font-semibold">{project.name}</h3>
+                                    <StatusBadge status={project.status} />
                                 </div>
-                                <p className="text-xs text-muted-foreground">Owner: {p.ownerName}</p>
-                                <p className="text-xs text-muted-foreground">{formatDate(p.startDate)} — {formatDate(p.endDate)}</p>
+                                <p className="text-xs text-muted-foreground">Owner: {project.ownerName}</p>
+                                <p className="text-xs text-muted-foreground">{formatDate(project.startDate)} — {formatDate(project.endDate)}</p>
                                 <div className="flex items-center gap-2">
-                                    <p className="text-xs text-muted-foreground">{p.events.length} events</p>
+                                    <p className="text-xs text-muted-foreground">{project.tasks.length} tasks</p>
                                     {badge && <Badge className={badge.className}>{badge.label}</Badge>}
                                 </div>
-                                <ProgressBar value={p.progress} size="sm" />
+                                <ProgressBar value={project.progress} size="sm" />
                             </CardContent>
                         </Card>
                     );
@@ -145,7 +168,6 @@ export default function ProjectsPage() {
                 </Button>
             </div>
 
-            {/* Filters */}
             <div className="flex items-center gap-3 flex-wrap">
                 <Filter className="h-4 w-4 text-muted-foreground" />
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -161,8 +183,8 @@ export default function ProjectsPage() {
                     <SelectTrigger className="w-[160px] h-9"><SelectValue /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value="All">All Owners</SelectItem>
-                        {owners.map((o) => (
-                            <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>
+                        {owners.map((owner) => (
+                            <SelectItem key={owner.id} value={owner.id}>{owner.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
@@ -184,7 +206,7 @@ export default function ProjectsPage() {
                                 <TableHead>Owner</TableHead>
                                 <TableHead>Start Date</TableHead>
                                 <TableHead>End Date</TableHead>
-                                <TableHead>Events</TableHead>
+                                <TableHead>Tasks</TableHead>
                                 <TableHead className="w-[140px]">Progress</TableHead>
                                 <TableHead>Status</TableHead>
                                 <TableHead>Deadline</TableHead>
@@ -192,22 +214,22 @@ export default function ProjectsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {projectsData.map((p) => {
-                                const badge = getDeadlineBadge(p.endDate, p.status);
+                            {projectsData.map((project) => {
+                                const badge = getDeadlineBadge(project.endDate, project.status);
                                 return (
-                                    <TableRow key={p.id} className="cursor-pointer" onClick={() => navigate(`/projects/${p.id}`)}>
-                                        <TableCell className="font-medium tv:text-tv-sm">{p.name}</TableCell>
-                                        <TableCell className="tv:text-tv-sm">{p.ownerName}</TableCell>
-                                        <TableCell className="text-sm">{formatDate(p.startDate)}</TableCell>
-                                        <TableCell className="text-sm">{formatDate(p.endDate)}</TableCell>
-                                        <TableCell>{p.events.length}</TableCell>
-                                        <TableCell><ProgressBar value={p.progress} size="sm" /></TableCell>
-                                        <TableCell><StatusBadge status={p.status} /></TableCell>
+                                    <TableRow key={project.id} className="cursor-pointer" onClick={() => navigate(`/projects/${project.id}`)}>
+                                        <TableCell className="font-medium tv:text-tv-sm">{project.name}</TableCell>
+                                        <TableCell className="tv:text-tv-sm">{project.ownerName}</TableCell>
+                                        <TableCell className="text-sm">{formatDate(project.startDate)}</TableCell>
+                                        <TableCell className="text-sm">{formatDate(project.endDate)}</TableCell>
+                                        <TableCell>{project.tasks.length}</TableCell>
+                                        <TableCell><ProgressBar value={project.progress} size="sm" /></TableCell>
+                                        <TableCell><StatusBadge status={project.status} /></TableCell>
                                         <TableCell>
                                             {badge && <Badge className={badge.className}>{badge.label}</Badge>}
                                         </TableCell>
                                         <TableCell>
-                                            <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${p.id}`); }}>
+                                            <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${project.id}`); }}>
                                                 View
                                             </Button>
                                         </TableCell>
@@ -226,6 +248,7 @@ export default function ProjectsPage() {
 function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
     const [startDate, setStartDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
+    const { data: users = [] } = useQuery<User[]>({ queryKey: ["users"], queryFn: getUsers });
 
     return (
         <ModalForm open={open} onOpenChange={onOpenChange} title="Create Project">

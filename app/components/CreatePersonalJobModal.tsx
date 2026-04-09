@@ -15,18 +15,34 @@ import { Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { PersonalJob, PersonalJobPriority } from "@/types";
 
+import { useMutation } from "@tanstack/react-query";
+import { createPersonalJob } from "@/lib/api";
+
 interface CreatePersonalJobModalProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    onCreate: (job: PersonalJob) => void;
+    onSuccess?: () => void;
 }
 
-export function CreatePersonalJobModal({ open, onOpenChange, onCreate }: CreatePersonalJobModalProps) {
+export function CreatePersonalJobModal({ open, onOpenChange, onSuccess }: CreatePersonalJobModalProps) {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [priority, setPriority] = useState<PersonalJobPriority>("Medium");
     const [checklistItems, setChecklistItems] = useState<string[]>([""]);
+
+    const createMutation = useMutation({
+        mutationFn: createPersonalJob,
+        onSuccess: () => {
+            toast.success("Personal job created successfully!");
+            onSuccess?.();
+            resetForm();
+            onOpenChange(false);
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to create personal job.");
+        }
+    });
 
     const addChecklistItem = () => setChecklistItems((prev) => [...prev, ""]);
 
@@ -58,26 +74,12 @@ export function CreatePersonalJobModal({ open, onOpenChange, onCreate }: CreateP
             return;
         }
 
-        const newJob: PersonalJob = {
-            id: `pj-${Date.now()}`,
+        createMutation.mutate({
             name: name.trim(),
-            description: description.trim(),
-            source: "Personal",
-            picId: "u5", // currentUser
+            activities: validChecklist,
             dueDate,
-            priority,
-            status: "Not Started",
-            checklist: validChecklist.map((label, i) => ({
-                id: `pjc-${Date.now()}-${i}`,
-                label,
-                completed: false,
-            })),
-        };
-
-        onCreate(newJob);
-        resetForm();
-        onOpenChange(false);
-        toast.success("Personal job created successfully!");
+            priority
+        });
     };
 
     return (

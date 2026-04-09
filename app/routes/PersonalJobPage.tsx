@@ -5,14 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
-import { AvatarBadge } from "@/components/AvatarBadge";
 import { CreatePersonalJobModal } from "@/components/CreatePersonalJobModal";
-import {
-    currentUser,
-    getUserPersonalJobs,
-    getUserAssignedJobsAsPersonalJobs,
-    getUserById,
-} from "@/data/mockData";
 import { calculatePersonalJobProgress, type PersonalJob } from "@/types";
 import { toast } from "sonner";
 import { Plus, Search, Send, Eye, Trash2 } from "lucide-react";
@@ -31,18 +24,37 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getPersonalJobs, deletePersonalJob, getStoredUser } from "@/lib/api";
 
 export default function PersonalJobPage() {
     const navigate = useNavigate();
-    const assignedJobs = getUserAssignedJobsAsPersonalJobs(currentUser.id);
-    const [personalJobs, setPersonalJobs] = useState<PersonalJob[]>(getUserPersonalJobs(currentUser.id));
+    const queryClient = useQueryClient();
+    const currentUser = getStoredUser();
+
+    const { data: allJobs = [], isLoading } = useQuery({
+        queryKey: ["personal-jobs"],
+        queryFn: getPersonalJobs,
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: deletePersonalJob,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["personal-jobs"] });
+            toast.success("Job deleted.");
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to delete job.");
+        }
+    });
+
     const [createOpen, setCreateOpen] = useState(false);
     const [search, setSearch] = useState("");
     const [sourceFilter, setSourceFilter] = useState("All");
     const [statusFilter, setStatusFilter] = useState("All");
 
-    const allJobs = useMemo(() => {
-        let jobs = [...assignedJobs, ...personalJobs];
+    const filteredJobs = useMemo(() => {
+        let jobs = [...allJobs];
         if (search) {
             const q = search.toLowerCase();
             jobs = jobs.filter((j) => j.name.toLowerCase().includes(q));
@@ -50,15 +62,16 @@ export default function PersonalJobPage() {
         if (sourceFilter !== "All") jobs = jobs.filter((j) => j.source === sourceFilter);
         if (statusFilter !== "All") jobs = jobs.filter((j) => j.status === statusFilter);
         return jobs;
-    }, [assignedJobs, personalJobs, search, sourceFilter, statusFilter]);
+    }, [allJobs, search, sourceFilter, statusFilter]);
 
-    const handleCreate = (job: PersonalJob) => {
-        setPersonalJobs((prev) => [...prev, job]);
+    const handleCreateSuccess = () => {
+        queryClient.invalidateQueries({ queryKey: ["personal-jobs"] });
     };
 
     const handleDelete = (jobId: string) => {
-        setPersonalJobs((prev) => prev.filter((j) => j.id !== jobId));
-        toast.success("Job deleted.");
+        if (confirm("Are you sure you want to delete this job?")) {
+            deleteMutation.mutate(jobId);
+        }
     };
 
     const submitProgress = () => toast.success("Progress submitted successfully!");
@@ -69,13 +82,17 @@ export default function PersonalJobPage() {
         return "text-muted-foreground";
     };
 
+    if (isLoading) {
+        return <div className="flex items-center justify-center min-h-[400px]">Loading jobs...</div>;
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                     <h2 className="text-lg font-semibold tv:text-tv-xl">My Jobs</h2>
                     <p className="text-sm text-muted-foreground">
-                        Logged in as <span className="font-medium text-foreground">{currentUser.name}</span> ({currentUser.role})
+                        Logged in as <span className="font-medium text-foreground">{currentUser?.name}</span> ({currentUser?.role})
                     </p>
                 </div>
                 <div className="flex gap-2">
@@ -129,12 +146,12 @@ export default function PersonalJobPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {allJobs.length === 0 ? (
+                            {filteredJobs.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No jobs found.</TableCell>
                                 </TableRow>
                             ) : (
-                                allJobs.map((job) => {
+                                filteredJobs.map((job) => {
                                     const progress = calculatePersonalJobProgress(job);
                                     return (
                                         <TableRow key={job.id}>
@@ -171,10 +188,10 @@ export default function PersonalJobPage() {
 
             {/* Mobile Cards */}
             <div className="md:hidden space-y-3">
-                {allJobs.length === 0 ? (
+                {filteredJobs.length === 0 ? (
                     <p className="text-center py-8 text-muted-foreground">No jobs found.</p>
                 ) : (
-                    allJobs.map((job) => {
+                    filteredJobs.map((job) => {
                         const progress = calculatePersonalJobProgress(job);
                         return (
                             <Card key={job.id} className="animate-fade-in" onClick={() => navigate(`/personal-job/${job.id}`)}>
@@ -200,7 +217,11 @@ export default function PersonalJobPage() {
                 )}
             </div>
 
-            <CreatePersonalJobModal open={createOpen} onOpenChange={setCreateOpen} onCreate={handleCreate} />
+            <CreatePersonalJobModal 
+                open={createOpen} 
+                onOpenChange={setCreateOpen} 
+                onSuccess={handleCreateSuccess} 
+            />
         </div>
     );
 }

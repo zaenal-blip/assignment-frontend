@@ -21,16 +21,29 @@ const roleColors: Record<string, string> = {
     Member: "bg-muted text-muted-foreground",
 };
 
+const isUrl = (value: string) =>
+    value.startsWith("http://") || value.startsWith("https://") || value.startsWith("/");
+
 export function AvatarBadge({ user, size = "md", showRole = false }: AvatarBadgeProps) {
+    const isImage = user.avatar && isUrl(user.avatar);
+
     return (
         <div className="relative inline-flex flex-col items-center">
             <div
                 className={cn(
-                    "flex items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground",
+                    "flex items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground overflow-hidden",
                     sizeClasses[size]
                 )}
             >
-                {user.avatar}
+                {isImage ? (
+                    <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="h-full w-full object-cover"
+                    />
+                ) : (
+                    user.avatar
+                )}
             </div>
             {showRole && (
                 <span
