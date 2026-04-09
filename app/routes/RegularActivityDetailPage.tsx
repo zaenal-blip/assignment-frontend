@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,18 +6,41 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import { ChecklistItemComponent } from "@/components/ChecklistItemComponent";
-import { getRegularActivityById, getUserById } from "@/data/mockData";
-import { calculateRegularActivityProgress, type RegularActivity } from "@/types";
+import { calculateRegularActivityProgress } from "@/types";
 import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getRegularActivityById, updateTaskActivity, getUsers } from "@/lib/api";
 
 export default function RegularActivityDetailPage() {
     const { activityId } = useParams();
     const navigate = useNavigate();
-    const original = getRegularActivityById(activityId || "");
+    const queryClient = useQueryClient();
 
-    const [activity, setActivity] = useState<RegularActivity | null>(
-        original ? { ...original, checklist: original.checklist.map((c) => ({ ...c })) } : null
-    );
+    const { data: activity, isLoading } = useQuery({
+        queryKey: ["regular-activity", activityId],
+        queryFn: () => getRegularActivityById(activityId || ""),
+        enabled: !!activityId,
+    });
+
+    const { data: usersList = [] } = useQuery({
+        queryKey: ["users"],
+        queryFn: getUsers,
+    });
+
+    const toggleMutation = useMutation({
+        mutationFn: ({ activityId: checkId, completed }: { activityId: string; completed: boolean }) =>
+            updateTaskActivity(activityId || "", checkId, completed),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["regular-activity", activityId] });
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to update item.");
+        }
+    });
+
+    if (isLoading) {
+        return <div className="flex items-center justify-center min-h-[400px]">Loading activity details...</div>;
+    }
 
     if (!activity) {
         return (
@@ -31,19 +53,14 @@ export default function RegularActivityDetailPage() {
         );
     }
 
-    const pic = getUserById(activity.picId);
+    const pic = usersList.find(u => String(u.id) === String(activity.picId));
     const progress = calculateRegularActivityProgress(activity);
 
     const toggleChecklist = (checklistId: string) => {
-        setActivity((prev) => {
-            if (!prev) return prev;
-            return {
-                ...prev,
-                checklist: prev.checklist.map((c) =>
-                    c.id === checklistId ? { ...c, completed: !c.completed } : c
-                ),
-            };
-        });
+        const item = activity.checklist.find(c => c.id === checklistId);
+        if (item) {
+            toggleMutation.mutate({ activityId: checklistId, completed: !item.completed });
+        }
     };
 
     const submitProgress = () => {

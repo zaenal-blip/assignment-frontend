@@ -1,29 +1,108 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { ArrowLeft, Plus } from "lucide-react";
+import { ArrowLeft, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
-import { EventCard } from "@/components/EventCard";
+import { TaskCard } from "@/components/TaskCard";
+import { AvatarBadge } from "@/components/AvatarBadge";
 import { ModalForm } from "@/components/ModalForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { projects, getProjectEvents, getUserById, users, tasks } from "@/data/mockData";
-import { calculateProjectProgress } from "@/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getProjectById, getUsers, createTask } from "@/lib/api";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { useUser } from "@/hooks/use-user";
 
 export default function ProjectDetailPage() {
     const { projectId } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { user: currentUser } = useUser();
+    const isManager = currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
+    
     const [modalOpen, setModalOpen] = useState(false);
+    const [taskName, setTaskName] = useState("");
+    const [picId, setPicId] = useState("");
+    const [dueDate, setDueDate] = useState("");
+    const [checklistItems, setChecklistItems] = useState<string[]>([""]);
 
-    const project = projects.find((p) => p.id === projectId);
+    const { data: project, isLoading } = useQuery({
+        queryKey: ["project", projectId],
+        queryFn: () => getProjectById(projectId || ""),
+        enabled: !!projectId,
+    });
+
+    const { data: users = [] } = useQuery({
+        queryKey: ["users"],
+        queryFn: getUsers,
+    });
+
+    const taskMutation = useMutation({
+        mutationFn: createTask,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+            toast.success("Task created successfully!");
+            setModalOpen(false);
+            setTaskName("");
+            setPicId("");
+            setDueDate("");
+            setChecklistItems([""]);
+        },
+        onError: (err: any) => {
+            toast.error(err.message || "Failed to create task");
+        }
+    });
+
+    if (isLoading) return <div className="text-center py-10">Loading project details...</div>;
     if (!project) return <div className="text-center py-10">Project not found</div>;
 
-    const projectEvents = getProjectEvents(project.id);
-    const progress = calculateProjectProgress(projectEvents, tasks);
-    const owner = getUserById(project.ownerId);
+    const projectTasks = project.tasks || [];
+    const totalActivities = projectTasks.reduce((acc, t) => acc + t.checklist.length, 0);
+    const completedActivities = projectTasks.reduce((acc, t) => acc + t.checklist.filter(c => c.completed).length, 0);
+    const progress = totalActivities > 0 ? Math.round((completedActivities / totalActivities) * 100) : 0;
+    
+    const owner = users.find(u => String(u.id) === String(project.ownerId));
+
+    const addChecklistItem = () => setChecklistItems([...checklistItems, ""]);
+    const removeChecklistItem = (index: number) => {
+        if (checklistItems.length > 1) {
+            setChecklistItems(checklistItems.filter((_, i) => i !== index));
+        }
+    };
+    const updateChecklistItem = (index: number, value: string) => {
+        const updated = [...checklistItems];
+        updated[index] = value;
+        setChecklistItems(updated);
+    };
+
+    const handleCreateTask = () => {
+        if (!taskName) return toast.error("Task name is required");
+        if (!picId) return toast.error("PIC is required");
+
+        const filteredActivities = checklistItems.filter(item => item.trim() !== "");
+
+        taskMutation.mutate({
+            name: taskName,
+            picId: Number(picId),
+            sourceType: "PROJECT",
+            projectId,
+            dueDate: dueDate || undefined,
+            activities: filteredActivities
+        });
+    };
+
+    const formatDate = (dateStr?: string) => {
+        if (!dateStr) return "N/A";
+        try {
+            return format(new Date(dateStr), "MMM dd, yyyy");
+        } catch {
+            return dateStr;
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -37,46 +116,85 @@ export default function ProjectDetailPage() {
                         <div>
                             <h2 className="text-xl font-bold tv:text-tv-xl">{project.name}</h2>
                             <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
-                            <p className="text-sm text-muted-foreground mt-1">Owner: <span className="font-medium text-foreground">{owner?.name}</span></p>
+                            <p className="text-sm text-muted-foreground mt-1">Date: {formatDate(project.startDate)} - {formatDate(project.endDate)}</p>
                         </div>
-                        <StatusBadge status={project.status} />
+                        <div className="flex flex-col items-end gap-2">
+                            <StatusBadge status={project.status} />
+                            {owner && (
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground mr-1">Owner:</span>
+                                    <AvatarBadge user={owner} size="sm" />
+                                    <span className="text-sm font-medium">{owner.name}</span>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <ProgressBar value={progress} className="mt-4" />
                 </CardContent>
             </Card>
 
             <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold tv:text-tv-lg">Events ({projectEvents.length})</h3>
-                <Button onClick={() => setModalOpen(true)} className="min-h-[44px]">
-                    <Plus className="h-4 w-4 mr-1" /> Create Event
-                </Button>
+                <h3 className="text-lg font-semibold tv:text-tv-lg">Tasks ({projectTasks.length})</h3>
+                {isManager && (
+                    <Button onClick={() => setModalOpen(true)} className="min-h-[44px]">
+                        <Plus className="h-4 w-4 mr-1" /> Create Task
+                    </Button>
+                )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 tv:gap-6">
-                {projectEvents.map((event) => (
-                    <EventCard key={event.id} event={event} />
+                {projectTasks.map((task) => (
+                    <TaskCard key={task.id} task={task} />
                 ))}
             </div>
 
-            <ModalForm open={modalOpen} onOpenChange={setModalOpen} title="Create Event">
-                <div className="space-y-4">
+            <ModalForm open={modalOpen} onOpenChange={setModalOpen} title="Create Task">
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto">
                     <div className="space-y-2">
-                        <Label>Event Name</Label>
-                        <Input placeholder="Enter event name" />
+                        <Label>Task Name</Label>
+                        <Input value={taskName} onChange={(e) => setTaskName(e.target.value)} placeholder="Enter task name" />
                     </div>
                     <div className="space-y-2">
                         <Label>Assign PIC</Label>
-                        <Select>
+                        <Select value={picId} onValueChange={setPicId}>
                             <SelectTrigger><SelectValue placeholder="Select PIC" /></SelectTrigger>
                             <SelectContent>
-                                {users.map((u) => (
+                                {users.filter(u => u.status === "Active").map((u) => (
                                     <SelectItem key={u.id} value={u.id}>{u.name} ({u.role})</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
                     </div>
-                    <Button className="w-full min-h-[44px]" onClick={() => setModalOpen(false)}>
-                        Create Event
+                    <div className="space-y-2">
+                        <Label>Due Date</Label>
+                        <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label>Checklist Activities</Label>
+                        {checklistItems.map((item, index) => (
+                            <div key={index} className="flex items-center gap-2">
+                                <Input
+                                    placeholder={`Activity ${index + 1}`}
+                                    value={item}
+                                    onChange={(e) => updateChecklistItem(index, e.target.value)}
+                                />
+                                {checklistItems.length > 1 && (
+                                    <Button variant="ghost" size="icon" onClick={() => removeChecklistItem(index)} className="shrink-0">
+                                        <X className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </div>
+                        ))}
+                        <Button variant="outline" size="sm" onClick={addChecklistItem} className="min-h-[44px] w-full">
+                            <Plus className="h-4 w-4 mr-1" /> Add Activity
+                        </Button>
+                    </div>
+                    <Button 
+                        className="w-full min-h-[44px]" 
+                        onClick={handleCreateTask}
+                        disabled={taskMutation.isPending}
+                    >
+                        {taskMutation.isPending ? "Creating..." : "Create Task"}
                     </Button>
                 </div>
             </ModalForm>

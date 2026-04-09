@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import type { User as TUser } from "@/types";
+import { clearStoredUser } from "@/lib/api";
 
 interface UserDropdownProps {
     user: TUser;
@@ -35,18 +36,20 @@ export function UserDropdown({ user }: UserDropdownProps) {
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
+                <DropdownMenuItem 
+                    className="cursor-pointer"
+                    onClick={() => navigate("/profile")}
+                >
                     <User className="mr-2 h-4 w-4" />
                     Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
-                    onClick={() => navigate("/login")}
+                    onClick={() => {
+                        clearStoredUser();
+                        navigate("/login");
+                    }}
                 >
                     <LogOut className="mr-2 h-4 w-4" />
                     Logout

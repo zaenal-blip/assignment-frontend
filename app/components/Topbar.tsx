@@ -1,11 +1,14 @@
+import { useEffect, useState } from "react";
 import { Bell, Search, Calendar } from "lucide-react";
 import { useLocation, Link } from "react-router";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { currentUser } from "@/data/mockData";
+import { getStoredUser } from "@/lib/api";
+import { useUser } from "@/hooks/use-user";
 import { UserDropdown } from "@/components/UserDropdown";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 const pageTitles: Record<string, string> = {
     "/dashboard": "Dashboard",
@@ -25,9 +28,14 @@ function getPageTitle(pathname: string): string {
 }
 
 export function Topbar() {
+    const { user: currentUser } = useUser();
+    const [today, setToday] = useState<Date | null>(null);
     const location = useLocation();
     const title = getPageTitle(location.pathname);
-    const today = new Date();
+
+    useEffect(() => {
+        setToday(new Date());
+    }, []);
 
     // Simple breadcrumbs logic
     const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -76,25 +84,111 @@ export function Topbar() {
                 </div>
             </div>
 
-            <div className="ml-auto flex items-center gap-2 tv:gap-6">
+         <div className="ml-auto flex items-center gap-2 tv:gap-6">
                 {/* Date Display - Desktop only */}
                 <div className="hidden items-center gap-2 rounded-full bg-muted/30 px-3 py-1.5 text-xs font-medium text-muted-foreground lg:flex">
                     <Calendar className="h-3.5 w-3.5" />
-                    <span>{format(today, "EEEE, MMM dd, yyyy")}</span>
+                    <span>{today && format(today, "EEEE, MMM dd, yyyy")}</span>
                 </div>
 
                 <div className="flex items-center gap-1 tv:gap-3">
-                    <button className="relative flex h-9 w-9 items-center justify-center rounded-full transition-all hover:bg-muted active:scale-95 tv:h-12 tv:w-12">
-                        <Bell className="h-5 w-5 text-muted-foreground tv:h-7 tv:w-7" />
+                    <NotificationDropdown />
+                    <div className="h-6 w-px bg-border tv:h-10 mx-1 lg:block hidden" />
+                    <UserDropdown user={currentUser ?? { id: "", name: "Guest", email: "", phone: "", role: "Member", avatar: "G", status: "Active" }} />
+                </div>
+            </div>
+        </header>
+    );
+}
+
+// Sub-component for Notifications
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } from "@/lib/api";
+import { CheckCircle2 } from "lucide-react";
+
+function NotificationDropdown() {
+    const queryClient = useQueryClient();
+    const { data: notifications = [] } = useQuery({
+        queryKey: ["notifications"],
+        queryFn: () => getNotifications(),
+        refetchInterval: 30000, // Poll every 30 seconds
+    });
+
+    const unreadCount = notifications.filter(n => !n.isRead).length;
+
+    const readMutation = useMutation({
+        mutationFn: markNotificationAsRead,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        }
+    });
+
+    const readAllMutation = useMutation({
+        mutationFn: markAllNotificationsAsRead,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["notifications"] });
+        }
+    });
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button className="relative flex h-9 w-9 items-center justify-center rounded-full transition-all hover:bg-muted active:scale-95 tv:h-12 tv:w-12">
+                    <Bell className="h-5 w-5 text-muted-foreground tv:h-7 tv:w-7" />
+                    {unreadCount > 0 && (
                         <span className="absolute right-2 top-2 flex h-2 w-2">
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-75"></span>
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-destructive"></span>
                         </span>
-                    </button>
-                    <div className="h-6 w-px bg-border tv:h-10 mx-1 lg:block hidden" />
-                    <UserDropdown user={currentUser} />
+                    )}
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80 max-h-[400px] overflow-y-auto">
+                <div className="flex items-center justify-between p-2">
+                    <DropdownMenuLabel className="p-0 text-sm font-semibold">Notifications</DropdownMenuLabel>
+                    {unreadCount > 0 && (
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-auto p-1 text-xs text-muted-foreground flex gap-1"
+                            onClick={(e: any) => {
+                                e.stopPropagation();
+                                readAllMutation.mutate();
+                            }}
+                            disabled={readAllMutation.isPending}
+                        >
+                            <CheckCircle2 className="h-3 w-3" /> Mark all read
+                        </Button>
+                    )}
                 </div>
-            </div>
-        </header>
+                <DropdownMenuSeparator />
+                {notifications.length === 0 ? (
+                    <div className="p-4 text-center text-sm text-muted-foreground">
+                        No new notifications.
+                    </div>
+                ) : (
+                    notifications.map(n => (
+                        <DropdownMenuItem 
+                            key={n.id} 
+                            className={cn("flex flex-col items-start gap-1 p-3 cursor-pointer", n.isRead ? "opacity-60" : "bg-muted/30")}
+                            onClick={() => {
+                                if (!n.isRead) readMutation.mutate(n.id);
+                            }}
+                        >
+                            <span className="text-sm">{n.message}</span>
+                            <span className="text-[10px] text-muted-foreground">{format(new Date(n.createdAt), "MMM dd, HH:mm")}</span>
+                        </DropdownMenuItem>
+                    ))
+                )}
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }

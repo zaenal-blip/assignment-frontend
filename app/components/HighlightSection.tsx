@@ -1,8 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { events, tasks } from "@/data/mockData";
 import { AlertTriangle, CalendarDays, Clock } from "lucide-react";
 import { useNavigate } from "react-router";
+import { format, addDays, parseISO, isBefore, isAfter, isSameDay } from "date-fns";
+import type { Event } from "@/types";
+import type { Task } from "@/types";
 
 function getBadgeStyle(type: "today" | "upcoming" | "due-soon" | "overdue") {
     switch (type) {
@@ -26,10 +28,12 @@ interface HighlightCardProps {
 function HighlightCard({ icon, title, items }: HighlightCardProps) {
     if (items.length === 0) return null;
     return (
-        <Card className="animate-fade-in">
+        <Card className="animate-fade-in border-none shadow-sm bg-gradient-to-br from-white to-slate-50/50">
             <CardContent className="p-4 tv:p-6">
                 <div className="flex items-center gap-2 mb-3">
-                    {icon}
+                    <div className="p-1.5 rounded-lg bg-white shadow-sm border border-slate-100">
+                        {icon}
+                    </div>
                     <h4 className="font-semibold text-foreground tv:text-tv-base">{title}</h4>
                 </div>
                 <div className="space-y-2.5">
@@ -37,13 +41,13 @@ function HighlightCard({ icon, title, items }: HighlightCardProps) {
                         <div
                             key={i}
                             onClick={item.onClick}
-                            className="flex items-center justify-between gap-2 p-2 rounded-md cursor-pointer transition-colors hover:bg-accent/50"
+                            className="flex items-center justify-between gap-2 p-2 rounded-md cursor-pointer transition-all hover:bg-white hover:shadow-sm hover:translate-x-1 border border-transparent hover:border-slate-100 group"
                         >
                             <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium truncate tv:text-tv-sm">{item.label}</p>
+                                <p className="text-sm font-medium truncate tv:text-tv-sm group-hover:text-primary transition-colors">{item.label}</p>
                                 <p className="text-xs text-muted-foreground">{item.sub}</p>
                             </div>
-                            <Badge className={getBadgeStyle(item.badgeType)}>{item.badge}</Badge>
+                            <Badge className={`${getBadgeStyle(item.badgeType)} font-medium shadow-none`}>{item.badge}</Badge>
                         </div>
                     ))}
                 </div>
@@ -52,94 +56,99 @@ function HighlightCard({ icon, title, items }: HighlightCardProps) {
     );
 }
 
-export function HighlightSection() {
-    const navigate = useNavigate();
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const todayStr = today.toISOString().split("T")[0];
+interface HighlightSectionProps {
+    events: Event[];
+    tasks: Task[];
+}
 
-    const soon = new Date(today);
-    soon.setDate(soon.getDate() + 5);
+export function HighlightSection({ events, tasks }: HighlightSectionProps) {
+    const navigate = useNavigate();
+    
+    // Use local time for strings consistency
+    const now = new Date();
+    const todayStr = format(now, "yyyy-MM-dd");
+    const soonDate = addDays(now, 5);
+    const soonStr = format(soonDate, "yyyy-MM-dd");
 
     // Today's events
     const todayEvents: HighlightCardProps["items"] = events
         .filter((e) => e.date === todayStr && e.status !== "Completed")
         .map((e) => ({
             label: e.name,
-            sub: e.description,
+            sub: "Scheduled for today",
             badge: "Today",
             badgeType: "today" as const,
-            onClick: () => navigate(`/projects/${e.projectId}/events/${e.id}`),
+            onClick: () => navigate(`/events/${e.id}`),
         }));
 
-    // Upcoming events (next 5 days, not today)
+    // Upcoming events (next 5 days, starting tomorrow)
     const upcomingEvents: HighlightCardProps["items"] = events
-        .filter((e) => {
-            const d = new Date(e.date);
-            return d > today && d <= soon && e.status !== "Completed";
-        })
-        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .filter((e) => e.date > todayStr && e.date <= soonStr && e.status !== "Completed")
+        .sort((a, b) => a.date.localeCompare(b.date))
         .slice(0, 4)
         .map((e) => ({
             label: e.name,
-            sub: `Date: ${new Date(e.date).toLocaleDateString("default", { month: "short", day: "numeric" })}`,
+            sub: `Date: ${format(parseISO(e.date), "MMM dd")}`,
             badge: "Upcoming",
             badgeType: "upcoming" as const,
-            onClick: () => navigate(`/projects/${e.projectId}/events/${e.id}`),
+            onClick: () => navigate(`/events/${e.id}`),
         }));
 
-    // Near deadline tasks (within 5 days, not completed)
-    const nearDeadlineTasks: HighlightCardProps["items"] = tasks
-        .filter((t) => {
-            const d = new Date(t.dueDate);
-            return d >= today && d <= soon && t.status !== "Completed";
-        })
-        .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-        .slice(0, 4)
+    // Task Highlights (Overdue & Due Soon)
+    // We prioritize tasks with explicit dueDate or date (for regular activities)
+    const activeTasks = tasks.filter(t => t.status !== "Completed");
+
+    const taskItems: HighlightCardProps["items"] = activeTasks
         .map((t) => {
-            const d = new Date(t.dueDate);
-            const isOverdue = d < today;
+            const dateStr = t.dueDate || t.date;
+            if (!dateStr) return null;
+
+            const d = parseISO(dateStr);
+            const isToday = isSameDay(d, now);
+            const isOverdue = !isToday && isBefore(d, now);
+            const isSoon = !isToday && !isOverdue && isBefore(d, soonDate);
+
+            if (!isToday && !isOverdue && !isSoon) return null;
+
+            let badgeType: "today" | "overdue" | "due-soon" = "due-soon";
+            let badgeLabel = "Due Soon";
+            
+            if (isToday) {
+                badgeType = "today";
+                badgeLabel = "Today";
+            } else if (isOverdue) {
+                badgeType = "overdue";
+                badgeLabel = "Overdue";
+            }
+
             return {
                 label: t.name,
-                sub: `Due: ${d.toLocaleDateString("default", { month: "short", day: "numeric" })}`,
-                badge: isOverdue ? "Overdue" : "Due Soon",
-                badgeType: isOverdue ? "overdue" as const : "due-soon" as const,
+                sub: `Due: ${format(d, "MMM dd")}`,
+                badge: badgeLabel,
+                badgeType: badgeType,
                 onClick: () => navigate(`/tasks/${t.id}`),
+                _date: dateStr // for sorting
             };
-        });
-
-    // Overdue tasks
-    const overdueTasks: HighlightCardProps["items"] = tasks
-        .filter((t) => {
-            const d = new Date(t.dueDate);
-            return d < today && t.status !== "Completed";
         })
-        .slice(0, 4)
-        .map((t) => ({
-            label: t.name,
-            sub: `Due: ${new Date(t.dueDate).toLocaleDateString("default", { month: "short", day: "numeric" })}`,
-            badge: "Overdue",
-            badgeType: "overdue" as const,
-            onClick: () => navigate(`/tasks/${t.id}`),
-        }));
-
-    const allDeadlineItems = [...overdueTasks, ...nearDeadlineTasks].slice(0, 4);
+        .filter((item): item is NonNullable<typeof item> => item !== null)
+        .sort((a, b) => a._date.localeCompare(b._date))
+        .slice(0, 6);
 
     const cards = [
         {
-            icon: <CalendarDays className="h-5 w-5 text-primary" />,
+            icon: <CalendarDays className="h-4 w-4 text-primary" />,
             title: "Today's Events",
             items: todayEvents,
         },
         {
-            icon: <Clock className="h-5 w-5 text-secondary" />,
+            icon: <Clock className="h-4 w-4 text-secondary" />,
             title: "Upcoming Events",
             items: upcomingEvents,
         },
         {
-            icon: <AlertTriangle className="h-5 w-5 text-warning" />,
-            title: "Near Deadline Tasks",
-            items: allDeadlineItems,
+            icon: <AlertTriangle className="h-4 w-4 text-warning" />,
+            title: "Priority Tasks",
+            items: taskItems,
         },
     ].filter((c) => c.items.length > 0);
 

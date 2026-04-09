@@ -8,6 +8,7 @@ export default [
         route("dashboard", "routes/DashboardPage.tsx"),
         route("projects", "routes/ProjectsPage.tsx"),
         route("projects/:projectId", "routes/ProjectDetailPage.tsx"),
+        route("events", "routes/EventsPage.tsx"),
         route("events/:eventId", "routes/EventDetailPage.tsx"),
         route("tasks/:taskId", "routes/TaskDetailPage.tsx"),
         route("personal-job", "routes/PersonalJobPage.tsx"),
@@ -15,6 +16,7 @@ export default [
         route("regular-activity", "routes/RegularActivityPage.tsx"),
         route("regular-activity/:activityId", "routes/RegularActivityDetailPage.tsx"),
         route("users", "routes/UsersPage.tsx"),
+        route("profile", "routes/ProfilePage.tsx"),
     ]),
     route("*", "routes/NotFound.tsx"),
 ] satisfies RouteConfig;

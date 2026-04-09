@@ -11,22 +11,58 @@ import { ModalForm } from "@/components/ModalForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { events, getEventTasks, getUserById, users, projects } from "@/data/mockData";
 import { calculateEventProgress } from "@/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getEventById, getUsers, createTask } from "@/lib/api";
+import { toast } from "sonner";
+import { format } from "date-fns";
+import { useUser } from "@/hooks/use-user";
 
 export default function EventDetailPage() {
     const { eventId } = useParams();
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    
     const [modalOpen, setModalOpen] = useState(false);
+    const [taskName, setTaskName] = useState("");
+    const [picId, setPicId] = useState("");
+    const [dueDate, setDueDate] = useState("");
     const [checklistItems, setChecklistItems] = useState<string[]>([""]);
 
-    const event = events.find((e) => e.id === eventId);
+    const { data: event, isLoading } = useQuery({
+        queryKey: ["event", eventId],
+        queryFn: () => getEventById(eventId || ""),
+        enabled: !!eventId,
+    });
+
+    const { data: users = [] } = useQuery({
+        queryKey: ["users"],
+        queryFn: getUsers,
+    });
+
+    const taskMutation = useMutation({
+        mutationFn: createTask,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["event", eventId] });
+            toast.success("Task created successfully!");
+            setModalOpen(false);
+            setTaskName("");
+            setPicId("");
+            setDueDate("");
+            setChecklistItems([""]);
+        },
+        onError: (err: any) => {
+            toast.error(err.message || "Failed to create task");
+        }
+    });
+
+    if (isLoading) return <div className="text-center py-10">Loading event details...</div>;
     if (!event) return <div className="text-center py-10">Event not found</div>;
 
-    const eventTasks = getEventTasks(event.id);
+    const eventTasks = event.tasks || [];
     const progress = calculateEventProgress(eventTasks);
-    const pic = getUserById(event.picId);
-    const project = projects.find((p) => p.id === event.projectId);
+    // Find the PIC from users list by ID since event API might not return avatar inside event.pic directly 
+    const pic = users.find(u => String(u.id) === String(event.picId));
 
     const addChecklistItem = () => setChecklistItems([...checklistItems, ""]);
     const removeChecklistItem = (index: number) => {
@@ -40,6 +76,34 @@ export default function EventDetailPage() {
         setChecklistItems(updated);
     };
 
+    const handleCreateTask = () => {
+        if (!taskName) return toast.error("Task name is required");
+        if (!picId) return toast.error("PIC is required");
+
+        const filteredActivities = checklistItems.filter(item => item.trim() !== "");
+
+        taskMutation.mutate({
+            name: taskName,
+            picId: Number(picId),
+            sourceType: "EVENT",
+            eventId,
+            dueDate: dueDate || undefined,
+            activities: filteredActivities
+        });
+    };
+
+    const formatDate = (dateStr?: string) => {
+        if (!dateStr) return "N/A";
+        try {
+            return format(new Date(dateStr), "MMM dd, yyyy");
+        } catch {
+            return dateStr;
+        }
+    };
+
+    const { user: currentUser } = useUser();
+    const isManager = currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
+
     return (
         <div className="space-y-6">
             <Button variant="ghost" onClick={() => navigate(-1)} className="min-h-[44px]">
@@ -50,10 +114,9 @@ export default function EventDetailPage() {
                 <CardContent className="p-6 tv:p-8">
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div className="space-y-1">
-                            <p className="text-xs text-muted-foreground">Project: {project?.name}</p>
                             <h2 className="text-xl font-bold tv:text-tv-xl">{event.name}</h2>
                             <p className="text-sm text-muted-foreground">{event.description}</p>
-                            <p className="text-sm text-muted-foreground">Date: {event.date}</p>
+                            <p className="text-sm text-muted-foreground">Date: {formatDate(event.date)} - {formatDate(event.endDate)}</p>
                         </div>
                         <div className="flex flex-col items-end gap-2">
                             <StatusBadge status={event.status} />
@@ -71,9 +134,11 @@ export default function EventDetailPage() {
 
             <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold tv:text-tv-lg">Tasks ({eventTasks.length})</h3>
-                <Button onClick={() => setModalOpen(true)} className="min-h-[44px]">
-                    <Plus className="h-4 w-4 mr-1" /> Create Task
-                </Button>
+                {isManager && (
+                    <Button onClick={() => setModalOpen(true)} className="min-h-[44px]">
+                        <Plus className="h-4 w-4 mr-1" /> Create Task
+                    </Button>
+                )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 tv:gap-6">
@@ -86,14 +151,14 @@ export default function EventDetailPage() {
                 <div className="space-y-4 max-h-[60vh] overflow-y-auto">
                     <div className="space-y-2">
                         <Label>Task Name</Label>
-                        <Input placeholder="Enter task name" />
+                        <Input value={taskName} onChange={(e) => setTaskName(e.target.value)} placeholder="Enter task name" />
                     </div>
                     <div className="space-y-2">
                         <Label>Assign PIC</Label>
-                        <Select>
+                        <Select value={picId} onValueChange={setPicId}>
                             <SelectTrigger><SelectValue placeholder="Select PIC" /></SelectTrigger>
                             <SelectContent>
-                                {users.map((u) => (
+                                {users.filter(u => u.status === "Active").map((u) => (
                                     <SelectItem key={u.id} value={u.id}>{u.name} ({u.role})</SelectItem>
                                 ))}
                             </SelectContent>
@@ -101,7 +166,7 @@ export default function EventDetailPage() {
                     </div>
                     <div className="space-y-2">
                         <Label>Due Date</Label>
-                        <Input type="date" />
+                        <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
                     </div>
                     <div className="space-y-2">
                         <Label>Checklist Activities</Label>
@@ -123,8 +188,12 @@ export default function EventDetailPage() {
                             <Plus className="h-4 w-4 mr-1" /> Add Activity
                         </Button>
                     </div>
-                    <Button className="w-full min-h-[44px]" onClick={() => { setModalOpen(false); setChecklistItems([""]); }}>
-                        Create Task
+                    <Button 
+                        className="w-full min-h-[44px]" 
+                        onClick={handleCreateTask}
+                        disabled={taskMutation.isPending}
+                    >
+                        {taskMutation.isPending ? "Creating..." : "Create Task"}
                     </Button>
                 </div>
             </ModalForm>
