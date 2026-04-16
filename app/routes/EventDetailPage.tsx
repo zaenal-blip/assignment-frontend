@@ -29,6 +29,8 @@ export default function EventDetailPage() {
     const [dueDate, setDueDate] = useState("");
     const [checklistItems, setChecklistItems] = useState<string[]>([""]);
 
+    const { user: currentUser } = useUser();
+    
     const { data: event, isLoading } = useQuery({
         queryKey: ["event", eventId],
         queryFn: () => getEventById(eventId || ""),
@@ -101,7 +103,6 @@ export default function EventDetailPage() {
         }
     };
 
-    const { user: currentUser } = useUser();
     const isManager = currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
 
     return (
