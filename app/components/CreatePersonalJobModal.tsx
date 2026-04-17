@@ -11,8 +11,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import type { PersonalJob, PersonalJobPriority } from "@/types";
 
 import { useMutation } from "@tanstack/react-query";
@@ -31,7 +35,7 @@ export function CreatePersonalJobModal({
 }: CreatePersonalJobModalProps) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
   const [priority, setPriority] = useState<PersonalJobPriority>("Medium");
   const [checklistItems, setChecklistItems] = useState<string[]>([""]);
 
@@ -63,7 +67,7 @@ export function CreatePersonalJobModal({
   const resetForm = () => {
     setName("");
     setDescription("");
-    setDueDate("");
+    setDueDate(new Date());
     setPriority("Medium");
     setChecklistItems([""]);
   };
@@ -83,7 +87,7 @@ export function CreatePersonalJobModal({
     createMutation.mutate({
       name: name.trim(),
       activities: validChecklist,
-      dueDate,
+      dueDate: dueDate.toISOString().split("T")[0],
       priority,
     });
   };
@@ -117,12 +121,29 @@ export function CreatePersonalJobModal({
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-2">
             <Label htmlFor="pj-due">Due Date</Label>
-            <Input
-              id="pj-due"
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  id="pj-due"
+                  variant="outline"
+                  className={cn(
+                    "w-full justify-start text-left font-normal min-h-[44px]",
+                    !dueDate && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dueDate ? format(dueDate, "PPP") : "Pick date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dueDate}
+                  onSelect={setDueDate}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <div className="space-y-2">
             <Label>Priority</Label>

@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Plus, Search, Eye, Trash2, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import { ModalForm } from "@/components/ModalForm";
+import { ConfirmModal } from "@/components/ConfirmModal";
 import {
   Table,
   TableBody,
@@ -90,6 +92,7 @@ export default function RegularActivityPage() {
       updateRegularJobStatus(jobId, isDone),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["regular-jobs"] });
+      queryClient.invalidateQueries({ queryKey: ["regular-tasks-today"] });
       toast.success("Activity marked as Done!");
     },
     onError: (error: any) =>
@@ -107,27 +110,26 @@ export default function RegularActivityPage() {
   const [formCategory, setFormCategory] = useState("Safety");
   const [formFrequency, setFormFrequency] = useState("Daily");
   const [formPic, setFormPic] = useState(currentUser?.id || "");
-  const [formDate, setFormDate] = useState("");
   const [formStartTime, setFormStartTime] = useState("08:00");
   const [formEndTime, setFormEndTime] = useState("09:00");
+  const [formPriority, setFormPriority] = useState("Low");
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!formDate) {
-      setFormDate(new Date().toISOString().split("T")[0]);
-    }
-  }, [formDate]);
 
   const isLeaderOrUp =
     currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
 
   const filtered = useMemo(() => {
-    return regularJobs.filter((a) => {
-      const matchSearch = a.name.toLowerCase().includes(search.toLowerCase());
-      const matchStatus = statusFilter === "all" || a.status === statusFilter;
-      const matchCategory =
-        categoryFilter === "all" || a.category === categoryFilter;
-      return matchSearch && matchStatus && matchCategory;
-    });
+    return regularJobs
+      .filter((a) => {
+        const matchSearch = a.name.toLowerCase().includes(search.toLowerCase());
+        const matchStatus = statusFilter === "all" || a.status === statusFilter;
+        const matchCategory =
+          categoryFilter === "all" || a.category === categoryFilter;
+        return matchSearch && matchStatus && matchCategory;
+      })
+      .sort((a, b) => (a.startTime || "").localeCompare(b.startTime || ""));
   }, [regularJobs, search, statusFilter, categoryFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE));
@@ -137,7 +139,7 @@ export default function RegularActivityPage() {
   );
 
   const handleCreate = () => {
-    if (!formName.trim() || !formDate || !formStartTime || !formEndTime) {
+    if (!formName.trim() || !formStartTime || !formEndTime) {
       toast.error("Please fill in all standard fields.");
       return;
     }
@@ -145,8 +147,8 @@ export default function RegularActivityPage() {
       name: formName.trim(),
       category: formCategory,
       frequency: formFrequency,
+      priority: formPriority,
       picId: Number(formPic),
-      date: formDate,
       startTime: formStartTime,
       endTime: formEndTime,
     });
@@ -154,8 +156,15 @@ export default function RegularActivityPage() {
 
   const handleDelete = (id: string, e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
-    if (confirm("Are you sure?")) {
-      deleteJobMutation.mutate(id);
+    setJobToDelete(id);
+    setDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (jobToDelete) {
+      deleteJobMutation.mutate(jobToDelete);
+      setDeleteOpen(false);
+      setJobToDelete(null);
     }
   };
 
@@ -168,9 +177,9 @@ export default function RegularActivityPage() {
     setFormName("");
     setFormCategory("Safety");
     setFormFrequency("Daily");
-    setFormDate(new Date().toISOString().split("T")[0]);
     setFormStartTime("08:00");
     setFormEndTime("09:00");
+    setFormPriority("Low");
     if (currentUser) setFormPic(currentUser.id);
   };
 
@@ -222,8 +231,7 @@ export default function RegularActivityPage() {
                     {/* Timeline dot */}
                     <div className="absolute left-[-20px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-primary bg-primary/20" />
                     <div
-                      className="flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors hover:bg-accent/50"
-                      onClick={() => navigate(`/regular-activity/${a.id}`)}
+                      className="flex items-center gap-3 p-2 rounded-md transition-colors hover:bg-accent/50"
                     >
                       <span className="text-sm font-mono text-muted-foreground whitespace-nowrap">
                         {a.startTime} – {a.endTime}
@@ -232,6 +240,14 @@ export default function RegularActivityPage() {
                         {a.name}
                       </span>
                       {pic && <AvatarBadge user={pic} size="sm" />}
+                      <span className={cn(
+                        "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border whitespace-nowrap",
+                        a.priority === "High" ? "bg-red-50 text-red-600 border-red-100" :
+                        a.priority === "Medium" ? "bg-amber-50 text-amber-600 border-amber-100" :
+                        "bg-blue-50 text-blue-600 border-blue-100"
+                      )}>
+                        {a.priority}
+                      </span>
                       <StatusBadge status={a.status} />
                     </div>
                   </div>
@@ -305,6 +321,7 @@ export default function RegularActivityPage() {
                   <TableHead>Frequency</TableHead>
                   <TableHead>PIC</TableHead>
                   <TableHead>Schedule</TableHead>
+                  <TableHead>Priority</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
@@ -351,8 +368,19 @@ export default function RegularActivityPage() {
 
                         {/* Schedule */}
                         <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
-                          {a.date ? format(new Date(a.date), "MMM dd") : "-"} ·{" "}
                           {a.startTime} – {a.endTime}
+                        </TableCell>
+
+                        {/* Priority */}
+                        <TableCell>
+                          <span className={cn(
+                            "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border",
+                            a.priority === "High" ? "bg-red-50 text-red-600 border-red-100" :
+                            a.priority === "Medium" ? "bg-amber-50 text-amber-600 border-amber-100" :
+                            "bg-blue-50 text-blue-600 border-blue-100"
+                          )}>
+                            {a.priority}
+                          </span>
                         </TableCell>
 
                         {/* Status */}
@@ -369,7 +397,10 @@ export default function RegularActivityPage() {
                                 size="sm"
                                 className="h-8 border-green-200 text-green-600 hover:bg-green-50 hover:text-green-700 font-medium"
                                 onClick={(e) => handleDone(a.id, e)}
-                                disabled={statusMutation.isPending}
+                                disabled={
+                                  statusMutation.isPending || 
+                                  (!isLeaderOrUp && String(currentUser?.id) !== String(a.picId))
+                                }
                               >
                                 <CheckCircle className="h-3.5 w-3.5 mr-1" />
                                 Done
@@ -420,6 +451,14 @@ export default function RegularActivityPage() {
                         <span className="flex items-center">
                           · {a.frequency}
                         </span>
+                        <span className={cn(
+                          "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border whitespace-nowrap",
+                          a.priority === "High" ? "bg-red-50 text-red-600 border-red-100" :
+                          a.priority === "Medium" ? "bg-amber-50 text-amber-600 border-amber-100" :
+                          "bg-blue-50 text-blue-600 border-blue-100"
+                        )}>
+                          {a.priority}
+                        </span>
                       </div>
                     </div>
                     <StatusBadge status={a.status} />
@@ -433,6 +472,10 @@ export default function RegularActivityPage() {
                           size="sm"
                           className="h-9 px-4 bg-success/80 hover:bg-success text-success-foreground"
                           onClick={(e) => handleDone(a.id, e)}
+                          disabled={
+                            statusMutation.isPending || 
+                            (!isLeaderOrUp && String(currentUser?.id) !== String(a.picId))
+                          }
                         >
                           <CheckCircle className="h-4 w-4 mr-1.5" /> Done
                         </Button>
@@ -536,16 +579,6 @@ export default function RegularActivityPage() {
             </div>
           </div>
 
-          {/* SCHEDULE INPUTS */}
-          <div>
-            <Label>Date</Label>
-            <Input
-              type="date"
-              value={formDate}
-              onChange={(e) => setFormDate(e.target.value)}
-              className="mt-1 min-h-[44px]"
-            />
-          </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <Label>Start Time</Label>
@@ -567,29 +600,49 @@ export default function RegularActivityPage() {
             </div>
           </div>
 
-          <div>
-            <Label>PIC</Label>
-            <Select
-              value={formPic}
-              onValueChange={setFormPic}
-              disabled={!isLeaderOrUp}
-            >
-              <SelectTrigger className="mt-1 min-h-[44px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {usersList.map((u) => (
-                  <SelectItem key={u.id} value={String(u.id)}>
-                    {u.name} ({u.role})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {!isLeaderOrUp && (
-              <p className="text-[10px] text-muted-foreground mt-1.5">
-                As a Member, you are automatically assigned as the PIC.
-              </p>
-            )}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label>Priority</Label>
+              <Select
+                value={formPriority}
+                onValueChange={(v) => setFormPriority(v)}
+              >
+                <SelectTrigger className="mt-1 min-h-[44px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {["Low", "Medium", "High"].map((p) => (
+                    <SelectItem key={p} value={p}>
+                      {p}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>PIC</Label>
+              <Select
+                value={formPic}
+                onValueChange={setFormPic}
+                disabled={!isLeaderOrUp}
+              >
+                <SelectTrigger className="mt-1 min-h-[44px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {usersList.map((u) => (
+                    <SelectItem key={u.id} value={String(u.id)}>
+                      {u.name} ({u.role})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {!isLeaderOrUp && (
+                <p className="text-[10px] text-muted-foreground mt-1.5 leading-tight">
+                  PIC is auto-assigned.
+                </p>
+              )}
+            </div>
           </div>
           <Button
             onClick={handleCreate}
@@ -600,6 +653,16 @@ export default function RegularActivityPage() {
           </Button>
         </div>
       </ModalForm>
+
+      <ConfirmModal
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={confirmDelete}
+        title="Delete Regular Activity"
+        description="Are you sure you want to delete this activity? This action cannot be undone."
+        confirmText="Delete"
+        variant="destructive"
+      />
     </div>
   );
 }

@@ -58,6 +58,10 @@ interface BackendProject {
     id: number;
     name: string;
     picId: number;
+    status: "ACTIVE" | "ON_HOLD" | "COMPLETED";
+    startDate: string;
+    endDate: string;
+    description?: string;
     progress: number;
     createdAt: string;
     updatedAt: string;
@@ -113,6 +117,9 @@ interface BackendRegularJob {
     category: "SAFETY" | "QUALITY" | "MAINTENANCE" | "FIVE_S" | "ENVIRONMENT";
     frequency: "DAILY" | "WEEKLY" | "MONTHLY";
     progress: number;
+    priority?: "LOW" | "MEDIUM" | "HIGH";
+    startTime?: string;
+    endTime?: string;
     createdAt: string;
     updatedAt: string;
     tasks: BackendTask[];
@@ -252,17 +259,14 @@ export function toAppUser(user: BackendUser): AppUser {
 }
 
 export function toAppProject(project: BackendProject): AppProject {
-    const startDate = new Date(project.createdAt).toISOString().split("T")[0];
-    const endDate = new Date(project.updatedAt).toISOString().split("T")[0];
-
     return {
         id: String(project.id),
         name: project.name,
         ownerId: String(project.picId),
-        description: "",
-        status: mapProjectStatus(project.progress),
-        startDate,
-        endDate,
+        description: project.description || "",
+        status: project.status === "ACTIVE" ? "Active" : project.status === "ON_HOLD" ? "On Hold" : "Completed",
+        startDate: project.startDate ? new Date(project.startDate).toISOString().split("T")[0] : new Date(project.createdAt).toISOString().split("T")[0],
+        endDate: project.endDate ? new Date(project.endDate).toISOString().split("T")[0] : new Date(project.updatedAt).toISOString().split("T")[0],
         createdAt: project.createdAt,
     };
 }
@@ -353,8 +357,9 @@ export function toAppRegularActivity(job: BackendRegularJob): AppRegularActivity
         frequency: frequencyMap[job.frequency] as any || "Daily",
         picId: String(job.picId),
         date: new Date(job.createdAt).toISOString().split("T")[0],
-        startTime: "08:00",
-        endTime: "09:00",
+        startTime: job.startTime || "08:00",
+        endTime: job.endTime || "09:00",
+        priority: job.priority ? (job.priority.charAt(0).toUpperCase() + job.priority.slice(1).toLowerCase()) as any : "Low",
         lastUpdate: new Date(job.updatedAt).toISOString().split("T")[0],
         status: job.progress >= 100 ? "Completed" : "Pending",
         checklist: [],
@@ -491,6 +496,21 @@ export async function getPersonalJobById(id: string): Promise<AppPersonalJob> {
     return toAppPersonalJob(task);
 }
 
+export async function createProject(data: { name: string; ownerId: number; startDate: string; endDate: string; description?: string }): Promise<AppProject> {
+    const result = await request<BackendProject>("/projects", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({
+            name: data.name,
+            picId: data.ownerId,
+            startDate: data.startDate,
+            endDate: data.endDate,
+            description: data.description,
+        }),
+    });
+    return toAppProject(result);
+}
+
 export async function getRegularActivityById(id: string): Promise<AppRegularActivity> {
     const task = await request<BackendTask>(`/tasks/${id}`, {
         headers: getAuthHeaders(),
@@ -509,6 +529,7 @@ export async function getRegularActivityById(id: string): Promise<AppRegularActi
         date: task.date || new Date(task.createdAt).toISOString().split("T")[0],
         startTime: task.startTime || "08:00",
         endTime: task.endTime || "09:00",
+        priority: task.priority ? (task.priority.charAt(0).toUpperCase() + task.priority.slice(1).toLowerCase()) as any : "Low",
         lastUpdate: new Date(task.updatedAt).toISOString().split("T")[0],
         status: task.status === "DONE" ? "Completed" : "Pending",
         checklist,
@@ -581,14 +602,15 @@ export async function getRegularTasksToday(): Promise<AppTask[]> {
     return (data.data || []).map(toAppTask);
 }
 
-export async function createRegularJob(data: { name: string; picId: number; category: string; frequency: string; date: string; startTime: string; endTime: string }): Promise<AppRegularActivity> {
+export async function createRegularJob(data: { name: string; picId: number; category: string; frequency: string; priority: string; date?: string; startTime: string; endTime: string }): Promise<AppRegularActivity> {
     const result = await request<BackendRegularJob>("/regular-jobs", {
         method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({
             ...data,
             category: data.category === "5S" ? "FIVE_S" : data.category.toUpperCase(),
-            frequency: data.frequency.toUpperCase()
+            frequency: data.frequency.toUpperCase(),
+            priority: data.priority.toUpperCase()
         }),
     });
     return toAppRegularActivity(result);

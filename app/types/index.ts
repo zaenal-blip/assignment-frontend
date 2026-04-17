@@ -106,6 +106,7 @@ export interface RegularActivity {
     date: string;
     startTime: string;
     endTime: string;
+    priority: "Low" | "Medium" | "High";
     lastUpdate: string;
     status: RegularActivityStatus;
     checklist: ChecklistItem[];

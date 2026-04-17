@@ -26,6 +26,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export default function EventsPage() {
@@ -200,12 +204,8 @@ function CreateEventModal({
 }) {
   const [eventName, setEventName] = useState("");
   const [pic, setPic] = useState("");
-  const [startDate, setStartDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
-  const [endDate, setEndDate] = useState(
-    new Date().toISOString().split("T")[0],
-  );
+  const [startDate, setStartDate] = useState<Date>(new Date());
+  const [endDate, setEndDate] = useState<Date>(new Date());
 
   const queryClient = useQueryClient();
 
@@ -217,8 +217,8 @@ function CreateEventModal({
       onOpenChange(false);
       setEventName("");
       setPic("");
-      setStartDate(new Date().toISOString().split("T")[0]);
-      setEndDate(new Date().toISOString().split("T")[0]);
+      setStartDate(new Date());
+      setEndDate(new Date());
     },
     onError: (err: any) => {
       toast.error(err.message || "Failed to create event");
@@ -238,8 +238,8 @@ function CreateEventModal({
     mutation.mutate({
       name: eventName,
       picId: Number(pic),
-      startDate,
-      endDate,
+      startDate: startDate.toISOString().split("T")[0],
+      endDate: endDate.toISOString().split("T")[0],
     });
   };
 
@@ -258,21 +258,53 @@ function CreateEventModal({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Start Date</Label>
-            <Input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 min-h-[44px]"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full mt-1 justify-start text-left font-normal min-h-[44px]",
+                    !startDate && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {startDate ? format(startDate, "PPP") : "Pick date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={startDate}
+                  onSelect={(d) => d && setStartDate(d)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
           <div>
             <Label>End Date</Label>
-            <Input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 min-h-[44px]"
-            />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "w-full mt-1 justify-start text-left font-normal min-h-[44px]",
+                    !endDate && "text-muted-foreground",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {endDate ? format(endDate, "PPP") : "Pick date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={endDate}
+                  onSelect={(d) => d && setEndDate(d)}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
         <div>

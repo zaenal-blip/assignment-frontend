@@ -7,6 +7,7 @@ import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
 import { CreatePersonalJobModal } from "@/components/CreatePersonalJobModal";
 import { calculatePersonalJobProgress, type PersonalJob } from "@/types";
+import { ConfirmModal } from "@/components/ConfirmModal";
 import { toast } from "sonner";
 import { Plus, Search, Send, Eye, Trash2 } from "lucide-react";
 import {
@@ -52,6 +53,8 @@ export default function PersonalJobPage() {
     const [search, setSearch] = useState("");
     const [sourceFilter, setSourceFilter] = useState("All");
     const [statusFilter, setStatusFilter] = useState("All");
+    const [deleteOpen, setDeleteOpen] = useState(false);
+    const [jobToDelete, setJobToDelete] = useState<string | null>(null);
 
     const filteredJobs = useMemo(() => {
         let jobs = [...allJobs];
@@ -69,8 +72,15 @@ export default function PersonalJobPage() {
     };
 
     const handleDelete = (jobId: string) => {
-        if (confirm("Are you sure you want to delete this job?")) {
-            deleteMutation.mutate(jobId);
+        setJobToDelete(jobId);
+        setDeleteOpen(true);
+    };
+
+    const confirmDelete = () => {
+        if (jobToDelete) {
+            deleteMutation.mutate(jobToDelete);
+            setDeleteOpen(false);
+            setJobToDelete(null);
         }
     };
 
@@ -221,6 +231,16 @@ export default function PersonalJobPage() {
                 open={createOpen} 
                 onOpenChange={setCreateOpen} 
                 onSuccess={handleCreateSuccess} 
+            />
+
+            <ConfirmModal
+                open={deleteOpen}
+                onOpenChange={setDeleteOpen}
+                onConfirm={confirmDelete}
+                title="Delete Personal Job"
+                description="Are you sure you want to delete this job? This action cannot be undone."
+                confirmText="Delete"
+                variant="destructive"
             />
         </div>
     );

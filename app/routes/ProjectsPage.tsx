@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { Plus, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { getProjects, getTasks, getUsers } from "@/lib/api";
+import { getProjects, getTasks, getUsers, createProject } from "@/lib/api";
 import type { Project, Task, User } from "@/types";
 
 function getDeadlineBadge(endDate: string, status: string) {
@@ -246,24 +247,72 @@ export default function ProjectsPage() {
 }
 
 function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+    const queryClient = useQueryClient();
+    const [name, setName] = useState("");
+    const [ownerId, setOwnerId] = useState("");
     const [startDate, setStartDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
+    const [description, setDescription] = useState("");
+    
     const { data: users = [] } = useQuery<User[]>({ queryKey: ["users"], queryFn: getUsers });
 
+    const createMutation = useMutation({
+        mutationFn: createProject,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["projects"] });
+            toast.success("Project created successfully!");
+            onOpenChange(false);
+            resetForm();
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Failed to create project");
+        }
+    });
+
+    const resetForm = () => {
+        setName("");
+        setOwnerId("");
+        setStartDate(undefined);
+        setEndDate(undefined);
+        setDescription("");
+    };
+
+    const handleCreate = () => {
+        if (!name || !ownerId || !startDate || !endDate) {
+            toast.error("Please fill in all required fields");
+            return;
+        }
+
+        createMutation.mutate({
+            name,
+            ownerId: Number(ownerId),
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            description
+        });
+    };
+
     return (
-        <ModalForm open={open} onOpenChange={onOpenChange} title="Create Project">
+        <ModalForm open={open} onOpenChange={(v) => {
+            onOpenChange(v);
+            if (!v) resetForm();
+        }} title="Create Project">
             <div className="space-y-4">
                 <div className="space-y-2">
                     <Label>Project Name</Label>
-                    <Input placeholder="Enter project name" />
+                    <Input 
+                        placeholder="Enter project name" 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
                 </div>
                 <div className="space-y-2">
                     <Label>Owner</Label>
-                    <Select>
+                    <Select value={ownerId} onValueChange={setOwnerId}>
                         <SelectTrigger><SelectValue placeholder="Select owner" /></SelectTrigger>
                         <SelectContent>
                             {users.filter((u) => ["Leader", "SPV", "DPH"].includes(u.role)).map((u) => (
-                                <SelectItem key={u.id} value={u.id}>{u.name} ({u.role})</SelectItem>
+                                <SelectItem key={u.id} value={String(u.id)}>{u.name} ({u.role})</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
@@ -300,10 +349,18 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                 </div>
                 <div className="space-y-2">
                     <Label>Description (optional)</Label>
-                    <Input placeholder="Enter description" />
+                    <Input 
+                        placeholder="Enter description" 
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                    />
                 </div>
-                <Button className="w-full min-h-[44px]" onClick={() => onOpenChange(false)}>
-                    Create Project
+                <Button 
+                    className="w-full min-h-[44px]" 
+                    onClick={handleCreate}
+                    disabled={createMutation.isPending}
+                >
+                    {createMutation.isPending ? "Creating..." : "Create Project"}
                 </Button>
             </div>
         </ModalForm>
