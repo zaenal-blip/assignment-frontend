@@ -40,7 +40,7 @@ export type RegisterBody = {
     email: string;
     noReg: string;
     noHp: string;
-    role: "MEMBER" | "LEADER" | "SPV" | "DPH";
+    role: "MEMBER" | "LEADER" | "SPV" | "DPH" | "TMMIN";
     password: string;
     confirmPassword?: string;
 };
@@ -50,7 +50,7 @@ interface BackendUser {
     name: string;
     email: string;
     noHp: string;
-    role: "MEMBER" | "LEADER" | "SPV" | "DPH";
+    role: "MEMBER" | "LEADER" | "SPV" | "DPH" | "TMMIN";
     avatar?: string;
 }
 
@@ -175,9 +175,27 @@ function toAppRole(role: BackendUser["role"]): UserRole {
             return "SPV";
         case "DPH":
             return "DPH";
+        case "TMMIN":
+            return "Yang punya TMMIN";
         case "MEMBER":
         default:
             return "Member";
+    }
+}
+
+function toBackendRole(role: UserRole): BackendUser["role"] {
+    switch (role) {
+        case "Leader":
+            return "LEADER";
+        case "SPV":
+            return "SPV";
+        case "DPH":
+            return "DPH";
+        case "Yang punya TMMIN":
+            return "TMMIN";
+        case "Member":
+        default:
+            return "MEMBER";
     }
 }
 
@@ -424,6 +442,22 @@ export async function getUsers(): Promise<AppUser[]> {
         headers: getAuthHeaders(),
     });
     return data.data.map(toAppUser);
+}
+
+export async function updateUser(id: string, body: Partial<AppUser>): Promise<{ message: string }> {
+    const backendBody: any = { ...body };
+    if (body.role) {
+        backendBody.role = toBackendRole(body.role);
+    }
+    if (body.phone) {
+        backendBody.noHp = body.phone;
+    }
+
+    return request<{ message: string }>(`/users/${id}`, {
+        method: "PATCH",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(backendBody),
+    });
 }
 
 export async function getProjects(): Promise<AppProject[]> {

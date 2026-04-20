@@ -18,7 +18,7 @@ import { useUser } from "@/hooks/use-user";
 
 export default function Login() {
   const { user } = useUser();
-  const [email, setEmail] = useState("");
+  const [noReg, setNoReg] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,7 @@ export default function Login() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login({ identifier: email, password });
+      await login({ identifier: noReg, password });
       toast({
         title: "Login berhasil",
         description: "Selamat datang kembali!",
@@ -44,7 +44,7 @@ export default function Login() {
     } catch (error) {
       toast({
         title: "Login gagal",
-        description: "Email atau password salah",
+        description: "NoReg atau password salah",
         variant: "destructive",
       });
     } finally {
@@ -80,17 +80,19 @@ export default function Login() {
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-2">
               <Label
-                htmlFor="email"
+                htmlFor="noReg"
                 className="text-sm font-semibold tracking-wide text-white/90 ml-1"
               >
-                Email
+                NoReg (Nomor Registrasi)
               </Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="nama@perusahaan.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="noReg"
+                type="text"
+                inputMode="numeric"
+                placeholder="2538600"
+                maxLength={7}
+                value={noReg}
+                onChange={(e) => setNoReg(e.target.value.replace(/\D/g, "").slice(0, 7))}
                 required
                 className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all duration-200 rounded-xl"
               />
