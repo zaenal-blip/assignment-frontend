@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,13 +14,21 @@ import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { login } from "@/lib/api";
 import background from "../assets/bg.png";
+import { useUser } from "@/hooks/use-user";
 
 export default function Login() {
+  const { user } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +51,7 @@ export default function Login() {
   return (
     <div
       className="flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 relative overflow-hidden"
+      //className="flex min-h-screen items-center justify-center lg:justify-end lg:pr-24 bg-cover bg-center bg-no-repeat px-4 relative overflow-hidden"
       style={{ backgroundImage: `url(${background})` }}
     >
       {/* Background Overlay */}

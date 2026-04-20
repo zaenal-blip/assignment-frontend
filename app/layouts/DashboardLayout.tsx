@@ -1,9 +1,16 @@
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Topbar } from "@/components/Topbar";
+import { useUser } from "@/hooks/use-user";
 
 export default function DashboardLayout() {
+    const { user } = useUser();
+
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+
     return (
         <SidebarProvider>
             <div className="min-h-screen flex w-full">
@@ -18,3 +25,4 @@ export default function DashboardLayout() {
         </SidebarProvider>
     );
 }
+
