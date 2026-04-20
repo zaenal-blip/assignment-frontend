@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { login } from "@/lib/api";
 import background from "../assets/bg.png";
@@ -20,6 +20,7 @@ export default function Login() {
   const { user } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -32,6 +33,7 @@ export default function Login() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await login({ identifier: email, password });
       toast({
@@ -45,6 +47,8 @@ export default function Login() {
         description: "Email atau password salah",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -123,9 +127,17 @@ export default function Login() {
             </div>
             <Button
               type="submit"
-              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl shadow-lg mt-2"
+              disabled={isLoading}
+              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl shadow-lg mt-2 flex items-center justify-center gap-2"
             >
-              Masuk
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Masuk"
+              )}
             </Button>
           </form>
 

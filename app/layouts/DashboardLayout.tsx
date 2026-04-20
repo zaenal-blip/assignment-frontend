@@ -1,14 +1,27 @@
-import { Navigate, Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Topbar } from "@/components/Topbar";
 import { useUser } from "@/hooks/use-user";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout() {
     const { user } = useUser();
+    const navigate = useNavigate();
+    const [mounted, setMounted] = useState(false);
 
-    if (!user) {
-        return <Navigate to="/login" replace />;
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    useEffect(() => {
+        if (mounted && !user) {
+            navigate("/login", { replace: true });
+        }
+    }, [mounted, user, navigate]);
+
+    if (!mounted || !user) {
+        return null;
     }
 
     return (

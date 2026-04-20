@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { register } from "@/lib/api";
 import background from "../assets/bg.png";
@@ -24,6 +24,7 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -77,6 +78,7 @@ export default function Register() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
+    setIsLoading(true);
     try {
       await register({
         name,
@@ -101,6 +103,8 @@ export default function Register() {
         description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -292,9 +296,17 @@ export default function Register() {
 
             <Button
               type="submit"
-              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-white/90 hover:scale-[1.01] active:scale-[0.99] transition-all rounded-xl shadow-lg mt-4"
+              disabled={isLoading}
+              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-white/90 hover:scale-[1.01] active:scale-[0.99] transition-all rounded-xl shadow-lg mt-4 flex items-center justify-center gap-2"
             >
-              Daftar Sekarang
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Daftar Sekarang"
+              )}
             </Button>
           </form>
 
