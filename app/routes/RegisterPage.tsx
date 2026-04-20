@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ import { Eye, EyeOff, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { register } from "@/lib/api";
 import background from "../assets/bg.png";
+import { useUser } from "@/hooks/use-user";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -26,6 +27,13 @@ export default function Register() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (user) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [user, navigate]);
 
   const handleNoRegChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "").slice(0, 7);
@@ -99,6 +107,7 @@ export default function Register() {
   return (
     <div
       className="flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-12 relative overflow-hidden"
+      //className="flex min-h-screen items-center justify-center lg:justify-end lg:pr-16 bg-cover bg-center bg-no-repeat px-4 py-12 relative overflow-hidden"
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="absolute inset-0 bg-black/50" />
