@@ -7,20 +7,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { StatusBadge } from "@/components/StatusBadge";
 import { AvatarBadge } from "@/components/AvatarBadge";
-import { useQuery } from "@tanstack/react-query";
-import { getUsers, getStoredUser } from "@/lib/api";
-import type { User } from "@/types";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getUsers, getStoredUser, updateUser } from "@/lib/api";
+import type { User, UserRole } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Navigate } from "react-router";
+import { toast } from "sonner";
+
+const ALL_ROLES: UserRole[] = ["Member", "Leader", "SPV", "DPH", "Yang punya TMMIN"];
 
 export default function UsersPage() {
   const isMobile = useIsMobile();
   const currentUser = getStoredUser();
+  const queryClient = useQueryClient();
 
-  // Only leaders can access this page
-  if (currentUser?.role == "Member") {
+  const isTMMIN = currentUser?.role === "Yang punya TMMIN";
+
+  // Only leaders and above can access this page
+  if (currentUser?.role === "Member") {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -28,6 +41,22 @@ export default function UsersPage() {
     queryKey: ["users"],
     queryFn: getUsers,
   });
+
+  const roleMutation = useMutation({
+    mutationFn: ({ userId, role }: { userId: string; role: UserRole }) =>
+      updateUser(userId, { role }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success("Role berhasil diubah");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Gagal mengubah role");
+    },
+  });
+
+  const handleRoleChange = (userId: string, newRole: UserRole) => {
+    roleMutation.mutate({ userId, role: newRole });
+  };
 
   if (isMobile) {
     return (
@@ -41,9 +70,29 @@ export default function UsersPage() {
                 <p className="font-medium">{user.name}</p>
                 <p className="text-xs text-muted-foreground">{user.email}</p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">
-                    {user.role}
-                  </span>
+                  {isTMMIN ? (
+                    <Select
+                      value={user.role}
+                      onValueChange={(value) =>
+                        handleRoleChange(user.id, value as UserRole)
+                      }
+                    >
+                      <SelectTrigger className="h-7 w-auto text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ALL_ROLES.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">
+                      {user.role}
+                    </span>
+                  )}
                   <StatusBadge status={user.status} />
                 </div>
               </div>
@@ -80,7 +129,29 @@ export default function UsersPage() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="tv:text-tv-sm">{user.role}</TableCell>
+                  <TableCell className="tv:text-tv-sm">
+                    {isTMMIN ? (
+                      <Select
+                        value={user.role}
+                        onValueChange={(value) =>
+                          handleRoleChange(user.id, value as UserRole)
+                        }
+                      >
+                        <SelectTrigger className="h-8 w-[180px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {ALL_ROLES.map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      user.role
+                    )}
+                  </TableCell>
                   <TableCell className="tv:text-tv-sm">{user.email}</TableCell>
                   <TableCell className="tv:text-tv-sm">{user.phone}</TableCell>
                   <TableCell>

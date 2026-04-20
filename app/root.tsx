@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { MaintenanceScreen } from "@/components/MaintenanceScreen";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  if (import.meta.env.VITE_MAINTENANCE_MODE === "true") {
+    return <MaintenanceScreen />;
+  }
   return <Outlet />;
 }
 
