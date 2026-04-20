@@ -222,7 +222,7 @@ export function AppSidebar() {
                 .filter(
                   (item) =>
                     item.url !== "/users" ||
-                    ["Leader", "SPV", "DPH"].includes(user?.role || ""),
+                    ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(user?.role || ""),
                 )
                 .map((item) => {
                   const isActive =

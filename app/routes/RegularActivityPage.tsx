@@ -118,7 +118,7 @@ export default function RegularActivityPage() {
 
 
   const isLeaderOrUp =
-    currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
+    currentUser && ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(currentUser.role);
 
   const filtered = useMemo(() => {
     return regularJobs
@@ -630,7 +630,7 @@ export default function RegularActivityPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {usersList.map((u) => (
+                  {usersList.filter((u) => u.role !== "Yang punya TMMIN").map((u) => (
                     <SelectItem key={u.id} value={String(u.id)}>
                       {u.name} ({u.role})
                     </SelectItem>

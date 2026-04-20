@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { ArrowLeft, Plus, X } from "lucide-react";
+import { ArrowLeft, Plus, X, Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -11,6 +11,9 @@ import { ModalForm } from "@/components/ModalForm";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getProjectById, getUsers, createTask } from "@/lib/api";
 import { toast } from "sonner";
@@ -22,12 +25,12 @@ export default function ProjectDetailPage() {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { user: currentUser } = useUser();
-    const isManager = currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
+    const isManager = currentUser && ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(currentUser.role);
     
     const [modalOpen, setModalOpen] = useState(false);
     const [taskName, setTaskName] = useState("");
     const [picId, setPicId] = useState("");
-    const [dueDate, setDueDate] = useState("");
+    const [dueDate, setDueDate] = useState<Date | undefined>(undefined);
     const [checklistItems, setChecklistItems] = useState<string[]>([""]);
 
     const { data: project, isLoading } = useQuery({
@@ -49,7 +52,7 @@ export default function ProjectDetailPage() {
             setModalOpen(false);
             setTaskName("");
             setPicId("");
-            setDueDate("");
+            setDueDate(undefined);
             setChecklistItems([""]);
         },
         onError: (err: any) => {
@@ -90,7 +93,7 @@ export default function ProjectDetailPage() {
             picId: Number(picId),
             sourceType: "PROJECT",
             projectId,
-            dueDate: dueDate || undefined,
+            dueDate: dueDate ? format(dueDate, "yyyy-MM-dd") : undefined,
             activities: filteredActivities
         });
     };
@@ -159,7 +162,7 @@ export default function ProjectDetailPage() {
                         <Select value={picId} onValueChange={setPicId}>
                             <SelectTrigger><SelectValue placeholder="Select PIC" /></SelectTrigger>
                             <SelectContent>
-                                {users.filter(u => u.status === "Active").map((u) => (
+                                {users.filter(u => u.status === "Active" && u.role !== "Yang punya TMMIN").map((u) => (
                                     <SelectItem key={u.id} value={u.id}>{u.name} ({u.role})</SelectItem>
                                 ))}
                             </SelectContent>
@@ -167,7 +170,28 @@ export default function ProjectDetailPage() {
                     </div>
                     <div className="space-y-2">
                         <Label>Due Date</Label>
-                        <Input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+                        <Popover>
+                            <PopoverTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    className={cn(
+                                        "w-full justify-start text-left font-normal min-h-[44px]",
+                                        !dueDate && "text-muted-foreground"
+                                    )}
+                                >
+                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                    {dueDate ? format(dueDate, "PPP") : "Pick due date"}
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={dueDate}
+                                    onSelect={setDueDate}
+                                    initialFocus
+                                />
+                            </PopoverContent>
+                        </Popover>
                     </div>
                     <div className="space-y-2">
                         <Label>Checklist Activities</Label>

@@ -132,6 +132,8 @@ interface BackendNotification {
     message: string;
     isRead: boolean;
     type?: string;
+    targetId?: number;
+    targetType?: string;
     createdAt: string;
 }
 
@@ -460,6 +462,13 @@ export async function updateUser(id: string, body: Partial<AppUser>): Promise<{ 
     });
 }
 
+export async function deleteUser(id: string): Promise<{ message: string }> {
+    return request<{ message: string }>(`/users/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+    });
+}
+
 export async function getProjects(): Promise<AppProject[]> {
     const data = await request<BackendListResponse<BackendProject>>("/projects?take=50", {
         headers: getAuthHeaders(),
@@ -700,6 +709,8 @@ export function toAppNotification(n: BackendNotification): AppNotification {
         message: n.message,
         isRead: n.isRead,
         type: n.type,
+        targetId: n.targetId,
+        targetType: n.targetType,
         createdAt: new Date(n.createdAt).toISOString()
     };
 }

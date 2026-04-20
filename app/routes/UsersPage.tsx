@@ -17,11 +17,13 @@ import {
 import { StatusBadge } from "@/components/StatusBadge";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getUsers, getStoredUser, updateUser } from "@/lib/api";
+import { toast } from "sonner";
+import { Trash2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { getUsers, getStoredUser, updateUser, deleteUser } from "@/lib/api";
 import type { User, UserRole } from "@/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Navigate } from "react-router";
-import { toast } from "sonner";
 
 const ALL_ROLES: UserRole[] = ["Member", "Leader", "SPV", "DPH", "Yang punya TMMIN"];
 
@@ -56,6 +58,23 @@ export default function UsersPage() {
 
   const handleRoleChange = (userId: string, newRole: UserRole) => {
     roleMutation.mutate({ userId, role: newRole });
+  };
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      toast.success("User berhasil dihapus");
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Gagal menghapus user");
+    },
+  });
+
+  const handleDeleteUser = (userId: string, userName: string) => {
+    if (confirm(`Apakah Anda yakin ingin menghapus user ${userName}?`)) {
+      deleteMutation.mutate(userId);
+    }
   };
 
   if (isMobile) {
@@ -94,6 +113,16 @@ export default function UsersPage() {
                     </span>
                   )}
                   <StatusBadge status={user.status} />
+                  {isTMMIN && user.id !== currentUser?.id && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 text-destructive"
+                      onClick={() => handleDeleteUser(user.id, user.name)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
             </CardContent>
@@ -116,6 +145,7 @@ export default function UsersPage() {
                 <TableHead>Email</TableHead>
                 <TableHead>Phone</TableHead>
                 <TableHead>Status</TableHead>
+                {isTMMIN && <TableHead className="w-[100px]">Action</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -157,6 +187,23 @@ export default function UsersPage() {
                   <TableCell>
                     <StatusBadge status={user.status} />
                   </TableCell>
+                  {isTMMIN && (
+                    <TableCell>
+                      {user.id !== currentUser?.id ? (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => handleDeleteUser(user.id, user.name)}
+                          disabled={deleteMutation.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Cannot delete yourself</span>
+                      )}
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>

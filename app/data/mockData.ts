@@ -168,7 +168,7 @@ export function getUserTasks(userId: string): Task[] {
 
 export const regularActivities: RegularActivity[] = [
     {
-        id: "ra1", name: "Daily Safety Patrol", category: "Safety", frequency: "Daily", picId: "u1", date: d(0), startTime: "08:00", endTime: "09:00", lastUpdate: d(0), status: "Completed",
+        id: "ra1", name: "Daily Safety Patrol", category: "Safety", frequency: "Daily", picId: "u1", date: d(0), startTime: "08:00", endTime: "09:00", lastUpdate: d(0), status: "Completed", priority: "Low",
         checklist: [
             { id: "rc1", label: "Check emergency exit", completed: true },
             { id: "rc2", label: "Check fire extinguisher", completed: true },
@@ -177,7 +177,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra2", name: "Machine Inspection", category: "Maintenance", frequency: "Daily", picId: "u3", date: d(0), startTime: "08:30", endTime: "09:30", lastUpdate: d(-1), status: "Pending",
+        id: "ra2", name: "Machine Inspection", category: "Maintenance", frequency: "Daily", picId: "u3", date: d(0), startTime: "08:30", endTime: "09:30", lastUpdate: d(-1), status: "Pending", priority: "High",
         checklist: [
             { id: "rc5", label: "Check oil level", completed: true },
             { id: "rc6", label: "Check belt tension", completed: false },
@@ -186,7 +186,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra3", name: "4S Audit", category: "5S", frequency: "Weekly", picId: "u4", date: d(1), startTime: "10:00", endTime: "11:30", lastUpdate: d(-3), status: "Overdue",
+        id: "ra3", name: "4S Audit", category: "5S", frequency: "Weekly", picId: "u4", date: d(1), startTime: "10:00", endTime: "11:30", lastUpdate: d(-3), status: "Overdue", priority: "Medium",
         checklist: [
             { id: "rc9", label: "Sort unnecessary items", completed: false },
             { id: "rc10", label: "Set workplace in order", completed: false },
@@ -195,7 +195,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra4", name: "Quality Patrol", category: "Quality", frequency: "Daily", picId: "u5", date: d(0), startTime: "09:00", endTime: "10:00", lastUpdate: d(0), status: "Pending",
+        id: "ra4", name: "Quality Patrol", category: "Quality", frequency: "Daily", picId: "u5", date: d(0), startTime: "09:00", endTime: "10:00", lastUpdate: d(0), status: "Pending", priority: "Medium",
         checklist: [
             { id: "rc13", label: "Check product dimensions", completed: true },
             { id: "rc14", label: "Visual defect inspection", completed: true },
@@ -204,7 +204,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra5", name: "Environmental Check", category: "Environment", frequency: "Weekly", picId: "u8", date: d(2), startTime: "13:00", endTime: "14:00", lastUpdate: d(-2), status: "Completed",
+        id: "ra5", name: "Environmental Check", category: "Environment", frequency: "Weekly", picId: "u8", date: d(2), startTime: "13:00", endTime: "14:00", lastUpdate: d(-2), status: "Completed", priority: "Low",
         checklist: [
             { id: "rc17", label: "Check waste disposal", completed: true },
             { id: "rc18", label: "Check chemical storage", completed: true },
@@ -212,7 +212,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra6", name: "Safety Equipment Check", category: "Safety", frequency: "Monthly", picId: "u2", date: d(3), startTime: "08:00", endTime: "09:30", lastUpdate: d(-10), status: "Overdue",
+        id: "ra6", name: "Safety Equipment Check", category: "Safety", frequency: "Monthly", picId: "u2", date: d(3), startTime: "08:00", endTime: "09:30", lastUpdate: d(-10), status: "Overdue", priority: "High",
         checklist: [
             { id: "rc20", label: "Inspect PPE condition", completed: false },
             { id: "rc21", label: "Check first aid kit", completed: false },
@@ -221,7 +221,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra7", name: "Production Line Audit", category: "Quality", frequency: "Monthly", picId: "u3", date: d(1), startTime: "14:00", endTime: "15:30", lastUpdate: d(-5), status: "Pending",
+        id: "ra7", name: "Production Line Audit", category: "Quality", frequency: "Monthly", picId: "u3", date: d(1), startTime: "14:00", endTime: "15:30", lastUpdate: d(-5), status: "Pending", priority: "Medium",
         checklist: [
             { id: "rc24", label: "Verify SOP compliance", completed: true },
             { id: "rc25", label: "Check calibration records", completed: false },

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Bell, Search, Calendar } from "lucide-react";
-import { useLocation, Link } from "react-router";
+import { useLocation, Link, useNavigate } from "react-router";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { getStoredUser } from "@/lib/api";
 import { useUser } from "@/hooks/use-user";
@@ -92,7 +92,7 @@ export function Topbar() {
                 </div>
 
                 <div className="flex items-center gap-1 tv:gap-3">
-                    <NotificationDropdown />
+                    {currentUser?.role !== "Yang punya TMMIN" && <NotificationDropdown />}
                     <div className="h-6 w-px bg-border tv:h-10 mx-1 lg:block hidden" />
                     <UserDropdown user={currentUser ?? { id: "", name: "Guest", email: "", phone: "", role: "Member", avatar: "G", status: "Active" }} />
                 </div>
@@ -116,6 +116,7 @@ import { CheckCircle2 } from "lucide-react";
 
 function NotificationDropdown() {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const { data: notifications = [] } = useQuery({
         queryKey: ["notifications"],
         queryFn: () => getNotifications(),
@@ -181,6 +182,12 @@ function NotificationDropdown() {
                             className={cn("flex flex-col items-start gap-1 p-3 cursor-pointer", n.isRead ? "opacity-60" : "bg-muted/30")}
                             onClick={() => {
                                 if (!n.isRead) readMutation.mutate(n.id);
+                                if (n.targetType && n.targetId) {
+                                    if (n.targetType === "TASK") navigate(`/tasks/${n.targetId}`);
+                                    else if (n.targetType === "PROJECT") navigate(`/projects/${n.targetId}`);
+                                    else if (n.targetType === "EVENT") navigate(`/events/${n.targetId}`);
+                                    else if (n.targetType === "PERSONAL_JOB") navigate(`/dashboard`);
+                                }
                             }}
                         >
                             <span className="text-sm">{n.message}</span>

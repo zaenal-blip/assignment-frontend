@@ -15,6 +15,8 @@ export interface AppNotification {
     message: string;
     isRead: boolean;
     type?: string;
+    targetId?: number;
+    targetType?: string;
     createdAt: string;
 }
 

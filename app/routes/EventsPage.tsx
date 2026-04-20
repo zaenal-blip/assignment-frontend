@@ -43,7 +43,7 @@ export default function EventsPage() {
   }, []);
 
   const isLeaderOrUp =
-    currentUser && ["Leader", "SPV", "DPH"].includes(currentUser.role);
+    currentUser && ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(currentUser.role);
 
   const { data: events = [] } = useQuery({
     queryKey: ["events"],
@@ -315,7 +315,7 @@ function CreateEventModal({
             </SelectTrigger>
             <SelectContent>
               {users
-                .filter((u) => u.status === "Active")
+                .filter((u) => u.status === "Active" && u.role !== "Yang punya TMMIN")
                 .map((u) => (
                   <SelectItem key={u.id} value={String(u.id)}>
                     {u.name} ({u.role})
