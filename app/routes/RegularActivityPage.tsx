@@ -40,7 +40,7 @@ import {
 
 const ITEMS_PER_PAGE = 5;
 
-const categories = ["Safety", "Quality", "Maintenance", "5S", "Environment"];
+const categories = ["Safety", "Quality", "Productivity", "Cost", "HR"];
 const frequencies = ["Daily", "Weekly", "Monthly"];
 
 export default function RegularActivityPage() {

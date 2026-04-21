@@ -177,7 +177,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra2", name: "Machine Inspection", category: "Maintenance", frequency: "Daily", picId: "u3", date: d(0), startTime: "08:30", endTime: "09:30", lastUpdate: d(-1), status: "Pending", priority: "High",
+        id: "ra2", name: "Machine Inspection", category: "Cost", frequency: "Daily", picId: "u3", date: d(0), startTime: "08:30", endTime: "09:30", lastUpdate: d(-1), status: "Pending", priority: "High",
         checklist: [
             { id: "rc5", label: "Check oil level", completed: true },
             { id: "rc6", label: "Check belt tension", completed: false },
@@ -186,7 +186,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra3", name: "4S Audit", category: "5S", frequency: "Weekly", picId: "u4", date: d(1), startTime: "10:00", endTime: "11:30", lastUpdate: d(-3), status: "Overdue", priority: "Medium",
+        id: "ra3", name: "4S Audit", category: "Productivity", frequency: "Weekly", picId: "u4", date: d(1), startTime: "10:00", endTime: "11:30", lastUpdate: d(-3), status: "Overdue", priority: "Medium",
         checklist: [
             { id: "rc9", label: "Sort unnecessary items", completed: false },
             { id: "rc10", label: "Set workplace in order", completed: false },
@@ -204,7 +204,7 @@ export const regularActivities: RegularActivity[] = [
         ],
     },
     {
-        id: "ra5", name: "Environmental Check", category: "Environment", frequency: "Weekly", picId: "u8", date: d(2), startTime: "13:00", endTime: "14:00", lastUpdate: d(-2), status: "Completed", priority: "Low",
+        id: "ra5", name: "Environmental Check", category: "HR", frequency: "Weekly", picId: "u8", date: d(2), startTime: "13:00", endTime: "14:00", lastUpdate: d(-2), status: "Completed", priority: "Low",
         checklist: [
             { id: "rc17", label: "Check waste disposal", completed: true },
             { id: "rc18", label: "Check chemical storage", completed: true },

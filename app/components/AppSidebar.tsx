@@ -144,8 +144,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { Pin, PinOff } from "lucide-react";
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
@@ -157,7 +159,8 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
+  const { state, setOpen } = useSidebar();
+  const [isPinned, setIsPinned] = useState(false);
   const collapsed = state === "collapsed";
   const location = useLocation();
   const navigate = useNavigate();
@@ -174,9 +177,31 @@ export function AppSidebar() {
   const displayUser = user ?? guestUser;
 
   return (
-    <Sidebar collapsible="icon" className="bg-[#1e3a5f] border-r-0 text-white">
+    <Sidebar
+      collapsible="icon"
+      className="bg-[#1e3a5f] border-r-0 text-white transition-all duration-300 ease-in-out"
+      onMouseEnter={() => !isPinned && setOpen(true)}
+      onMouseLeave={() => !isPinned && setOpen(false)}
+    >
       {/* Brand Header */}
-      <SidebarHeader className="border-b border-white/20 px-4 py-6 bg-[#1e3a5f]">
+      <SidebarHeader className="border-b border-white/20 px-4 py-6 bg-[#1e3a5f] relative group">
+        <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block z-50">
+          <button
+            onClick={() => setIsPinned(!isPinned)}
+            className={`p-1.5 rounded-lg transition-all ${
+              isPinned
+                ? "bg-white/20 text-white shadow-inner"
+                : "text-white/40 hover:bg-white/10 hover:text-white"
+            }`}
+            title={isPinned ? "Unpin Sidebar" : "Pin Sidebar"}
+          >
+            {isPinned ? (
+              <PinOff className="h-4 w-4" />
+            ) : (
+              <Pin className="h-4 w-4" />
+            )}
+          </button>
+        </div>
         {!collapsed ? (
           <div className="flex items-center gap-3 px-1 transition-all duration-300">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 shadow-sm ring-1 ring-white/20">
@@ -222,7 +247,9 @@ export function AppSidebar() {
                 .filter(
                   (item) =>
                     item.url !== "/users" ||
-                    ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(user?.role || ""),
+                    ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(
+                      user?.role || "",
+                    ),
                 )
                 .map((item) => {
                   const isActive =
@@ -231,7 +258,11 @@ export function AppSidebar() {
                       location.pathname.startsWith(item.url));
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton asChild isActive={isActive}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        tooltip={item.title}
+                      >
                         <NavLink
                           to={item.url}
                           end={item.url === "/dashboard"}
