@@ -179,19 +179,22 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="bg-[#1e3a5f] border-r-0 text-white transition-all duration-300 ease-in-out"
+      className="bg-gradient-to-b from-[#0b1220] via-[#0a1120] to-[#020617]
+backdrop-blur-3xl
+border-r border-cyan-500/10
+shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration-500 ease-in-out"
       onMouseEnter={() => !isPinned && setOpen(true)}
       onMouseLeave={() => !isPinned && setOpen(false)}
     >
       {/* Brand Header */}
-      <SidebarHeader className="border-b border-white/20 px-4 py-6 bg-[#1e3a5f] relative group">
+      <SidebarHeader className="border-b border-white/5 px-4 py-8 bg-transparent relative group">
         <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block z-50">
           <button
             onClick={() => setIsPinned(!isPinned)}
-            className={`p-1.5 rounded-lg transition-all ${
+            className={`p-1.5 rounded-xl transition-all duration-300 ${
               isPinned
-                ? "bg-white/20 text-white shadow-inner"
-                : "text-white/40 hover:bg-white/10 hover:text-white"
+                ? "bg-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)] ring-1 ring-cyan-500/30"
+                : "text-white/20 hover:bg-white/10 hover:text-white"
             }`}
             title={isPinned ? "Unpin Sidebar" : "Pin Sidebar"}
           >
@@ -203,30 +206,30 @@ export function AppSidebar() {
           </button>
         </div>
         {!collapsed ? (
-          <div className="flex items-center gap-3 px-1 transition-all duration-300">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 shadow-sm ring-1 ring-white/20">
+          <div className="flex items-center gap-4 px-2 transition-all duration-300">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 via-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-500">
               <img
                 src={tpsLogo}
                 alt="TPS logo"
-                className="h-6 w-6 object-contain brightness-0 invert"
+                className="h-7 w-7 object-contain brightness-0 invert drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]"
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <h1 className="text-sm font-bold tracking-tight text-white uppercase truncate">
+              <h1 className="text-lg font-extrabold tracking-tight text-white uppercase truncate font-display bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
                 TPS Board
               </h1>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-white/40">
-                Management System
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-400/80">
+                Management
               </p>
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/20 transition-transform hover:scale-110">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 ring-1 ring-white/20 transition-all duration-500 hover:scale-110 shadow-lg shadow-cyan-500/20">
               <img
                 src={tpsLogo}
                 alt="TPS logo"
-                className="h-6 w-6 object-contain brightness-0 invert"
+                className="h-7 w-7 object-contain brightness-0 invert"
               />
             </div>
           </div>
@@ -234,15 +237,16 @@ export function AppSidebar() {
       </SidebarHeader>
 
       {/* Navigation */}
-      <SidebarContent className="px-3 py-4 bg-[#1e3a5f]">
+      <SidebarContent className="px-3 py-6 bg-transparent no-scrollbar">
         <SidebarGroup>
           {!collapsed && (
-            <p className="mb-3 px-4 text-[12px] font-bold uppercase tracking-[0.2em] text-white/30">
-              Navigation
+            <p className="mb-6 px-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 flex items-center gap-2">
+              <span className="h-[1px] w-4 bg-white/10" />
+              Main Menu
             </p>
           )}
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-2">
+            <SidebarMenu className="space-y-1.5">
               {menuItems
                 .filter(
                   (item) =>
@@ -262,30 +266,41 @@ export function AppSidebar() {
                         asChild
                         isActive={isActive}
                         tooltip={item.title}
+                        className="group/btn h-auto p-0"
                       >
                         <NavLink
                           to={item.url}
                           end={item.url === "/dashboard"}
-                          className={`group flex items-center gap-3 rounded-lg px-4 py-2 transition-all duration-200 border-l-2
+                          className={`relative group flex items-center gap-3.5 rounded-xl px-4 py-3.5 transition-all duration-300
                           ${
                             isActive
-                              ? "bg-white/15 text-white border-white shadow-sm"
-                              : "text-white/70 border-transparent hover:bg-white/5 hover:text-white hover:scale-[1.02]"
+                              ? "bg-cyan-500/10 border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(34,211,238,0.15)]"
+                              : "text-white/40 hover:bg-white/5 hover:text-white hover:translate-x-1"
                           }`}
                         >
-                          <item.icon
-                            className={`h-5 w-5 shrink-0 transition-colors
-                          ${isActive ? "text-white" : "text-white/50 group-hover:text-white"}`}
-                          />
+                          {isActive && (
+                            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-cyan-400 rounded-r-full shadow-[0_0_12px_rgba(34,211,238,0.8)]" />
+                          )}
+
+                          <div className="relative flex items-center justify-center">
+                            <item.icon
+                              className={`h-5 w-5 shrink-0 transition-all duration-300
+                            ${isActive ? "text-cyan-400 scale-110 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]" : "text-white/40 group-hover:text-white group-hover:scale-110"}`}
+                            />
+                          </div>
+
                           {!collapsed && (
                             <span
-                              className={`truncate ${isActive ? "font-medium" : ""}`}
+                              className={`truncate text-[14px] tracking-wide transition-all duration-300 ${isActive ? "font-bold text-white" : "font-medium"}`}
                             >
                               {item.title}
                             </span>
                           )}
+
                           {!collapsed && isActive && (
-                            <div className="ml-auto flex h-1.5 w-1.5 rounded-full bg-white opacity-40" />
+                            <div className="ml-auto">
+                              <div className="h-1.5 w-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,1)] animate-pulse" />
+                            </div>
                           )}
                         </NavLink>
                       </SidebarMenuButton>
@@ -298,32 +313,49 @@ export function AppSidebar() {
       </SidebarContent>
 
       {/* User Footer */}
-      <SidebarFooter className="border-t border-white/20 p-4 bg-[#1e3a5f]">
+      <SidebarFooter className="p-4 bg-transparent mt-auto">
         {!collapsed ? (
-          <div className="flex items-center gap-3 rounded-xl bg-white/5 p-3 ring-1 ring-white/5 transition-all hover:bg-white/10">
-            <AvatarBadge user={displayUser} size="sm" showRole={false} />
-            <div className="flex flex-1 flex-col min-w-0">
-              <span className="truncate text-xs font-bold text-white">
-                {displayUser.name}
-              </span>
-              <span className="truncate text-[10px] uppercase font-medium text-white/40">
-                {displayUser.role}
-              </span>
+          <div className="flex flex-col gap-3 rounded-2xl bg-gradient-to-b from-white/10 to-white/5 p-4 border border-white/10 shadow-xl group/user overflow-hidden transition-all duration-300 hover:border-white/20">
+            <div className="flex items-center gap-3">
+              <div className="relative group/avatar">
+                <AvatarBadge
+                  user={displayUser}
+                  size="sm"
+                  showRole={false}
+                  className="ring-2 ring-white/10 group-hover/user:ring-cyan-500/50 transition-all duration-500"
+                />
+                <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#1a1f2e] group-hover/user:scale-110 transition-transform" />
+              </div>
+              <div className="flex flex-1 flex-col min-w-0">
+                <span className="truncate text-sm font-bold text-white font-display tracking-tight group-hover/user:text-cyan-100 transition-colors">
+                  {displayUser.name}
+                </span>
+                <span className="truncate text-[9px] uppercase font-bold text-cyan-400/60 tracking-widest flex items-center gap-1">
+                  <div className="h-1 w-1 rounded-full bg-cyan-400/60" />
+                  {displayUser.role}
+                </span>
+              </div>
             </div>
+
             <button
               onClick={() => navigate("/login")}
-              className="group/logout rounded-lg p-2 text-white/30 transition-all hover:bg-red-500/20 hover:text-red-400"
-              title="Logout"
+              className="flex items-center justify-center gap-2 w-full mt-1 rounded-xl py-2 text-xs font-bold text-white/40 transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-400 border border-white/5 hover:border-rose-500/20 group/logout"
             >
-              <LogOut className="h-4 w-4 transition-transform group-hover/logout:scale-110" />
+              <LogOut className="h-3.5 w-3.5 transition-transform group-hover/logout:-translate-x-1" />
+              Sign Out
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-4 py-2">
-            <AvatarBadge user={displayUser} size="sm" showRole={false} />
+          <div className="flex flex-col items-center gap-4 py-4 bg-white/5 rounded-2xl border border-white/10">
+            <AvatarBadge
+              user={displayUser}
+              size="sm"
+              showRole={false}
+              className="ring-2 ring-white/10 hover:ring-cyan-500/50 transition-all"
+            />
             <button
               onClick={() => navigate("/login")}
-              className="rounded-lg p-2.5 text-white/30 transition-all hover:bg-white/10 hover:text-white"
+              className="rounded-xl p-3 text-white/20 transition-all hover:bg-rose-500/20 hover:text-rose-400 border border-transparent hover:border-rose-500/20"
               title="Logout"
             >
               <LogOut className="h-4 w-4" />

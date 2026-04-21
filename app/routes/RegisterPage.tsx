@@ -325,7 +325,7 @@ export default function Register() {
       </Card>
 
       <div className="absolute top-[5%] left-[5%] w-72 h-72 bg-blue-500/20 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[5%] right-[5%] w-72 h-72 bg-purple-500/20 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[5%] right-[5%] w-72 h-72 bg-blue-500/20 rounded-full blur-[120px] pointer-events-none" />
     </div>
   );
 }

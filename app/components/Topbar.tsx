@@ -63,20 +63,20 @@ export function Topbar() {
   });
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center border-b bg-card px-4 tv:h-24 tv:px-10">
+    <header className="sticky top-0 z-30 flex h-14 items-center glass-darker border-b border-white/5 px-4 tv:h-24 tv:px-10">
       <div className="flex items-center gap-3">
-        <SidebarTrigger className="lg:hidden" />
+        <SidebarTrigger className="lg:hidden text-white" />
         <div className="flex flex-col">
           <div className="flex items-center gap-1">
             <Link
               to="/"
-              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="text-xs text-white/40 hover:text-white transition-colors"
             >
               TPS
             </Link>
             {breadcrumbs}
           </div>
-          <h1 className="text-lg font-bold text-foreground tv:text-tv-2xl leading-tight">
+          <h1 className="text-lg font-bold text-white tv:text-tv-2xl leading-tight text-glow">
             {title}
           </h1>
         </div>
@@ -85,24 +85,24 @@ export function Topbar() {
       {/* Global Search - Hidden on small mobile */}
       <div className="mx-auto hidden max-w-md flex-1 px-4 md:block">
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 transition-colors group-focus-within:text-cyan-400" />
           <Input
             placeholder="Search assignments, projects..."
-            className="h-9 w-full bg-muted/50 pl-10 focus-visible:bg-background transition-all border-none focus-visible:ring-1 focus-visible:ring-primary/30"
+            className="h-9 w-full bg-white/5 backdrop-blur-sm pl-10 text-white placeholder:text-white/20 focus-visible:bg-white/10 transition-all border border-white/10 focus-visible:ring-1 focus-visible:ring-cyan-500/50"
           />
         </div>
       </div>
 
       <div className="ml-auto flex items-center gap-2 tv:gap-6">
         {/* Date Display - Desktop only */}
-        <div className="hidden items-center gap-2 rounded-full bg-muted/30 px-3 py-1.5 text-xs font-medium text-muted-foreground lg:flex">
-          <Calendar className="h-3.5 w-3.5" />
+        <div className="hidden items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-1.5 text-xs font-medium text-white/60 lg:flex">
+          <Calendar className="h-3.5 w-3.5 text-cyan-400" />
           <span>{today && format(today, "EEEE, MMM dd, yyyy")}</span>
         </div>
 
         <div className="flex items-center gap-1 tv:gap-3">
           {currentUser?.role !== "Yang punya TMMIN" && <NotificationDropdown />}
-          <div className="h-6 w-px bg-border tv:h-10 mx-1 lg:block hidden" />
+          <div className="h-6 w-px bg-white/10 tv:h-10 mx-1 lg:block hidden" />
           <UserDropdown
             user={
               currentUser ?? {

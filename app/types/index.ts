@@ -95,7 +95,7 @@ export function calculateProjectProgress(events: Event[], tasks: Task[]): number
     return calculateEventProgress(projectTasks);
 }
 
-export type RegularActivityCategory = "Safety" | "Quality" | "Maintenance" | "5S" | "Environment";
+export type RegularActivityCategory = "Safety" | "Quality" | "Productivity" | "Cost" | "HR";
 export type RegularActivityFrequency = "Daily" | "Weekly" | "Monthly";
 export type RegularActivityStatus = "Completed" | "Pending" | "Overdue";
 

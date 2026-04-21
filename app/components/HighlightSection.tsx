@@ -9,13 +9,12 @@ import type { Task } from "@/types";
 function getBadgeStyle(type: "today" | "upcoming" | "due-soon" | "overdue") {
     switch (type) {
         case "today":
-            return "bg-primary/15 text-primary border-primary/30";
         case "upcoming":
-            return "bg-secondary/15 text-secondary border-secondary/30";
+            return "bg-emerald-500/20 text-emerald-400 border-emerald-500/30";
         case "due-soon":
-            return "bg-warning/15 text-warning border-warning/30";
+            return "bg-amber-500/20 text-amber-400 border-amber-500/30";
         case "overdue":
-            return "bg-destructive/15 text-destructive border-destructive/30";
+            return "bg-rose-500/20 text-rose-400 border-rose-500/30";
     }
 }
 
@@ -28,26 +27,32 @@ interface HighlightCardProps {
 function HighlightCard({ icon, title, items }: HighlightCardProps) {
     if (items.length === 0) return null;
     return (
-        <Card className="animate-fade-in border-none shadow-sm bg-gradient-to-br from-white to-slate-50/50">
+        <Card className="glass border-none animate-fade-in group">
             <CardContent className="p-4 tv:p-6">
-                <div className="flex items-center gap-2 mb-3">
-                    <div className="p-1.5 rounded-lg bg-white shadow-sm border border-slate-100">
+                <div className="flex items-center gap-2 mb-4">
+                    <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:bg-cyan-500/20 transition-colors">
                         {icon}
                     </div>
-                    <h4 className="font-semibold text-foreground tv:text-tv-base">{title}</h4>
+                    <h4 className="font-semibold text-white tv:text-tv-base">{title}</h4>
                 </div>
-                <div className="space-y-2.5">
+                <div className="space-y-3">
                     {items.map((item, i) => (
                         <div
                             key={i}
                             onClick={item.onClick}
-                            className="flex items-center justify-between gap-2 p-2 rounded-md cursor-pointer transition-all hover:bg-white hover:shadow-sm hover:translate-x-1 border border-transparent hover:border-slate-100 group"
+                            className="flex items-center justify-between gap-3 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-white/5 border border-transparent hover:border-white/10 group/item"
                         >
                             <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium truncate tv:text-tv-sm group-hover:text-primary transition-colors">{item.label}</p>
-                                <p className="text-xs text-muted-foreground">{item.sub}</p>
+                                <p className="text-sm font-medium truncate text-white/90 tv:text-tv-sm group-hover/item:text-cyan-400 transition-colors">
+                                    {item.label}
+                                </p>
+                                <p className="text-[10px] text-white/40 uppercase tracking-wider font-semibold mt-0.5">
+                                    {item.sub}
+                                </p>
                             </div>
-                            <Badge className={`${getBadgeStyle(item.badgeType)} font-medium shadow-none`}>{item.badge}</Badge>
+                            <Badge className={`${getBadgeStyle(item.badgeType)} font-bold text-[10px] px-2 py-0.5 rounded-full border shadow-none`}>
+                                {item.badge}
+                            </Badge>
                         </div>
                     ))}
                 </div>

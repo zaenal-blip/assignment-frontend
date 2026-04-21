@@ -159,7 +159,7 @@ export default function Login() {
 
       {/* Decorative elements */}
       <div className="absolute top-[10%] right-[10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[10%] left-[10%] w-64 h-64 bg-purple-500/20 rounded-full blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-[10%] left-[10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
     </div>
   );
 }
