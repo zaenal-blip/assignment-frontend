@@ -125,6 +125,7 @@ import {
   ClipboardList,
   Users,
   LogOut,
+  Target,
 } from "lucide-react";
 
 import { NavLink } from "@/components/NavLink";
@@ -155,6 +156,7 @@ const menuItems = [
   { title: "Events", url: "/events", icon: CalendarDays },
   { title: "Regular Activity", url: "/regular-activity", icon: ClipboardCheck },
   { title: "Personal Job", url: "/personal-job", icon: ClipboardList },
+  { title: "KPI Hoshin", url: "/hoshin", icon: Target },
   { title: "Users", url: "/users", icon: Users },
 ];
 
@@ -254,6 +256,11 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
                     ["Leader", "SPV", "DPH", "Yang punya TMMIN"].includes(
                       user?.role || "",
                     ),
+                )
+                .filter(
+                  (item) =>
+                    item.url !== "/hoshin" ||
+                    user?.role === "Yang punya TMMIN",
                 )
                 .map((item) => {
                   const isActive =

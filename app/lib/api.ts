@@ -8,6 +8,7 @@ import type {
     PersonalJob as AppPersonalJob,
     RegularActivity as AppRegularActivity,
     AppNotification,
+    HoshinKPI as AppHoshinKPI,
 } from "@/types";
 
 export type {
@@ -68,6 +69,9 @@ interface BackendProject {
     pic?: { id: number; name: string };
     _count?: { tasks: number };
     tasks?: BackendTask[];
+    hoshinId?: number;
+    actionPlan?: string;
+    hoshin?: { id: number; code: string; cluster: string; actionPlan: string };
 }
 
 interface BackendEvent {
@@ -288,6 +292,14 @@ export function toAppProject(project: BackendProject): AppProject {
         startDate: project.startDate ? new Date(project.startDate).toISOString().split("T")[0] : new Date(project.createdAt).toISOString().split("T")[0],
         endDate: project.endDate ? new Date(project.endDate).toISOString().split("T")[0] : new Date(project.updatedAt).toISOString().split("T")[0],
         createdAt: project.createdAt,
+        hoshinId: project.hoshinId ? String(project.hoshinId) : undefined,
+        actionPlan: project.actionPlan || undefined,
+        hoshin: project.hoshin ? {
+            id: String(project.hoshin.id),
+            code: project.hoshin.code,
+            cluster: project.hoshin.cluster,
+            actionPlan: project.hoshin.actionPlan,
+        } : undefined,
     };
 }
 
@@ -347,6 +359,8 @@ export function toAppPersonalJob(task: BackendTask): AppPersonalJob {
         name: task.name,
         description: "",
         source: task.sourceType === "PERSONAL" ? "Personal" : "Assigned",
+        sourceType: task.sourceType,
+        regularJobId: task.regularJob?.id ? String(task.regularJob.id) : undefined,
         picId: String(task.picId),
         dueDate,
         priority: task.priority ? (task.priority.charAt(0).toUpperCase() + task.priority.slice(1).toLowerCase()) as any : "Low",
@@ -539,7 +553,7 @@ export async function getPersonalJobById(id: string): Promise<AppPersonalJob> {
     return toAppPersonalJob(task);
 }
 
-export async function createProject(data: { name: string; ownerId: number; startDate: string; endDate: string; description?: string }): Promise<AppProject> {
+export async function createProject(data: { name: string; ownerId: number; startDate: string; endDate: string; description?: string; hoshinId?: number; actionPlan?: string }): Promise<AppProject> {
     const result = await request<BackendProject>("/projects", {
         method: "POST",
         headers: getAuthHeaders(),
@@ -549,6 +563,8 @@ export async function createProject(data: { name: string; ownerId: number; start
             startDate: data.startDate,
             endDate: data.endDate,
             description: data.description,
+            hoshinId: data.hoshinId || undefined,
+            actionPlan: data.actionPlan || undefined,
         }),
     });
     return toAppProject(result);
@@ -733,6 +749,70 @@ export async function markNotificationAsRead(id: string): Promise<void> {
 export async function markAllNotificationsAsRead(): Promise<void> {
     await request(`/notifications/read-all`, {
         method: "PATCH",
+        headers: getAuthHeaders(),
+    });
+}
+
+// --- KPI Hoshin ---
+interface BackendHoshinKPI {
+    id: number;
+    code: string;
+    cluster: string;
+    subCluster?: string;
+    actionPlan: string;
+    target?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+function toAppHoshinKPI(kpi: BackendHoshinKPI): AppHoshinKPI {
+    return {
+        id: String(kpi.id),
+        code: kpi.code,
+        cluster: kpi.cluster,
+        subCluster: kpi.subCluster,
+        actionPlan: kpi.actionPlan,
+        target: kpi.target,
+    };
+}
+
+export async function getHoshinKPIs(): Promise<AppHoshinKPI[]> {
+    const data = await request<BackendHoshinKPI[]>("/hoshin", {
+        headers: getAuthHeaders(),
+    });
+    return data.map(toAppHoshinKPI);
+}
+
+export async function createHoshinKPI(data: {
+    code: string;
+    cluster: string;
+    subCluster?: string;
+    actionPlan: string;
+    target?: string;
+}): Promise<AppHoshinKPI> {
+    const result = await request<BackendHoshinKPI>("/hoshin", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+    });
+    return toAppHoshinKPI(result);
+}
+
+export async function updateHoshinKPI(
+    id: string,
+    data: Partial<{ code: string; cluster: string; subCluster: string; actionPlan: string; target: string }>
+): Promise<AppHoshinKPI> {
+    const result = await request<BackendHoshinKPI>(`/hoshin/${id}`, {
+        method: "PUT",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(data),
+    });
+    return toAppHoshinKPI(result);
+}
+
+export async function deleteHoshinKPI(id: string): Promise<void> {
+    await request(`/hoshin/${id}`, {
+        method: "DELETE",
         headers: getAuthHeaders(),
     });
 }

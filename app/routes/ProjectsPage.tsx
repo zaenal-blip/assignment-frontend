@@ -33,8 +33,8 @@ import {
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { getProjects, getTasks, getUsers, createProject } from "@/lib/api";
-import type { Project, Task, User } from "@/types";
+import { getProjects, getTasks, getUsers, createProject, getHoshinKPIs } from "@/lib/api";
+import type { Project, Task, User, HoshinKPI } from "@/types";
 
 function getDeadlineBadge(endDate: string, status: string) {
     if (status === "Completed") return null;
@@ -294,8 +294,23 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
     const [startDate, setStartDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
     const [description, setDescription] = useState("");
+    const [selectedHoshinId, setSelectedHoshinId] = useState<string>("");
+    const [hoshinSearch, setHoshinSearch] = useState("");
+    const [hoshinDropdownOpen, setHoshinDropdownOpen] = useState(false);
     
     const { data: users = [] } = useQuery<User[]>({ queryKey: ["users"], queryFn: getUsers });
+    const { data: hoshinKPIs = [] } = useQuery<HoshinKPI[]>({
+        queryKey: ["hoshin-kpis"],
+        queryFn: getHoshinKPIs,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const selectedHoshin = hoshinKPIs.find(k => k.id === selectedHoshinId);
+    const filteredHoshins = hoshinKPIs.filter(k =>
+        k.cluster.toLowerCase().includes(hoshinSearch.toLowerCase()) ||
+        k.actionPlan.toLowerCase().includes(hoshinSearch.toLowerCase()) ||
+        k.code.toLowerCase().includes(hoshinSearch.toLowerCase())
+    );
 
     const createMutation = useMutation({
         mutationFn: createProject,
@@ -316,6 +331,8 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
         setStartDate(undefined);
         setEndDate(undefined);
         setDescription("");
+        setSelectedHoshinId("");
+        setHoshinSearch("");
     };
 
     const handleCreate = () => {
@@ -329,7 +346,9 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
             ownerId: Number(ownerId),
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),
-            description
+            description,
+            hoshinId: selectedHoshin ? Number(selectedHoshin.id) : undefined,
+            actionPlan: selectedHoshin?.actionPlan || undefined,
         });
     };
 
@@ -399,6 +418,75 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                         onChange={(e) => setDescription(e.target.value)}
                         className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
                     />
+                </div>
+
+                {/* Hoshin KPI Alignment */}
+                <div className="space-y-3">
+                    <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Align With Hoshin</Label>
+                    {hoshinKPIs.length === 0 ? (
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold">
+                            KPI Hoshin not available. Contact Super Admin.
+                        </div>
+                    ) : (
+                        <div className="relative">
+                            <div
+                                onClick={() => setHoshinDropdownOpen(!hoshinDropdownOpen)}
+                                className={cn(
+                                    "bg-white/5 border border-white/10 rounded-xl h-12 text-white flex items-center px-4 cursor-pointer hover:bg-white/10 transition-all",
+                                    hoshinDropdownOpen && "border-cyan-500/50 ring-1 ring-cyan-500/20"
+                                )}
+                            >
+                                {selectedHoshin ? (
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-sm font-bold truncate">{selectedHoshin.cluster}</span>
+                                        <span className="text-[10px] text-white/40 truncate">{selectedHoshin.actionPlan}</span>
+                                    </div>
+                                ) : (
+                                    <span className="text-white/20">Select KPI alignment (optional)</span>
+                                )}
+                            </div>
+
+                            {hoshinDropdownOpen && (
+                                <div className="absolute z-50 mt-2 w-full glass-darker border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                                    <div className="p-2 border-b border-white/5">
+                                        <Input
+                                            value={hoshinSearch}
+                                            onChange={(e) => setHoshinSearch(e.target.value)}
+                                            placeholder="Search KPI..."
+                                            className="bg-white/5 border-white/10 rounded-lg h-9 text-white text-xs placeholder:text-white/20"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <div className="max-h-[200px] overflow-y-auto">
+                                        <div
+                                            onClick={() => { setSelectedHoshinId(""); setHoshinDropdownOpen(false); setHoshinSearch(""); }}
+                                            className="px-4 py-2.5 text-xs text-white/40 hover:bg-white/5 cursor-pointer transition-colors"
+                                        >
+                                            — None —
+                                        </div>
+                                        {filteredHoshins.map(k => (
+                                            <div
+                                                key={k.id}
+                                                onClick={() => { setSelectedHoshinId(k.id); setHoshinDropdownOpen(false); setHoshinSearch(""); }}
+                                                className={cn(
+                                                    "px-4 py-3 cursor-pointer transition-colors hover:bg-cyan-500/10",
+                                                    selectedHoshinId === k.id && "bg-cyan-500/10 border-l-2 border-cyan-400"
+                                                )}
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-bold text-white truncate">{k.cluster}</p>
+                                                        <p className="text-[10px] text-white/40 truncate mt-0.5">{k.actionPlan}</p>
+                                                    </div>
+                                                    <span className="text-[9px] font-mono text-white/20 shrink-0 ml-2">{k.code}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
                 <Button 
                     className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-white/10 cyan-glow" 

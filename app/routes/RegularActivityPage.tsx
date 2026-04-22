@@ -232,43 +232,88 @@ export default function RegularActivityPage() {
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="flex items-start gap-6 overflow-x-auto pb-8 pt-4 scrollbar-hide">
               {todayActivities.map((a, i) => {
                 const pic = usersList.find((u) => String(u.id) === String(a.picId));
+                const isDone = a.status === "Completed";
                 return (
-                  <div 
-                    key={a.id} 
-                    className="relative p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/[0.08] transition-all group overflow-hidden"
-                  >
-                    <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-30 transition-opacity">
-                      <Zap className="h-10 w-10 text-emerald-400" />
-                    </div>
-                    
-                    <div className="relative space-y-3">
-                      <div className="flex justify-between items-start">
-                        <span className="text-[10px] font-mono font-bold text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20">
-                          {a.startTime} – {a.endTime}
-                        </span>
-                        <StatusBadge status={a.status} className="scale-75 origin-right" />
+                  <div key={a.id} className="relative flex flex-col min-w-[280px] group">
+                    {/* Timeline Line Connector */}
+                    {i < todayActivities.length - 1 && (
+                      <div className={cn(
+                        "absolute top-[22px] left-[44px] w-[calc(100%+1.5rem)] h-[2px] z-0",
+                        isDone ? "bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-white/10" : "bg-white/10"
+                      )} />
+                    )}
+
+                    {/* Timeline Node */}
+                    <div className="relative z-10 flex items-center gap-4 mb-6">
+                      <div className={cn(
+                        "w-11 h-11 rounded-2xl flex items-center justify-center border-2 transition-all duration-500",
+                        isDone 
+                          ? "bg-emerald-500/20 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-110" 
+                          : "bg-white/5 border-white/10"
+                      )}>
+                        {isDone ? (
+                          <CheckCircle className="h-5 w-5 text-emerald-400" />
+                        ) : (
+                          <div className="h-2 w-2 rounded-full bg-white/20 animate-pulse" />
+                        )}
                       </div>
-                      <h4 className="font-bold text-white group-hover:text-emerald-400 transition-colors truncate">
-                        {a.name}
-                      </h4>
-                      <div className="flex items-center justify-between pt-1">
-                        <div className="flex items-center gap-2">
-                          {pic && <AvatarBadge user={pic} size="sm" className="ring-1 ring-white/10" />}
-                          <span className="text-[10px] font-bold text-white/40 uppercase truncate max-w-[80px]">
-                            {pic?.name}
-                          </span>
-                        </div>
-                        <span className={cn(
-                          "px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-widest border",
-                          a.priority === "High" ? "bg-rose-500/20 text-rose-400 border-rose-500/30" :
-                          a.priority === "Medium" ? "bg-amber-500/20 text-amber-400 border-amber-500/30" :
-                          "bg-cyan-500/20 text-cyan-400 border-cyan-500/30"
-                        )}>
-                          {a.priority}
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-mono font-bold text-emerald-400/80 bg-emerald-500/10 px-2 py-0.5 rounded-lg border border-emerald-500/20 w-fit">
+                          {a.startTime}
                         </span>
+                      </div>
+                    </div>
+
+                    {/* Timeline Card */}
+                    <div 
+                      className={cn(
+                        "relative p-5 rounded-[2rem] border transition-all duration-500 group-hover:scale-[1.02]",
+                        isDone 
+                          ? "bg-emerald-500/5 border-emerald-500/20" 
+                          : "bg-white/5 border-white/10"
+                      )}
+                    >
+                      <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-20 transition-opacity">
+                        <Zap className="h-12 w-12 text-emerald-400" />
+                      </div>
+                      
+                      <div className="relative space-y-4">
+                        <div className="flex justify-between items-start">
+                          <h4 className={cn(
+                            "font-bold text-lg font-display tracking-tight transition-colors",
+                            isDone ? "text-emerald-400" : "text-white"
+                          )}>
+                            {a.name}
+                          </h4>
+                          <StatusBadge status={a.status} className="scale-75 origin-right" />
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                          <div className="flex items-center gap-2">
+                            {pic && <AvatarBadge user={pic} size="sm" className="ring-1 ring-white/10" />}
+                            <div className="flex flex-col">
+                              <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">PIC</span>
+                              <span className="text-[10px] font-bold text-white/60 truncate max-w-[100px]">
+                                {pic?.name}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div className="flex flex-col items-end">
+                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Priority</span>
+                            <span className={cn(
+                              "text-[10px] font-bold uppercase",
+                              a.priority === "High" ? "text-rose-400" :
+                              a.priority === "Medium" ? "text-amber-400" :
+                              "text-cyan-400"
+                            )}>
+                              {a.priority}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -357,8 +402,14 @@ export default function RegularActivityPage() {
                         <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">{a.category}</span>
                       </div>
 
-                      <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-lg w-fit">
-                        {a.frequency}
+                      <div className="space-y-1">
+                        <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-lg w-fit flex items-center gap-1.5">
+                          {a.frequency}
+                          <Zap className="h-2.5 w-2.5 text-emerald-400/60 animate-pulse" />
+                        </div>
+                        <p className="text-[8px] text-white/20 font-bold uppercase tracking-tighter pl-1">
+                          Auto-reset {a.frequency.toLowerCase()}
+                        </p>
                       </div>
 
                       <div className="flex items-center gap-3">
@@ -384,13 +435,20 @@ export default function RegularActivityPage() {
                         </span>
                       </div>
 
-                      <StatusBadge status={a.status} className="scale-90 origin-left" />
+                      <div className="flex flex-col gap-1">
+                        <StatusBadge status={a.status} className="scale-90 origin-left" />
+                        {isCompleted && a.frequency === "Daily" && (
+                          <span className="text-[8px] font-bold text-emerald-400/60 uppercase tracking-widest pl-1">
+                            Done today
+                          </span>
+                        )}
+                      </div>
 
                       <div className="flex lg:justify-end items-center gap-3">
                         {!isCompleted && (
                           <button 
                             onClick={(e) => handleDone(a.id, e)}
-                            disabled={statusMutation.isPending || (!isLeaderOrUp && String(currentUser?.id) !== String(a.picId))}
+                            disabled={statusMutation.isPending}
                             className="bg-emerald-500/10 text-emerald-400 p-2.5 rounded-xl border border-emerald-500/20 hover:bg-emerald-500/20 transition-all disabled:opacity-30"
                           >
                             <CheckCircle className="h-5 w-5" />

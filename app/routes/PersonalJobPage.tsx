@@ -9,7 +9,7 @@ import { CreatePersonalJobModal } from "@/components/CreatePersonalJobModal";
 import { calculatePersonalJobProgress, type PersonalJob } from "@/types";
 import { ConfirmModal } from "@/components/ConfirmModal";
 import { toast } from "sonner";
-import { Plus, Search, Send, Eye, Trash2, ArrowRight, Zap } from "lucide-react";
+import { Plus, Search, Send, Eye, Trash2, ArrowRight, Zap, CheckCircle } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -26,7 +26,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getPersonalJobs, deletePersonalJob, getStoredUser } from "@/lib/api";
+import { getPersonalJobs, deletePersonalJob, getStoredUser, updateRegularJobStatus } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
 export default function PersonalJobPage() {
@@ -57,6 +57,18 @@ export default function PersonalJobPage() {
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [jobToDelete, setJobToDelete] = useState<string | null>(null);
 
+    const statusMutation = useMutation({
+        mutationFn: ({ jobId, isDone }: { jobId: string, isDone: boolean }) => 
+            updateRegularJobStatus(jobId, isDone),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["personal-jobs"] });
+            toast.success("Operational status updated.");
+        },
+        onError: (error: any) => {
+            toast.error(error.message || "Protocol sync failed.");
+        }
+    });
+
     const filteredJobs = useMemo(() => {
         let jobs = [...allJobs];
         if (search) {
@@ -83,6 +95,11 @@ export default function PersonalJobPage() {
             setDeleteOpen(false);
             setJobToDelete(null);
         }
+    };
+
+    const handleDone = (regularJobId: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        statusMutation.mutate({ jobId: regularJobId, isDone: true });
     };
 
     const submitProgress = () => toast.success("Progress submitted successfully!");
@@ -195,7 +212,14 @@ export default function PersonalJobPage() {
                                             <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors font-display tracking-tight leading-tight">
                                                 {job.name}
                                             </h4>
-                                            <p className="text-[10px] text-white/20 uppercase tracking-widest">TASK-#{job.id.toString().slice(-4)}</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-[10px] text-white/20 uppercase tracking-widest">TASK-#{job.id.toString().slice(-4)}</p>
+                                                {job.sourceType === "REGULAR" && (
+                                                    <span className="text-[8px] text-cyan-400/60 font-bold uppercase tracking-tighter flex items-center gap-1">
+                                                        <Zap className="h-2 w-2" /> Protocol
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
 
                                         {/* Source */}
@@ -245,6 +269,15 @@ export default function PersonalJobPage() {
 
                                         {/* Action */}
                                         <div className="flex lg:justify-end items-center gap-3">
+                                            {job.sourceType === "REGULAR" && job.regularJobId && job.status !== "Completed" && (
+                                                <button 
+                                                    onClick={(e) => handleDone(job.regularJobId!, e)}
+                                                    disabled={statusMutation.isPending}
+                                                    className="bg-emerald-500/10 text-emerald-400 p-2.5 rounded-xl border border-emerald-500/20 hover:bg-emerald-500/20 transition-all disabled:opacity-30"
+                                                >
+                                                    <CheckCircle className="h-5 w-5" />
+                                                </button>
+                                            )}
                                             <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
                                                 <ArrowRight className="h-5 w-5" />
                                             </button>
