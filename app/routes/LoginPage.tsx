@@ -69,7 +69,7 @@ export default function Login() {
             <LogIn className="h-8 w-8 text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
           </div>
           <CardTitle className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">
-            TPS Board
+            AURA
           </CardTitle>
           <CardDescription className="text-white/70 font-medium">
             Masuk ke akun Anda untuk melanjutkan
@@ -92,7 +92,9 @@ export default function Login() {
                 placeholder="2538600"
                 maxLength={7}
                 value={noReg}
-                onChange={(e) => setNoReg(e.target.value.replace(/\D/g, "").slice(0, 7))}
+                onChange={(e) =>
+                  setNoReg(e.target.value.replace(/\D/g, "").slice(0, 7))
+                }
                 required
                 className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all duration-200 rounded-xl"
               />
@@ -152,6 +154,9 @@ export default function Login() {
               >
                 Daftar sekarang
               </Link>
+            </p>
+            <p className="mt-6 text-xs text-[hsl(190_20%_70%)]">
+              © {new Date().getFullYear()} Zaenal Arifin AURA
             </p>
           </div>
         </CardContent>

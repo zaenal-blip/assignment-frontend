@@ -218,10 +218,10 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
             </div>
             <div className="flex flex-col min-w-0">
               <h1 className="text-lg font-extrabold tracking-tight text-white uppercase truncate font-display bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-                TPS Board
+                AURA
               </h1>
               <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-400/80">
-                Management
+                Management System
               </p>
             </div>
           </div>
@@ -259,8 +259,7 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
                 )
                 .filter(
                   (item) =>
-                    item.url !== "/hoshin" ||
-                    user?.role === "Yang punya TMMIN",
+                    item.url !== "/hoshin" || user?.role === "Yang punya TMMIN",
                 )
                 .map((item) => {
                   const isActive =

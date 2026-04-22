@@ -127,7 +127,7 @@ export default function Register() {
             Daftar Akun
           </CardTitle>
           <CardDescription className="text-white/70 font-medium">
-            Bergabung dengan TPS Assignment Board
+            Bergabung dengan AURA
           </CardDescription>
         </CardHeader>
 
@@ -319,6 +319,9 @@ export default function Register() {
               >
                 Masuk di sini
               </Link>
+            </p>
+            <p className="mt-6 text-xs text-[hsl(190_20%_70%)]">
+              © {new Date().getFullYear()} Zaenal Arifin AURA
             </p>
           </div>
         </CardContent>

@@ -14,7 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import type { Route } from "./+types/root";
 import "./app.css";
-import { MaintenanceScreen } from "@/components/MaintenanceScreen";
+import MaintenanceScreen from "@/components/MaintenanceScreen";
 
 const queryClient = new QueryClient();
 
