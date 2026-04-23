@@ -130,7 +130,7 @@ import {
 
 import { NavLink } from "@/components/NavLink";
 import { useLocation, useNavigate } from "react-router";
-import { getStoredUser, type AppUser } from "@/lib/api";
+import { getStoredUser, clearStoredUser, type AppUser } from "@/lib/api";
 import { useUser } from "@/hooks/use-user";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import tpsLogo from "@/assets/tps3.png";
@@ -344,7 +344,10 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
             </div>
 
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                clearStoredUser();
+                navigate("/login");
+              }}
               className="flex items-center justify-center gap-2 w-full mt-1 rounded-xl py-2 text-xs font-bold text-white/40 transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-400 border border-white/5 hover:border-rose-500/20 group/logout"
             >
               <LogOut className="h-3.5 w-3.5 transition-transform group-hover/logout:-translate-x-1" />
@@ -360,7 +363,10 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
               className="ring-2 ring-white/10 hover:ring-cyan-500/50 transition-all"
             />
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => {
+                clearStoredUser();
+                navigate("/login");
+              }}
               className="rounded-xl p-3 text-white/20 transition-all hover:bg-rose-500/20 hover:text-rose-400 border border-transparent hover:border-rose-500/20"
               title="Logout"
             >
