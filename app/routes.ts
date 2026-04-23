@@ -15,6 +15,7 @@ export default [
         route("personal-job/:jobId", "routes/PersonalJobDetailPage.tsx"),
         route("regular-activity", "routes/RegularActivityPage.tsx"),
         route("regular-activity/:activityId", "routes/RegularActivityDetailPage.tsx"),
+        route("hoshin", "routes/HoshinPage.tsx"),
         route("users", "routes/UsersPage.tsx"),
         route("profile", "routes/ProfilePage.tsx"),
     ]),

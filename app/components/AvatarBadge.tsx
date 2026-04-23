@@ -5,6 +5,7 @@ interface AvatarBadgeProps {
     user: User;
     size?: "sm" | "md" | "lg";
     showRole?: boolean;
+    className?: string;
 }
 
 const sizeClasses = {
@@ -24,11 +25,11 @@ const roleColors: Record<string, string> = {
 const isUrl = (value: string) =>
     value.startsWith("http://") || value.startsWith("https://") || value.startsWith("/");
 
-export function AvatarBadge({ user, size = "md", showRole = false }: AvatarBadgeProps) {
+export function AvatarBadge({ user, size = "md", showRole = false, className }: AvatarBadgeProps) {
     const isImage = user.avatar && isUrl(user.avatar);
 
     return (
-        <div className="relative inline-flex flex-col items-center">
+        <div className={cn("relative inline-flex flex-col items-center", className)}>
             <div
                 className={cn(
                     "flex items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground overflow-hidden",

@@ -61,6 +61,18 @@ export interface Project {
     startDate: string;
     endDate: string;
     createdAt: string;
+    hoshinId?: string;
+    actionPlan?: string;
+    hoshin?: HoshinKPI;
+}
+
+export interface HoshinKPI {
+    id: string;
+    code: string;
+    cluster: string;
+    subCluster?: string;
+    actionPlan: string;
+    target?: string;
 }
 
 export interface Activity {
@@ -95,7 +107,7 @@ export function calculateProjectProgress(events: Event[], tasks: Task[]): number
     return calculateEventProgress(projectTasks);
 }
 
-export type RegularActivityCategory = "Safety" | "Quality" | "Maintenance" | "5S" | "Environment";
+export type RegularActivityCategory = "Safety" | "Quality" | "Productivity" | "Cost" | "HR";
 export type RegularActivityFrequency = "Daily" | "Weekly" | "Monthly";
 export type RegularActivityStatus = "Completed" | "Pending" | "Overdue";
 
@@ -128,6 +140,8 @@ export interface PersonalJob {
     name: string;
     description: string;
     source: PersonalJobSource;
+    sourceType?: "EVENT" | "PROJECT" | "PERSONAL" | "REGULAR";
+    regularJobId?: string;
     picId: string;
     dueDate: string;
     priority: PersonalJobPriority;
@@ -136,7 +150,12 @@ export interface PersonalJob {
 }
 
 export function calculatePersonalJobProgress(job: PersonalJob): number {
-    if (job.checklist.length === 0) return 0;
+    if (job.checklist.length === 0) {
+        // For tasks with no checklist (e.g. regular activities), derive from status
+        if (job.status === "Completed") return 100;
+        if (job.status === "In Progress") return 50;
+        return 0;
+    }
     const completed = job.checklist.filter((c) => c.completed).length;
     return Math.round((completed / job.checklist.length) * 100);
 }

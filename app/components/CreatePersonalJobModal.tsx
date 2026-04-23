@@ -99,90 +99,96 @@ export function CreatePersonalJobModal({
       title="Create Personal Job"
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="pj-name">Job Name</Label>
+        <div className="space-y-3">
+          <Label htmlFor="pj-name" className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Job Name</Label>
           <Input
             id="pj-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Daily Machine Check"
+            className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="pj-desc">Description</Label>
+        <div className="space-y-3">
+          <Label htmlFor="pj-desc" className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Description</Label>
           <Textarea
             id="pj-desc"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Describe the job..."
-            rows={2}
+            placeholder="Describe the job objective..."
+            className="bg-white/5 border-white/10 rounded-xl text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4 py-3 min-h-[100px] resize-none"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <div className="space-y-2">
-            <Label htmlFor="pj-due">Due Date</Label>
+          <div className="space-y-3">
+            <Label htmlFor="pj-due" className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Due Date</Label>
             <Popover>
               <PopoverTrigger asChild>
                 <Button
                   id="pj-due"
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal min-h-[44px]",
-                    !dueDate && "text-muted-foreground",
+                    "w-full justify-start text-left font-normal h-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all",
+                    !dueDate && "text-white/20",
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-2 h-4 w-4 text-cyan-400" />
                   {dueDate ? format(dueDate, "PPP") : "Pick date"}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
+              <PopoverContent className="w-auto p-0 glass-darker border-white/10 text-white backdrop-blur-3xl" align="start">
                 <Calendar
                   mode="single"
                   selected={dueDate}
                   onSelect={setDueDate}
                   initialFocus
+                  className="text-white"
                 />
               </PopoverContent>
             </Popover>
           </div>
-          <div className="space-y-2">
-            <Label>Priority</Label>
+          <div className="space-y-3">
+            <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Priority</Label>
             <Select
               value={priority}
               onValueChange={(v) => setPriority(v as PersonalJobPriority)}
             >
-              <SelectTrigger>
+              <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Low">Low</SelectItem>
-                <SelectItem value="Medium">Medium</SelectItem>
-                <SelectItem value="High">High</SelectItem>
+              <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
+                {["Low", "Medium", "High"].map((p) => (
+                  <SelectItem key={p} value={p} className="focus:bg-cyan-500/20 focus:text-white cursor-pointer">{p}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label>Checklist Activities</Label>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between ml-1">
+            <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80">Checklist Activities</Label>
             <Button
               type="button"
               variant="ghost"
               size="sm"
               onClick={addChecklistItem}
+              className="text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white hover:bg-white/5 transition-all gap-1"
             >
-              <Plus className="h-4 w-4 mr-1" /> Add Item
+              <Plus className="h-3.5 w-3.5" /> Add Step
             </Button>
           </div>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
+          <div className="space-y-3 max-h-48 overflow-y-auto pr-2 no-scrollbar">
             {checklistItems.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
+              <div key={index} className="flex items-center gap-2 animate-fade-in group/item">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-cyan-400 group-hover/item:border-cyan-500/50 transition-colors shadow-inner">
+                  {index + 1}
+                </div>
                 <Input
                   value={item}
                   onChange={(e) => updateChecklistItem(index, e.target.value)}
                   placeholder={`Checklist item ${index + 1}`}
-                  className="flex-1"
+                  className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all font-medium"
                 />
                 {checklistItems.length > 1 && (
                   <Button
@@ -190,7 +196,7 @@ export function CreatePersonalJobModal({
                     variant="ghost"
                     size="icon"
                     onClick={() => removeChecklistItem(index)}
-                    className="h-9 w-9 shrink-0 text-destructive hover:text-destructive"
+                    className="shrink-0 text-rose-500/50 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl h-12 w-12 border border-transparent hover:border-rose-500/20 transition-all"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -200,8 +206,17 @@ export function CreatePersonalJobModal({
           </div>
         </div>
 
-        <Button type="submit" className="w-full min-h-[44px]">
-          Create Job
+        <Button 
+          type="submit" 
+          className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-4 border border-white/10 cyan-glow"
+          disabled={createMutation.isPending}
+        >
+          {createMutation.isPending ? (
+            <div className="flex items-center gap-3">
+              <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+              <span>Constructing...</span>
+            </div>
+          ) : "Create Job Protocol"}
         </Button>
       </form>
     </ModalForm>

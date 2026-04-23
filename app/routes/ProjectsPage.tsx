@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Plus, Filter } from "lucide-react";
+import { Plus, Filter, Search, ArrowRight, LayoutGrid, List as ListIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/table";
 import { ProgressBar } from "@/components/ProgressBar";
 import { StatusBadge } from "@/components/StatusBadge";
+import { AvatarBadge } from "@/components/AvatarBadge";
 import { Badge } from "@/components/ui/badge";
 import { ModalForm } from "@/components/ModalForm";
 import { Input } from "@/components/ui/input";
@@ -32,8 +33,8 @@ import {
 } from "@/components/ui/select";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
-import { getProjects, getTasks, getUsers, createProject } from "@/lib/api";
-import type { Project, Task, User } from "@/types";
+import { getProjects, getTasks, getUsers, createProject, getHoshinKPIs } from "@/lib/api";
+import type { Project, Task, User, HoshinKPI } from "@/types";
 
 function getDeadlineBadge(endDate: string, status: string) {
     if (status === "Completed") return null;
@@ -106,141 +107,181 @@ export default function ProjectsPage() {
         }
     };
 
-    if (isMobile) {
-        return (
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-lg font-semibold">Projects</h2>
-                    <Button onClick={() => setModalOpen(true)} size="sm" className="min-h-[44px]">
-                        <Plus className="h-4 w-4 mr-1" /> Create
-                    </Button>
-                </div>
-
-                <div className="flex gap-2 flex-wrap">
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-[120px] h-9"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="All">All Status</SelectItem>
-                            <SelectItem value="Active">Active</SelectItem>
-                            <SelectItem value="On Hold">On Hold</SelectItem>
-                            <SelectItem value="Completed">Completed</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
-                        <SelectTrigger className="w-[130px] h-9"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="All">All Deadlines</SelectItem>
-                            <SelectItem value="Ending Soon">Ending Soon</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-
-                {projectsData.map((project) => {
-                    const badge = getDeadlineBadge(project.endDate, project.status);
-                    return (
-                        <Card key={project.id} className="cursor-pointer" onClick={() => navigate(`/projects/${project.id}`)}>
-                            <CardContent className="p-4 space-y-2">
-                                <div className="flex justify-between items-start gap-2">
-                                    <h3 className="font-semibold">{project.name}</h3>
-                                    <StatusBadge status={project.status} />
-                                </div>
-                                <p className="text-xs text-muted-foreground">Owner: {project.ownerName}</p>
-                                <p className="text-xs text-muted-foreground">{formatDate(project.startDate)} — {formatDate(project.endDate)}</p>
-                                <div className="flex items-center gap-2">
-                                    <p className="text-xs text-muted-foreground">{project.tasks.length} tasks</p>
-                                    {badge && <Badge className={badge.className}>{badge.label}</Badge>}
-                                </div>
-                                <ProgressBar value={project.progress} size="sm" />
-                            </CardContent>
-                        </Card>
-                    );
-                })}
-                <CreateProjectModal open={modalOpen} onOpenChange={setModalOpen} />
-            </div>
-        );
-    }
-
     return (
-        <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold tv:text-tv-xl">Projects</h2>
-                <Button onClick={() => setModalOpen(true)} className="min-h-[44px]">
-                    <Plus className="h-4 w-4 mr-1" /> Create Project
+        <div className="space-y-8 animate-fade-in-up px-2 pb-10">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
+                <div className="space-y-1">
+                    <h1 className="text-3xl font-bold tracking-tight text-white font-display text-glow">
+                        Projects
+                    </h1>
+                    <p className="text-sm text-white/40 font-medium tracking-wide uppercase">
+                        Manage and track your industrial assets
+                    </p>
+                </div>
+
+                <div className="flex flex-1 max-w-md mx-auto w-full md:mx-0">
+                    <div className="relative w-full group">
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 transition-colors group-focus-within:text-cyan-400" />
+                        <Input
+                            placeholder="Search projects by name..."
+                            className="h-11 w-full bg-white/5 backdrop-blur-md pl-10 text-white border-white/10 rounded-2xl focus-visible:ring-1 focus-visible:ring-cyan-500/50 transition-all placeholder:text-white/20"
+                        />
+                    </div>
+                </div>
+
+                <Button 
+                    onClick={() => setModalOpen(true)} 
+                    className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Create Project
                 </Button>
             </div>
 
-            <div className="flex items-center gap-3 flex-wrap">
-                <Filter className="h-4 w-4 text-muted-foreground" />
+            {/* Filter Section */}
+            <div className="glass p-5 rounded-3xl border-none flex flex-wrap items-center gap-4">
+                <div className="flex items-center gap-3 mr-2">
+                    <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 shadow-inner">
+                        <Filter className="h-4 w-4" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Filters</span>
+                </div>
+                
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[140px] h-9"><SelectValue /></SelectTrigger>
-                    <SelectContent>
+                    <SelectTrigger className="w-[140px] h-10 rounded-full bg-white/5 border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                        <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent className="glass-darker border-white/10 text-white">
                         <SelectItem value="All">All Status</SelectItem>
                         <SelectItem value="Active">Active</SelectItem>
                         <SelectItem value="On Hold">On Hold</SelectItem>
                         <SelectItem value="Completed">Completed</SelectItem>
                     </SelectContent>
                 </Select>
+
                 <Select value={ownerFilter} onValueChange={setOwnerFilter}>
-                    <SelectTrigger className="w-[160px] h-9"><SelectValue /></SelectTrigger>
-                    <SelectContent>
+                    <SelectTrigger className="w-[170px] h-10 rounded-full bg-white/5 border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                        <SelectValue placeholder="All Owners" />
+                    </SelectTrigger>
+                    <SelectContent className="glass-darker border-white/10 text-white">
                         <SelectItem value="All">All Owners</SelectItem>
                         {owners.map((owner) => (
                             <SelectItem key={owner.id} value={owner.id}>{owner.name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
+
                 <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
-                    <SelectTrigger className="w-[150px] h-9"><SelectValue /></SelectTrigger>
-                    <SelectContent>
+                    <SelectTrigger className="w-[160px] h-10 rounded-full bg-white/5 border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                        <SelectValue placeholder="All Deadlines" />
+                    </SelectTrigger>
+                    <SelectContent className="glass-darker border-white/10 text-white">
                         <SelectItem value="All">All Deadlines</SelectItem>
                         <SelectItem value="Ending Soon">Ending Soon</SelectItem>
                     </SelectContent>
                 </Select>
             </div>
 
-            <Card>
-                <CardContent className="p-0">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Project Name</TableHead>
-                                <TableHead>Owner</TableHead>
-                                <TableHead>Start Date</TableHead>
-                                <TableHead>End Date</TableHead>
-                                <TableHead>Tasks</TableHead>
-                                <TableHead className="w-[140px]">Progress</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Deadline</TableHead>
-                                <TableHead>Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {projectsData.map((project) => {
-                                const badge = getDeadlineBadge(project.endDate, project.status);
-                                return (
-                                    <TableRow key={project.id} className="cursor-pointer" onClick={() => navigate(`/projects/${project.id}`)}>
-                                        <TableCell className="font-medium tv:text-tv-sm">{project.name}</TableCell>
-                                        <TableCell className="tv:text-tv-sm">{project.ownerName}</TableCell>
-                                        <TableCell className="text-sm">{formatDate(project.startDate)}</TableCell>
-                                        <TableCell className="text-sm">{formatDate(project.endDate)}</TableCell>
-                                        <TableCell>{project.tasks.length}</TableCell>
-                                        <TableCell><ProgressBar value={project.progress} size="sm" /></TableCell>
-                                        <TableCell><StatusBadge status={project.status} /></TableCell>
-                                        <TableCell>
-                                            {badge && <Badge className={badge.className}>{badge.label}</Badge>}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); navigate(`/projects/${project.id}`); }}>
-                                                View
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+            {/* Projects List (Modern Card Table) */}
+            <div className="space-y-4">
+                {/* Desktop Header */}
+                <div className="hidden lg:grid grid-cols-[2fr_1.5fr_1.5fr_1fr_1.5fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+                    <div>Project Name</div>
+                    <div>Owner</div>
+                    <div>Duration</div>
+                    <div className="text-center">Tasks</div>
+                    <div>Progress</div>
+                    <div>Status</div>
+                    <div></div>
+                </div>
+
+                <div className="space-y-4">
+                    {projectsData.map((project) => {
+                        const deadline = getDeadlineBadge(project.endDate, project.status);
+                        const owner = users.find(u => u.id === project.ownerId);
+
+                        return (
+                            <div 
+                                key={project.id}
+                                onClick={() => navigate(`/projects/${project.id}`)}
+                                className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-3xl border-none transition-all duration-300 hover:scale-[1.01] hover:cyan-glow cursor-pointer group"
+                            >
+                                <div className="grid grid-cols-1 lg:grid-cols-[2fr_1.5fr_1.5fr_1fr_1.5fr_1fr_auto] items-center gap-4 lg:gap-6">
+                                    {/* Name */}
+                                    <div className="space-y-1">
+                                        <h3 className="font-bold text-white text-base font-display tracking-tight group-hover:text-cyan-400 transition-colors">
+                                            {project.name}
+                                        </h3>
+                                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold flex items-center gap-2">
+                                            ID: #{project.id.toString().padStart(4, '0')}
+                                            {deadline && (
+                                                <span className={cn("px-2 py-0.5 rounded-full border", deadline.className)}>
+                                                    {deadline.label}
+                                                </span>
+                                            )}
+                                        </p>
+                                    </div>
+
+                                    {/* Owner */}
+                                    <div className="flex items-center gap-3">
+                                        {owner && <AvatarBadge user={owner} size="sm" className="ring-2 ring-white/10 group-hover:ring-cyan-500/50 transition-all" />}
+                                        <span className="text-sm font-semibold text-white/80">{project.ownerName}</span>
+                                    </div>
+
+                                    {/* Dates */}
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-bold text-white/70">{formatDate(project.endDate)}</span>
+                                        <span className="text-[10px] text-white/30 uppercase font-semibold">Deadline</span>
+                                    </div>
+
+                                    {/* Tasks */}
+                                    <div className="flex lg:justify-center">
+                                        <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-white">
+                                            {project.tasks.length} Tasks
+                                        </span>
+                                    </div>
+
+                                    {/* Progress */}
+                                    <div className="space-y-2 min-w-[120px]">
+                                        <div className="flex justify-between items-center text-[10px] font-bold">
+                                            <span className="text-white/40 uppercase">Completion</span>
+                                            <span className="text-cyan-400">{project.progress}%</span>
+                                        </div>
+                                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden p-[1px]">
+                                            <div 
+                                                className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(34,211,238,0.3)]"
+                                                style={{ width: `${project.progress}%` }}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Status */}
+                                    <div>
+                                        <StatusBadge 
+                                            status={project.status} 
+                                            className={cn(
+                                                "px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-widest border border-white/10 shadow-inner",
+                                                project.status === "Active" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
+                                                project.status === "Completed" ? "bg-blue-500/20 text-blue-400 border-blue-500/30" :
+                                                "bg-rose-500/20 text-rose-400 border-rose-500/30"
+                                            )}
+                                        />
+                                    </div>
+
+                                    {/* Action */}
+                                    <div className="flex lg:justify-end">
+                                        <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
+                                            <ArrowRight className="h-5 w-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
             <CreateProjectModal open={modalOpen} onOpenChange={setModalOpen} />
         </div>
     );
@@ -253,8 +294,23 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
     const [startDate, setStartDate] = useState<Date>();
     const [endDate, setEndDate] = useState<Date>();
     const [description, setDescription] = useState("");
+    const [selectedHoshinId, setSelectedHoshinId] = useState<string>("");
+    const [hoshinSearch, setHoshinSearch] = useState("");
+    const [hoshinDropdownOpen, setHoshinDropdownOpen] = useState(false);
     
     const { data: users = [] } = useQuery<User[]>({ queryKey: ["users"], queryFn: getUsers });
+    const { data: hoshinKPIs = [] } = useQuery<HoshinKPI[]>({
+        queryKey: ["hoshin-kpis"],
+        queryFn: getHoshinKPIs,
+        staleTime: 5 * 60 * 1000,
+    });
+
+    const selectedHoshin = hoshinKPIs.find(k => k.id === selectedHoshinId);
+    const filteredHoshins = hoshinKPIs.filter(k =>
+        k.cluster.toLowerCase().includes(hoshinSearch.toLowerCase()) ||
+        k.actionPlan.toLowerCase().includes(hoshinSearch.toLowerCase()) ||
+        k.code.toLowerCase().includes(hoshinSearch.toLowerCase())
+    );
 
     const createMutation = useMutation({
         mutationFn: createProject,
@@ -275,6 +331,8 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
         setStartDate(undefined);
         setEndDate(undefined);
         setDescription("");
+        setSelectedHoshinId("");
+        setHoshinSearch("");
     };
 
     const handleCreate = () => {
@@ -288,7 +346,9 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
             ownerId: Number(ownerId),
             startDate: startDate.toISOString(),
             endDate: endDate.toISOString(),
-            description
+            description,
+            hoshinId: selectedHoshin ? Number(selectedHoshin.id) : undefined,
+            actionPlan: selectedHoshin?.actionPlan || undefined,
         });
     };
 
@@ -297,70 +357,148 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
             onOpenChange(v);
             if (!v) resetForm();
         }} title="Create Project">
-            <div className="space-y-4">
-                <div className="space-y-2">
-                    <Label>Project Name</Label>
+            <div className="space-y-6 max-h-[75vh] overflow-y-auto px-1">
+                <div className="space-y-3">
+                    <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Project Name</Label>
                     <Input 
-                        placeholder="Enter project name" 
+                        placeholder="Enter project nomenclature..." 
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
                     />
                 </div>
-                <div className="space-y-2">
-                    <Label>Owner</Label>
+                <div className="space-y-3">
+                    <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Lead Architect (Owner)</Label>
                     <Select value={ownerId} onValueChange={setOwnerId}>
-                        <SelectTrigger><SelectValue placeholder="Select owner" /></SelectTrigger>
-                        <SelectContent>
+                        <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors">
+                            <SelectValue placeholder="Select lead owner" />
+                        </SelectTrigger>
+                        <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
                             {users.filter((u) => ["Leader", "SPV", "DPH"].includes(u.role)).map((u) => (
-                                <SelectItem key={u.id} value={String(u.id)}>{u.name} ({u.role})</SelectItem>
+                                <SelectItem key={u.id} value={String(u.id)} className="focus:bg-cyan-500/20 focus:text-white cursor-pointer">{u.name} ({u.role})</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                        <Label>Start Date</Label>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                        <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Initiation Date</Label>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !startDate && "text-muted-foreground")}>
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all", !startDate && "text-white/20")}>
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-cyan-400" />
                                     {startDate ? format(startDate, "PPP") : "Pick date"}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus className="p-3 pointer-events-auto" />
+                            <PopoverContent className="w-auto p-0 glass-darker border-white/10 text-white backdrop-blur-3xl" align="start">
+                                <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus className="p-3 text-white" />
                             </PopoverContent>
                         </Popover>
                     </div>
-                    <div className="space-y-2">
-                        <Label>End Date</Label>
+                    <div className="space-y-3">
+                        <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Target Horizon</Label>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !endDate && "text-muted-foreground")}>
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
+                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all", !endDate && "text-white/20")}>
+                                    <CalendarIcon className="mr-2 h-4 w-4 text-cyan-400" />
                                     {endDate ? format(endDate, "PPP") : "Pick date"}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="start">
-                                <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus className="p-3 pointer-events-auto" />
+                            <PopoverContent className="w-auto p-0 glass-darker border-white/10 text-white backdrop-blur-3xl" align="start">
+                                <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus className="p-3 text-white" />
                             </PopoverContent>
                         </Popover>
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <Label>Description (optional)</Label>
+                <div className="space-y-3">
+                    <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Project Brief (optional)</Label>
                     <Input 
-                        placeholder="Enter description" 
+                        placeholder="Enter mission parameters..." 
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                        className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
                     />
                 </div>
+
+                {/* Hoshin KPI Alignment */}
+                <div className="space-y-3">
+                    <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Align With Hoshin</Label>
+                    {hoshinKPIs.length === 0 ? (
+                        <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-bold">
+                            KPI Hoshin not available. Contact Super Admin.
+                        </div>
+                    ) : (
+                        <div className="relative">
+                            <div
+                                onClick={() => setHoshinDropdownOpen(!hoshinDropdownOpen)}
+                                className={cn(
+                                    "bg-white/5 border border-white/10 rounded-xl h-12 text-white flex items-center px-4 cursor-pointer hover:bg-white/10 transition-all",
+                                    hoshinDropdownOpen && "border-cyan-500/50 ring-1 ring-cyan-500/20"
+                                )}
+                            >
+                                {selectedHoshin ? (
+                                    <div className="flex flex-col min-w-0">
+                                        <span className="text-sm font-bold truncate">{selectedHoshin.cluster}</span>
+                                        <span className="text-[10px] text-white/40 truncate">{selectedHoshin.actionPlan}</span>
+                                    </div>
+                                ) : (
+                                    <span className="text-white/20">Select KPI alignment (optional)</span>
+                                )}
+                            </div>
+
+                            {hoshinDropdownOpen && (
+                                <div className="absolute z-50 mt-2 w-full glass-darker border border-white/10 rounded-xl overflow-hidden shadow-2xl">
+                                    <div className="p-2 border-b border-white/5">
+                                        <Input
+                                            value={hoshinSearch}
+                                            onChange={(e) => setHoshinSearch(e.target.value)}
+                                            placeholder="Search KPI..."
+                                            className="bg-white/5 border-white/10 rounded-lg h-9 text-white text-xs placeholder:text-white/20"
+                                            autoFocus
+                                        />
+                                    </div>
+                                    <div className="max-h-[200px] overflow-y-auto">
+                                        <div
+                                            onClick={() => { setSelectedHoshinId(""); setHoshinDropdownOpen(false); setHoshinSearch(""); }}
+                                            className="px-4 py-2.5 text-xs text-white/40 hover:bg-white/5 cursor-pointer transition-colors"
+                                        >
+                                            — None —
+                                        </div>
+                                        {filteredHoshins.map(k => (
+                                            <div
+                                                key={k.id}
+                                                onClick={() => { setSelectedHoshinId(k.id); setHoshinDropdownOpen(false); setHoshinSearch(""); }}
+                                                className={cn(
+                                                    "px-4 py-3 cursor-pointer transition-colors hover:bg-cyan-500/10",
+                                                    selectedHoshinId === k.id && "bg-cyan-500/10 border-l-2 border-cyan-400"
+                                                )}
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-bold text-white truncate">{k.cluster}</p>
+                                                        <p className="text-[10px] text-white/40 truncate mt-0.5">{k.actionPlan}</p>
+                                                    </div>
+                                                    <span className="text-[9px] font-mono text-white/20 shrink-0 ml-2">{k.code}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
                 <Button 
-                    className="w-full min-h-[44px]" 
+                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-white/10 cyan-glow" 
                     onClick={handleCreate}
                     disabled={createMutation.isPending}
                 >
-                    {createMutation.isPending ? "Creating..." : "Create Project"}
+                    {createMutation.isPending ? (
+                        <div className="flex items-center gap-3">
+                            <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                            <span>Synthesizing...</span>
+                        </div>
+                    ) : "Initialize Project"}
                 </Button>
             </div>
         </ModalForm>
