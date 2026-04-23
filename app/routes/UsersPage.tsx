@@ -18,7 +18,14 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { AvatarBadge } from "@/components/AvatarBadge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Trash2, Shield, Mail, Phone, ArrowRight, UserPlus } from "lucide-react";
+import {
+  Trash2,
+  Shield,
+  Mail,
+  Phone,
+  ArrowRight,
+  UserPlus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getUsers, getStoredUser, updateUser, deleteUser } from "@/lib/api";
 import type { User, UserRole } from "@/types";
@@ -26,12 +33,13 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Navigate } from "react-router";
 import { cn } from "@/lib/utils";
 
-const ALL_ROLES: UserRole[] = ["Member", "Leader", "SPV", "DPH", "Yang punya TMMIN"];
-
-
-const ALL_ROLES: UserRole[] = ["Member", "Leader", "SPV", "DPH", "Yang punya TMMIN"];
-
-
+const ALL_ROLES: UserRole[] = [
+  "Member",
+  "Leader",
+  "SPV",
+  "DPH",
+  "Yang punya TMMIN",
+];
 export default function UsersPage() {
   const isMobile = useIsMobile();
   const currentUser = getStoredUser();
@@ -96,9 +104,7 @@ export default function UsersPage() {
         </div>
 
         {isTMMIN && (
-          <Button 
-            className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95"
-          >
+          <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95">
             <UserPlus className="h-5 w-5 mr-2" />
             Provision Operator
           </Button>
@@ -112,8 +118,12 @@ export default function UsersPage() {
             <Shield className="h-5 w-5" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Active Core</p>
-            <p className="text-xl font-black text-white text-glow">{users.length} Units</p>
+            <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">
+              Active Core
+            </p>
+            <p className="text-xl font-black text-white text-glow">
+              {users.length} Units
+            </p>
           </div>
         </div>
       </div>
@@ -132,7 +142,7 @@ export default function UsersPage() {
 
         <div className="space-y-4">
           {users.map((user) => (
-            <div 
+            <div
               key={user.id}
               className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:blue-glow group"
             >
@@ -140,17 +150,27 @@ export default function UsersPage() {
                 {/* Identity */}
                 <div className="flex items-center gap-4">
                   <div className="relative">
-                    <AvatarBadge user={user} size="md" className="ring-2 ring-white/10 group-hover:ring-cyan-500/50 transition-all" />
-                    <div className={cn(
-                      "absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-[#090a18]",
-                      user.status === "Active" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" : "bg-rose-500"
-                    )} />
+                    <AvatarBadge
+                      user={user}
+                      size="md"
+                      className="ring-2 ring-white/10 group-hover:ring-cyan-500/50 transition-all"
+                    />
+                    <div
+                      className={cn(
+                        "absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-[#090a18]",
+                        user.status === "Active"
+                          ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"
+                          : "bg-rose-500",
+                      )}
+                    />
                   </div>
                   <div className="space-y-0.5">
                     <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors font-display tracking-tight leading-tight">
                       {user.name}
                     </h4>
-                    <p className="text-[10px] text-white/20 uppercase tracking-widest">UNIT-ID: {user.id.slice(-6).toUpperCase()}</p>
+                    <p className="text-[10px] text-white/20 uppercase tracking-widest">
+                      UNIT-ID: {user.id.slice(-6).toUpperCase()}
+                    </p>
                   </div>
                 </div>
 
@@ -159,14 +179,18 @@ export default function UsersPage() {
                   {isTMMIN ? (
                     <Select
                       value={user.role}
-                      onValueChange={(value) => handleRoleChange(user.id, value as UserRole)}
+                      onValueChange={(value) =>
+                        handleRoleChange(user.id, value as UserRole)
+                      }
                     >
                       <SelectTrigger className="h-9 w-full bg-white/5 border-white/10 rounded-xl text-white text-xs font-bold uppercase tracking-widest focus:ring-cyan-500/30">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="glass-darker border-white/10 text-white">
                         {ALL_ROLES.map((role) => (
-                          <SelectItem key={role} value={role}>{role}</SelectItem>
+                          <SelectItem key={role} value={role}>
+                            {role}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -180,22 +204,29 @@ export default function UsersPage() {
                 {/* Email */}
                 <div className="flex items-center gap-2 text-white/50 group-hover:text-white/80 transition-colors">
                   <Mail className="h-3.5 w-3.5 opacity-40 shrink-0" />
-                  <span className="text-sm font-medium truncate max-w-[180px]">{user.email}</span>
+                  <span className="text-sm font-medium truncate max-w-[180px]">
+                    {user.email}
+                  </span>
                 </div>
 
                 {/* Phone */}
                 <div className="flex items-center gap-2 text-white/50">
                   <Phone className="h-3.5 w-3.5 opacity-40 shrink-0" />
-                  <span className="text-sm font-mono tracking-tighter">{user.phone || "N/A"}</span>
+                  <span className="text-sm font-mono tracking-tighter">
+                    {user.phone || "N/A"}
+                  </span>
                 </div>
 
                 {/* Status */}
-                <StatusBadge status={user.status} className="scale-90 origin-left" />
+                <StatusBadge
+                  status={user.status}
+                  className="scale-90 origin-left"
+                />
 
                 {/* Actions */}
                 <div className="flex lg:justify-end gap-2">
                   {isTMMIN && user.id !== currentUser?.id ? (
-                    <button 
+                    <button
                       onClick={() => handleDeleteUser(user.id, user.name)}
                       disabled={deleteMutation.isPending}
                       className="p-2.5 rounded-xl bg-rose-500/5 text-rose-500/30 hover:text-rose-500 hover:bg-rose-500/10 transition-all border border-transparent hover:border-rose-500/20 disabled:opacity-20"
