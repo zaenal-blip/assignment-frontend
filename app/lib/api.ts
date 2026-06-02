@@ -239,6 +239,7 @@ function mapProjectStatus(progress: number): AppProject["status"] {
 }
 
 export function getStoredUser(): AppUser | null {
+    if (typeof window === "undefined") return null;
     try {
         const raw = localStorage.getItem(USER_STORAGE_KEY);
         return raw ? (JSON.parse(raw) as AppUser) : null;
@@ -248,20 +249,24 @@ export function getStoredUser(): AppUser | null {
 }
 
 export function setStoredUser(user: AppUser, token: string) {
+    if (typeof window === "undefined") return;
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
     localStorage.setItem(TOKEN_STORAGE_KEY, token);
 }
 
 export function clearStoredUser() {
+    if (typeof window === "undefined") return;
     localStorage.removeItem(USER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_STORAGE_KEY);
 }
 
 function getAuthHeaders(): HeadersInit {
     const headers: Record<string, string> = {};
-    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
-    if (token) {
-        headers.Authorization = `Bearer ${token}`;
+    if (typeof window !== "undefined") {
+        const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+        if (token) {
+            headers.Authorization = `Bearer ${token}`;
+        }
     }
     return headers;
 }
@@ -427,7 +432,7 @@ export async function getProfile(): Promise<AppUser> {
 
 export async function updateProfile(formData: FormData): Promise<{ message: string }> {
     const url = normalizeApiPath("/users/me");
-    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    const token = typeof window !== "undefined" ? localStorage.getItem(TOKEN_STORAGE_KEY) : null;
     
     const response = await fetch(url, {
         method: "PATCH",
@@ -446,8 +451,10 @@ export async function updateProfile(formData: FormData): Promise<{ message: stri
     const currentUser = getStoredUser();
     if (currentUser) {
         const updatedProfile = await getProfile();
-        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedProfile));
-        window.dispatchEvent(new Event("user-updated"));
+        if (typeof window !== "undefined") {
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedProfile));
+            window.dispatchEvent(new Event("user-updated"));
+        }
     }
 
     return data;

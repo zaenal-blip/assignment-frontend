@@ -59,8 +59,8 @@ export default function DashboardPage() {
             <HighlightSection events={events} tasks={tasks} />
 
             <Card className="glass border-none overflow-hidden">
-                <CardHeader className="border-b border-white/10 py-4">
-                    <CardTitle className="text-xl font-bold text-white tv:text-tv-xl flex items-center gap-2">
+                <CardHeader className="border-b border-foreground/10 py-4">
+                    <CardTitle className="text-xl font-bold text-foreground tv:text-tv-xl flex items-center gap-2">
                         <CalendarDays className="h-5 w-5 text-cyan-400" />
                         Event Calendar
                     </CardTitle>
@@ -71,21 +71,21 @@ export default function DashboardPage() {
             </Card>
 
             <Card className="glass border-none overflow-hidden">
-                <CardHeader className="border-b border-white/10 py-4">
-                    <CardTitle className="text-xl font-bold text-white tv:text-tv-xl flex items-center gap-2">
+                <CardHeader className="border-b border-foreground/10 py-4">
+                    <CardTitle className="text-xl font-bold text-foreground tv:text-tv-xl flex items-center gap-2">
                         <ListChecks className="h-5 w-5 text-blue-400" />
                         Recent Activity
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
-                    <div className="divide-y divide-white/5">
+                    <div className="divide-y divide-foreground/5">
                         {recentActivities.slice(0, 6).map((activity) => {
                             const user = getUserById(activity.userId);
                             const isCompleted = activity.message.toLowerCase().includes("completed");
                             return (
-                                <div key={activity.id} className="flex items-start gap-4 p-4 transition-colors hover:bg-white/5 group">
+                                <div key={activity.id} className="flex items-start gap-4 p-4 transition-colors hover:bg-foreground/5 group">
                                     <div className="relative">
-                                        {user && <AvatarBadge user={user} size="sm" className="ring-2 ring-white/10 group-hover:ring-cyan-500/50 transition-all" />}
+                                        {user && <AvatarBadge user={user} size="sm" className="ring-2 ring-foreground/10 group-hover:ring-cyan-500/50 transition-all" />}
                                         <div className={cn(
                                             "absolute -bottom-1 -right-1 h-3 w-3 rounded-full border-2 border-[#1e3a5f] z-10",
                                             isCompleted ? "bg-emerald-500" : "bg-cyan-500 shadow-[0_0_5px_rgba(6,182,212,1)]"
@@ -93,14 +93,14 @@ export default function DashboardPage() {
                                     </div>
                                     <div className="min-w-0 flex-1">
                                         <div className="flex justify-between items-start gap-2">
-                                            <p className="text-sm text-white/90 tv:text-tv-sm leading-tight">
-                                                <span className="font-bold text-white group-hover:text-cyan-400 transition-colors">
+                                            <p className="text-sm text-foreground/90 tv:text-tv-sm leading-tight">
+                                                <span className="font-bold text-foreground group-hover:text-cyan-400 transition-colors">
                                                     {user?.name || "Guest"}
                                                 </span>{" "}
                                                 {activity.message}
                                             </p>
                                         </div>
-                                        <p className="text-[10px] font-semibold text-white/30 uppercase tracking-wider mt-1">
+                                        <p className="text-[10px] font-semibold text-foreground/30 uppercase tracking-wider mt-1">
                                             {formatActivityDate(activity.timestamp)}
                                         </p>
                                     </div>

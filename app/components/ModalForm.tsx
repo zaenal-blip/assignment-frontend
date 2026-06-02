@@ -26,8 +26,8 @@ export function ModalForm({ open, onOpenChange, title, children }: ModalFormProp
     if (isMobile) {
         return (
             <Drawer open={open} onOpenChange={onOpenChange}>
-                <DrawerContent className="glass-darker border-white/10 text-white">
-                    <DrawerHeader className="border-b border-white/5 pb-4">
+                <DrawerContent className="glass-darker border-foreground/10 text-foreground">
+                    <DrawerHeader className="border-b border-foreground/5 pb-4">
                         <DrawerTitle className="text-xl font-bold font-display text-glow tracking-tight">
                             {title}
                         </DrawerTitle>
@@ -40,9 +40,9 @@ export function ModalForm({ open, onOpenChange, title, children }: ModalFormProp
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-xl glass-darker border-white/10 text-white shadow-2xl overflow-hidden p-0">
+            <DialogContent className="sm:max-w-xl glass-darker border-foreground/10 text-foreground shadow-2xl overflow-hidden p-0">
                 <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5 pointer-events-none" />
-                <DialogHeader className="px-8 py-6 border-b border-white/5 relative bg-white/5">
+                <DialogHeader className="px-8 py-6 border-b border-foreground/5 relative bg-foreground/5">
                     <DialogTitle className="text-2xl font-bold font-display text-glow tracking-tight uppercase">
                         {title}
                     </DialogTitle>

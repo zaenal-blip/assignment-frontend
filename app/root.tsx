@@ -15,8 +15,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Route } from "./+types/root";
 import "./app.css";
 import MaintenanceScreen from "@/components/MaintenanceScreen";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const queryClient = new QueryClient();
+
+export function meta() {
+  return [
+    { title: "AURA - Management System" },
+    { name: "description", content: "AURA Management System - Protocol Schedule & Milestones dashboard." },
+  ];
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -25,9 +33,13 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
+  // Non-blocking font load: use media=print trick, onLoad swaps to all
   {
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:wght@400;500;600;700&display=swap",
+    /* @ts-ignore - media trick to avoid render-blocking */
+    media: "print",
+    onLoad: "this.media='all'",
   },
 ];
 
@@ -42,13 +54,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            {children}
-            <Toaster />
-            <Sonner />
-            <ScrollRestoration />
-            <Scripts />
-          </TooltipProvider>
+          <ThemeProvider defaultTheme="dark" storageKey="tps-ui-theme">
+            <TooltipProvider>
+              {children}
+              <Toaster />
+              <Sonner />
+              <ScrollRestoration />
+              <Scripts />
+            </TooltipProvider>
+          </ThemeProvider>
         </QueryClientProvider>
       </body>
     </html>

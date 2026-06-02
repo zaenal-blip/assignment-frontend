@@ -112,27 +112,27 @@ export default function ProjectsPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-white font-display text-glow">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground font-display text-glow">
                         Projects
                     </h1>
-                    <p className="text-sm text-white/40 font-medium tracking-wide uppercase">
+                    <p className="text-sm text-foreground/40 font-medium tracking-wide uppercase">
                         Manage and track your industrial assets
                     </p>
                 </div>
 
                 <div className="flex flex-1 max-w-md mx-auto w-full md:mx-0">
                     <div className="relative w-full group">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 transition-colors group-focus-within:text-cyan-400" />
+                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/30 transition-colors group-focus-within:text-cyan-400" />
                         <Input
                             placeholder="Search projects by name..."
-                            className="h-11 w-full bg-white/5 backdrop-blur-md pl-10 text-white border-white/10 rounded-2xl focus-visible:ring-1 focus-visible:ring-cyan-500/50 transition-all placeholder:text-white/20"
+                            className="h-11 w-full bg-foreground/5 backdrop-blur-md pl-10 text-foreground border-foreground/10 rounded-2xl focus-visible:ring-1 focus-visible:ring-cyan-500/50 transition-all placeholder:text-foreground/20"
                         />
                     </div>
                 </div>
 
                 <Button 
                     onClick={() => setModalOpen(true)} 
-                    className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                    className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-foreground font-bold rounded-2xl h-11 px-6 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
                 >
                     <Plus className="h-5 w-5 mr-2" />
                     Create Project
@@ -145,14 +145,14 @@ export default function ProjectsPage() {
                     <div className="p-2 rounded-xl bg-cyan-500/10 text-cyan-400 shadow-inner">
                         <Filter className="h-4 w-4" />
                     </div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30">Filters</span>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/30">Filters</span>
                 </div>
                 
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[140px] h-10 rounded-full bg-white/5 border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                    <SelectTrigger className="w-[140px] h-10 rounded-full bg-foreground/5 border-foreground/10 text-foreground text-xs font-semibold hover:bg-foreground/10 transition-colors">
                         <SelectValue placeholder="All Status" />
                     </SelectTrigger>
-                    <SelectContent className="glass-darker border-white/10 text-white">
+                    <SelectContent className="glass-darker border-foreground/10 text-foreground">
                         <SelectItem value="All">All Status</SelectItem>
                         <SelectItem value="Active">Active</SelectItem>
                         <SelectItem value="On Hold">On Hold</SelectItem>
@@ -161,10 +161,10 @@ export default function ProjectsPage() {
                 </Select>
 
                 <Select value={ownerFilter} onValueChange={setOwnerFilter}>
-                    <SelectTrigger className="w-[170px] h-10 rounded-full bg-white/5 border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                    <SelectTrigger className="w-[170px] h-10 rounded-full bg-foreground/5 border-foreground/10 text-foreground text-xs font-semibold hover:bg-foreground/10 transition-colors">
                         <SelectValue placeholder="All Owners" />
                     </SelectTrigger>
-                    <SelectContent className="glass-darker border-white/10 text-white">
+                    <SelectContent className="glass-darker border-foreground/10 text-foreground">
                         <SelectItem value="All">All Owners</SelectItem>
                         {owners.map((owner) => (
                             <SelectItem key={owner.id} value={owner.id}>{owner.name}</SelectItem>
@@ -173,10 +173,10 @@ export default function ProjectsPage() {
                 </Select>
 
                 <Select value={deadlineFilter} onValueChange={setDeadlineFilter}>
-                    <SelectTrigger className="w-[160px] h-10 rounded-full bg-white/5 border-white/10 text-white text-xs font-semibold hover:bg-white/10 transition-colors">
+                    <SelectTrigger className="w-[160px] h-10 rounded-full bg-foreground/5 border-foreground/10 text-foreground text-xs font-semibold hover:bg-foreground/10 transition-colors">
                         <SelectValue placeholder="All Deadlines" />
                     </SelectTrigger>
-                    <SelectContent className="glass-darker border-white/10 text-white">
+                    <SelectContent className="glass-darker border-foreground/10 text-foreground">
                         <SelectItem value="All">All Deadlines</SelectItem>
                         <SelectItem value="Ending Soon">Ending Soon</SelectItem>
                     </SelectContent>
@@ -186,7 +186,7 @@ export default function ProjectsPage() {
             {/* Projects List (Modern Card Table) */}
             <div className="space-y-4">
                 {/* Desktop Header */}
-                <div className="hidden lg:grid grid-cols-[2fr_1.5fr_1.5fr_1fr_1.5fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+                <div className="hidden lg:grid grid-cols-[2fr_1.5fr_1.5fr_1fr_1.5fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/30">
                     <div>Project Name</div>
                     <div>Owner</div>
                     <div>Duration</div>
@@ -205,15 +205,15 @@ export default function ProjectsPage() {
                             <div 
                                 key={project.id}
                                 onClick={() => navigate(`/projects/${project.id}`)}
-                                className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-3xl border-none transition-all duration-300 hover:scale-[1.01] hover:cyan-glow cursor-pointer group"
+                                className="glass hover:bg-foreground/[0.08] p-4 lg:px-8 lg:py-5 rounded-3xl border-none transition-all duration-300 hover:scale-[1.01] hover:cyan-glow cursor-pointer group"
                             >
                                 <div className="grid grid-cols-1 lg:grid-cols-[2fr_1.5fr_1.5fr_1fr_1.5fr_1fr_auto] items-center gap-4 lg:gap-6">
                                     {/* Name */}
                                     <div className="space-y-1">
-                                        <h3 className="font-bold text-white text-base font-display tracking-tight group-hover:text-cyan-400 transition-colors">
+                                        <h3 className="font-bold text-foreground text-base font-display tracking-tight group-hover:text-cyan-400 transition-colors">
                                             {project.name}
                                         </h3>
-                                        <p className="text-[10px] text-white/30 uppercase tracking-widest font-semibold flex items-center gap-2">
+                                        <p className="text-[10px] text-foreground/30 uppercase tracking-widest font-semibold flex items-center gap-2">
                                             ID: #{project.id.toString().padStart(4, '0')}
                                             {deadline && (
                                                 <span className={cn("px-2 py-0.5 rounded-full border", deadline.className)}>
@@ -225,19 +225,19 @@ export default function ProjectsPage() {
 
                                     {/* Owner */}
                                     <div className="flex items-center gap-3">
-                                        {owner && <AvatarBadge user={owner} size="sm" className="ring-2 ring-white/10 group-hover:ring-cyan-500/50 transition-all" />}
-                                        <span className="text-sm font-semibold text-white/80">{project.ownerName}</span>
+                                        {owner && <AvatarBadge user={owner} size="sm" className="ring-2 ring-foreground/10 group-hover:ring-cyan-500/50 transition-all" />}
+                                        <span className="text-sm font-semibold text-foreground/80">{project.ownerName}</span>
                                     </div>
 
                                     {/* Dates */}
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-bold text-white/70">{formatDate(project.endDate)}</span>
-                                        <span className="text-[10px] text-white/30 uppercase font-semibold">Deadline</span>
+                                        <span className="text-xs font-bold text-foreground/70">{formatDate(project.endDate)}</span>
+                                        <span className="text-[10px] text-foreground/30 uppercase font-semibold">Deadline</span>
                                     </div>
 
                                     {/* Tasks */}
                                     <div className="flex lg:justify-center">
-                                        <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-white">
+                                        <span className="px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold text-foreground">
                                             {project.tasks.length} Tasks
                                         </span>
                                     </div>
@@ -245,10 +245,10 @@ export default function ProjectsPage() {
                                     {/* Progress */}
                                     <div className="space-y-2 min-w-[120px]">
                                         <div className="flex justify-between items-center text-[10px] font-bold">
-                                            <span className="text-white/40 uppercase">Completion</span>
+                                            <span className="text-foreground/40 uppercase">Completion</span>
                                             <span className="text-cyan-400">{project.progress}%</span>
                                         </div>
-                                        <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden p-[1px]">
+                                        <div className="h-2 w-full bg-foreground/5 rounded-full overflow-hidden p-[1px]">
                                             <div 
                                                 className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(34,211,238,0.3)]"
                                                 style={{ width: `${project.progress}%` }}
@@ -261,7 +261,7 @@ export default function ProjectsPage() {
                                         <StatusBadge 
                                             status={project.status} 
                                             className={cn(
-                                                "px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-widest border border-white/10 shadow-inner",
+                                                "px-4 py-1.5 rounded-full font-bold text-[10px] uppercase tracking-widest border border-foreground/10 shadow-inner",
                                                 project.status === "Active" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
                                                 project.status === "Completed" ? "bg-blue-500/20 text-blue-400 border-blue-500/30" :
                                                 "bg-rose-500/20 text-rose-400 border-rose-500/30"
@@ -271,7 +271,7 @@ export default function ProjectsPage() {
 
                                     {/* Action */}
                                     <div className="flex lg:justify-end">
-                                        <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
+                                        <button className="p-2.5 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
                                             <ArrowRight className="h-5 w-5" />
                                         </button>
                                     </div>
@@ -364,18 +364,18 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                         placeholder="Enter project nomenclature..." 
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                        className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
                     />
                 </div>
                 <div className="space-y-3">
                     <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Lead Architect (Owner)</Label>
                     <Select value={ownerId} onValueChange={setOwnerId}>
-                        <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors">
+                        <SelectTrigger className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground hover:bg-foreground/10 transition-colors">
                             <SelectValue placeholder="Select lead owner" />
                         </SelectTrigger>
-                        <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
+                        <SelectContent className="glass-darker border-foreground/10 text-foreground backdrop-blur-3xl">
                             {users.filter((u) => ["Leader", "SPV", "DPH"].includes(u.role)).map((u) => (
-                                <SelectItem key={u.id} value={String(u.id)} className="focus:bg-cyan-500/20 focus:text-white cursor-pointer">{u.name} ({u.role})</SelectItem>
+                                <SelectItem key={u.id} value={String(u.id)} className="focus:bg-cyan-500/20 focus:text-foreground cursor-pointer">{u.name} ({u.role})</SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
@@ -385,13 +385,13 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                         <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Initiation Date</Label>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all", !startDate && "text-white/20")}>
+                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-12 rounded-xl bg-foreground/5 border-foreground/10 text-foreground hover:bg-foreground/10 hover:border-foreground/20 transition-all", !startDate && "text-foreground/20")}>
                                     <CalendarIcon className="mr-2 h-4 w-4 text-cyan-400" />
                                     {startDate ? format(startDate, "PPP") : "Pick date"}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 glass-darker border-white/10 text-white backdrop-blur-3xl" align="start">
-                                <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus className="p-3 text-white" />
+                            <PopoverContent className="w-auto p-0 glass-darker border-foreground/10 text-foreground backdrop-blur-3xl" align="start">
+                                <Calendar mode="single" selected={startDate} onSelect={setStartDate} initialFocus className="p-3 text-foreground" />
                             </PopoverContent>
                         </Popover>
                     </div>
@@ -399,13 +399,13 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                         <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Target Horizon</Label>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all", !endDate && "text-white/20")}>
+                                <Button variant="outline" className={cn("w-full justify-start text-left font-normal h-12 rounded-xl bg-foreground/5 border-foreground/10 text-foreground hover:bg-foreground/10 hover:border-foreground/20 transition-all", !endDate && "text-foreground/20")}>
                                     <CalendarIcon className="mr-2 h-4 w-4 text-cyan-400" />
                                     {endDate ? format(endDate, "PPP") : "Pick date"}
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0 glass-darker border-white/10 text-white backdrop-blur-3xl" align="start">
-                                <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus className="p-3 text-white" />
+                            <PopoverContent className="w-auto p-0 glass-darker border-foreground/10 text-foreground backdrop-blur-3xl" align="start">
+                                <Calendar mode="single" selected={endDate} onSelect={setEndDate} initialFocus className="p-3 text-foreground" />
                             </PopoverContent>
                         </Popover>
                     </div>
@@ -416,7 +416,7 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                         placeholder="Enter mission parameters..." 
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                        className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
                     />
                 </div>
 
@@ -432,35 +432,35 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                             <div
                                 onClick={() => setHoshinDropdownOpen(!hoshinDropdownOpen)}
                                 className={cn(
-                                    "bg-white/5 border border-white/10 rounded-xl h-12 text-white flex items-center px-4 cursor-pointer hover:bg-white/10 transition-all",
+                                    "bg-foreground/5 border border-foreground/10 rounded-xl h-12 text-foreground flex items-center px-4 cursor-pointer hover:bg-foreground/10 transition-all",
                                     hoshinDropdownOpen && "border-cyan-500/50 ring-1 ring-cyan-500/20"
                                 )}
                             >
                                 {selectedHoshin ? (
                                     <div className="flex flex-col min-w-0">
                                         <span className="text-sm font-bold truncate">{selectedHoshin.cluster}</span>
-                                        <span className="text-[10px] text-white/40 truncate">{selectedHoshin.actionPlan}</span>
+                                        <span className="text-[10px] text-foreground/40 truncate">{selectedHoshin.actionPlan}</span>
                                     </div>
                                 ) : (
-                                    <span className="text-white/20">Select KPI alignment (optional)</span>
+                                    <span className="text-foreground/20">Select KPI alignment (optional)</span>
                                 )}
                             </div>
 
                             {hoshinDropdownOpen && (
-                                <div className="absolute z-50 mt-2 w-full glass-darker border border-white/10 rounded-xl overflow-hidden shadow-2xl">
-                                    <div className="p-2 border-b border-white/5">
+                                <div className="absolute z-50 mt-2 w-full glass-darker border border-foreground/10 rounded-xl overflow-hidden shadow-2xl">
+                                    <div className="p-2 border-b border-foreground/5">
                                         <Input
                                             value={hoshinSearch}
                                             onChange={(e) => setHoshinSearch(e.target.value)}
                                             placeholder="Search KPI..."
-                                            className="bg-white/5 border-white/10 rounded-lg h-9 text-white text-xs placeholder:text-white/20"
+                                            className="bg-foreground/5 border-foreground/10 rounded-lg h-9 text-foreground text-xs placeholder:text-foreground/20"
                                             autoFocus
                                         />
                                     </div>
                                     <div className="max-h-[200px] overflow-y-auto">
                                         <div
                                             onClick={() => { setSelectedHoshinId(""); setHoshinDropdownOpen(false); setHoshinSearch(""); }}
-                                            className="px-4 py-2.5 text-xs text-white/40 hover:bg-white/5 cursor-pointer transition-colors"
+                                            className="px-4 py-2.5 text-xs text-foreground/40 hover:bg-foreground/5 cursor-pointer transition-colors"
                                         >
                                             — None —
                                         </div>
@@ -475,10 +475,10 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                                             >
                                                 <div className="flex items-center justify-between">
                                                     <div className="min-w-0">
-                                                        <p className="text-sm font-bold text-white truncate">{k.cluster}</p>
-                                                        <p className="text-[10px] text-white/40 truncate mt-0.5">{k.actionPlan}</p>
+                                                        <p className="text-sm font-bold text-foreground truncate">{k.cluster}</p>
+                                                        <p className="text-[10px] text-foreground/40 truncate mt-0.5">{k.actionPlan}</p>
                                                     </div>
-                                                    <span className="text-[9px] font-mono text-white/20 shrink-0 ml-2">{k.code}</span>
+                                                    <span className="text-[9px] font-mono text-foreground/20 shrink-0 ml-2">{k.code}</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -489,13 +489,13 @@ function CreateProjectModal({ open, onOpenChange }: { open: boolean; onOpenChang
                     )}
                 </div>
                 <Button 
-                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-white/10 cyan-glow" 
+                    className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-foreground font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-foreground/10 cyan-glow" 
                     onClick={handleCreate}
                     disabled={createMutation.isPending}
                 >
                     {createMutation.isPending ? (
                         <div className="flex items-center gap-3">
-                            <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                            <span className="h-4 w-4 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" />
                             <span>Synthesizing...</span>
                         </div>
                     ) : "Initialize Project"}

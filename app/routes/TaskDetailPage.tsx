@@ -80,7 +80,7 @@ export default function TaskDetailPage() {
                 <Button 
                     variant="ghost" 
                     onClick={handleBack} 
-                    className="glass border-white/5 text-white/60 hover:text-white hover:bg-white/10 rounded-xl px-4"
+                    className="glass border-foreground/5 text-foreground/60 hover:text-foreground hover:bg-foreground/10 rounded-xl px-4"
                 >
                     <ArrowLeft className="h-4 w-4 mr-2" /> 
                     Back to Sector
@@ -103,34 +103,34 @@ export default function TaskDetailPage() {
                                 )}>
                                     {task.priority || "Standard"} Priority
                                 </span>
-                                <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                                <span className="px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold text-foreground/40 uppercase tracking-widest">
                                     OBJECTIVE-#{task.id.slice(-6).toUpperCase()}
                                 </span>
                             </div>
                             
-                            <h2 className="text-3xl md:text-4xl font-black text-white font-display tracking-tight text-glow uppercase leading-tight">
+                            <h2 className="text-3xl md:text-4xl font-black text-foreground font-display tracking-tight text-glow uppercase leading-tight">
                                 {task.name}
                             </h2>
 
                             <div className="flex flex-wrap items-center gap-6 pt-2">
                                 <div className="flex items-center gap-2 group">
-                                    <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/30 group-hover:text-cyan-400 transition-colors">
+                                    <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-foreground/10 flex items-center justify-center text-foreground/30 group-hover:text-cyan-400 transition-colors">
                                         <Clock className="h-4 w-4" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Deadline</span>
-                                        <span className="text-sm font-bold text-white/80">{formatDate(task.dueDate)}</span>
+                                        <span className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Deadline</span>
+                                        <span className="text-sm font-bold text-foreground/80">{formatDate(task.dueDate)}</span>
                                     </div>
                                 </div>
 
                                 {task.startTime && (
-                                    <div className="flex items-center gap-2 group border-l border-white/5 pl-6">
-                                        <div className="h-8 w-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white/30 group-hover:text-cyan-400 transition-colors">
+                                    <div className="flex items-center gap-2 group border-l border-foreground/5 pl-6">
+                                        <div className="h-8 w-8 rounded-lg bg-foreground/5 border border-foreground/10 flex items-center justify-center text-foreground/30 group-hover:text-cyan-400 transition-colors">
                                             <Zap className="h-4 w-4" />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Operational window</span>
-                                            <span className="text-sm font-bold text-white/80">{task.startTime} - {task.endTime}</span>
+                                            <span className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Operational window</span>
+                                            <span className="text-sm font-bold text-foreground/80">{task.startTime} - {task.endTime}</span>
                                         </div>
                                     </div>
                                 )}
@@ -140,28 +140,28 @@ export default function TaskDetailPage() {
                         <div className="flex flex-col items-end gap-6 text-right">
                             <StatusBadge status={task.status} className="scale-110 origin-right" />
                             {pic && (
-                                <div className="flex items-center gap-4 glass-darker px-5 py-3 rounded-2xl border-white/10">
+                                <div className="flex items-center gap-4 glass-darker px-5 py-3 rounded-2xl border-foreground/10">
                                     <div className="text-right">
-                                        <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Operator</p>
-                                        <p className="text-sm font-bold text-white">{pic.name}</p>
+                                        <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Operator</p>
+                                        <p className="text-sm font-bold text-foreground">{pic.name}</p>
                                     </div>
-                                    <AvatarBadge user={pic} size="md" className="ring-2 ring-white/10" />
+                                    <AvatarBadge user={pic} size="md" className="ring-2 ring-foreground/10" />
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <div className="pt-8 border-t border-white/5">
+                    <div className="pt-8 border-t border-foreground/5">
                         <div className="flex justify-between items-end mb-4">
                             <div className="space-y-1">
-                                <h4 className="text-[11px] font-black text-white/30 uppercase tracking-[0.3em]">Operational Integrity</h4>
+                                <h4 className="text-[11px] font-black text-foreground/30 uppercase tracking-[0.3em]">Operational Integrity</h4>
                                 <p className="text-xs font-bold text-cyan-400/60 uppercase">Protocol completion status</p>
                             </div>
                             <div className="text-right">
-                                <span className="text-3xl font-black text-white text-glow">{Math.round(progress)}%</span>
+                                <span className="text-3xl font-black text-foreground text-glow">{Math.round(progress)}%</span>
                             </div>
                         </div>
-                        <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
+                        <div className="h-3 w-full bg-foreground/5 rounded-full overflow-hidden border border-foreground/5 p-0.5">
                             <div 
                                 className="h-full bg-gradient-to-r from-blue-600 via-cyan-400 to-emerald-400 rounded-full transition-all duration-1000 shadow-[0_0_15px_rgba(6,182,212,0.4)]"
                                 style={{ width: `${progress}%` }}
@@ -174,29 +174,29 @@ export default function TaskDetailPage() {
             {/* Checklist Grid */}
             <div className="glass p-8 md:p-10 rounded-[2.5rem] border-none relative overflow-hidden">
                 <div className="absolute bottom-0 right-0 p-10 opacity-[0.03]">
-                    <Shield className="h-48 w-48 text-white" />
+                    <Shield className="h-48 w-48 text-foreground" />
                 </div>
                 
                 <div className="relative space-y-8">
-                    <div className="flex items-center justify-between border-b border-white/5 pb-6">
+                    <div className="flex items-center justify-between border-b border-foreground/5 pb-6">
                         <div className="space-y-1">
-                            <h3 className="text-xl font-bold text-white font-display tracking-tight uppercase flex items-center gap-3">
+                            <h3 className="text-xl font-bold text-foreground font-display tracking-tight uppercase flex items-center gap-3">
                                 <Target className="h-5 w-5 text-cyan-400" />
                                 Mission Checklist
                             </h3>
-                            <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Verification of sub-protocols</p>
+                            <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Verification of sub-protocols</p>
                         </div>
-                        <div className="glass-darker px-4 py-2 rounded-xl border-white/10">
-                            <span className="text-xs font-black text-white">
-                                {task.checklist.filter(c => c.completed).length} <span className="text-white/30">/</span> {task.checklist.length}
+                        <div className="glass-darker px-4 py-2 rounded-xl border-foreground/10">
+                            <span className="text-xs font-black text-foreground">
+                                {task.checklist.filter(c => c.completed).length} <span className="text-foreground/30">/</span> {task.checklist.length}
                             </span>
                         </div>
                     </div>
                     
                     {task.checklist.length === 0 ? (
-                        <div className="text-center py-16 bg-white/[0.02] rounded-[2rem] border border-dashed border-white/10">
-                            <Shield className="h-12 w-12 text-white/5 mx-auto mb-4" />
-                            <p className="text-white/20 font-bold uppercase tracking-widest">No sub-protocols defined</p>
+                        <div className="text-center py-16 bg-foreground/[0.02] rounded-[2rem] border border-dashed border-foreground/10">
+                            <Shield className="h-12 w-12 text-foreground/5 mx-auto mb-4" />
+                            <p className="text-foreground/20 font-bold uppercase tracking-widest">No sub-protocols defined</p>
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -208,21 +208,21 @@ export default function TaskDetailPage() {
                                         "flex items-center gap-4 p-5 rounded-3xl transition-all duration-300 border cursor-pointer group",
                                         item.completed 
                                             ? "bg-emerald-500/5 border-emerald-500/20 shadow-[inset_0_0_15px_rgba(16,185,129,0.05)]" 
-                                            : "bg-white/5 border-white/5 hover:border-cyan-500/30 hover:bg-white/[0.08]"
+                                            : "bg-foreground/5 border-foreground/5 hover:border-cyan-500/30 hover:bg-foreground/[0.08]"
                                     )}
                                 >
                                     <div className={cn(
                                         "h-7 w-7 rounded-lg border-2 flex items-center justify-center transition-all",
                                         item.completed 
                                             ? "bg-emerald-500 border-emerald-500 text-white shadow-[0_0_10px_rgba(16,185,129,0.5)]" 
-                                            : "bg-transparent border-white/10 group-hover:border-cyan-500/50"
+                                            : "bg-transparent border-foreground/10 group-hover:border-cyan-500/50"
                                     )}>
                                         {item.completed && <CheckCircle2 className="h-4 w-4" />}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className={cn(
                                             "text-sm font-bold tracking-tight transition-all",
-                                            item.completed ? "text-white/30 line-through" : "text-white/80 group-hover:text-white"
+                                            item.completed ? "text-foreground/30 line-through" : "text-foreground/80 group-hover:text-foreground"
                                         )}>
                                             {item.label}
                                         </p>

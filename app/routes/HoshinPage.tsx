@@ -139,8 +139,8 @@ export default function HoshinPage() {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="glass p-12 rounded-[2rem] text-center border-none">
-          <Target className="h-12 w-12 text-white/10 mx-auto mb-4" />
-          <p className="text-white/30 font-bold uppercase tracking-widest">
+          <Target className="h-12 w-12 text-foreground/10 mx-auto mb-4" />
+          <p className="text-foreground/30 font-bold uppercase tracking-widest">
             Access restricted to Super Admin
           </p>
         </div>
@@ -161,16 +161,16 @@ export default function HoshinPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-white font-display text-glow">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-display text-glow">
             KPI Hoshin
           </h1>
-          <p className="text-sm text-white/40 font-medium tracking-wide uppercase">
+          <p className="text-sm text-foreground/40 font-medium tracking-wide uppercase">
             Master data management for KPI alignment
           </p>
         </div>
         <Button
           onClick={openCreate}
-          className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-foreground font-bold rounded-2xl h-11 px-6 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="h-5 w-5 mr-2" />
           Add KPI
@@ -180,12 +180,12 @@ export default function HoshinPage() {
       {/* Search */}
       <div className="px-2">
         <div className="relative group max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 group-focus-within:text-cyan-400 transition-colors" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/30 group-focus-within:text-cyan-400 transition-colors" />
           <Input
             placeholder="Search KPI by cluster, code, or action plan..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-11 bg-white/5 border-white/10 rounded-2xl pl-10 text-white placeholder:text-white/20 focus-visible:ring-cyan-500/30"
+            className="h-11 bg-foreground/5 border-foreground/10 rounded-2xl pl-10 text-foreground placeholder:text-foreground/20 focus-visible:ring-cyan-500/30"
           />
         </div>
       </div>
@@ -193,7 +193,7 @@ export default function HoshinPage() {
       {/* Table */}
       <div className="space-y-4">
         {/* Header */}
-        <div className="hidden lg:grid grid-cols-[0.8fr_1.2fr_1fr_2fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+        <div className="hidden lg:grid grid-cols-[0.8fr_1.2fr_1fr_2fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/30">
           <div>Code</div>
           <div>Cluster</div>
           <div>Sub Cluster</div>
@@ -205,8 +205,8 @@ export default function HoshinPage() {
         <div className="space-y-3">
           {filtered.length === 0 ? (
             <div className="glass p-12 rounded-[2rem] text-center border-none">
-              <Target className="h-12 w-12 text-white/5 mx-auto mb-4" />
-              <p className="text-white/20 font-bold uppercase tracking-widest">
+              <Target className="h-12 w-12 text-foreground/5 mx-auto mb-4" />
+              <p className="text-foreground/20 font-bold uppercase tracking-widest">
                 No KPI Hoshin data found
               </p>
             </div>
@@ -214,7 +214,7 @@ export default function HoshinPage() {
             filtered.map((kpi) => (
               <div
                 key={kpi.id}
-                className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] group"
+                className="glass hover:bg-foreground/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] group"
               >
                 <div className="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr_1fr_2fr_1fr_auto] items-center gap-4 lg:gap-6">
                   {/* Code */}
@@ -227,28 +227,28 @@ export default function HoshinPage() {
                   {/* Cluster */}
                   <div className="flex items-center gap-2">
                     <Layers className="h-3 w-3 text-cyan-400/40" />
-                    <span className="text-sm font-bold text-white">
+                    <span className="text-sm font-bold text-foreground">
                       {kpi.cluster}
                     </span>
                   </div>
 
                   {/* Sub Cluster */}
                   <div>
-                    <span className="text-xs text-white/50">
+                    <span className="text-xs text-foreground/50">
                       {kpi.subCluster || "—"}
                     </span>
                   </div>
 
                   {/* Action Plan */}
                   <div>
-                    <p className="text-sm text-white/70 line-clamp-2">
+                    <p className="text-sm text-foreground/70 line-clamp-2">
                       {kpi.actionPlan}
                     </p>
                   </div>
 
                   {/* Target */}
                   <div>
-                    <span className="text-xs font-bold text-white/50">
+                    <span className="text-xs font-bold text-foreground/50">
                       {kpi.target || "—"}
                     </span>
                   </div>
@@ -294,7 +294,7 @@ export default function HoshinPage() {
                 value={formCode}
                 onChange={(e) => setFormCode(e.target.value)}
                 placeholder="e.g. KPI-S-001"
-                className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
               />
             </div>
             <div className="space-y-3">
@@ -305,7 +305,7 @@ export default function HoshinPage() {
                 value={formCluster}
                 onChange={(e) => setFormCluster(e.target.value)}
                 placeholder="e.g. Safety"
-                className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
               />
             </div>
           </div>
@@ -319,7 +319,7 @@ export default function HoshinPage() {
                 value={formSubCluster}
                 onChange={(e) => setFormSubCluster(e.target.value)}
                 placeholder="e.g. Fire Prevention"
-                className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
               />
             </div>
             <div className="space-y-3">
@@ -330,7 +330,7 @@ export default function HoshinPage() {
                 value={formTarget}
                 onChange={(e) => setFormTarget(e.target.value)}
                 placeholder="e.g. Zero Accident"
-                className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
               />
             </div>
           </div>
@@ -343,18 +343,18 @@ export default function HoshinPage() {
               value={formActionPlan}
               onChange={(e) => setFormActionPlan(e.target.value)}
               placeholder="Describe the action plan..."
-              className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+              className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
             />
           </div>
 
           <Button
             onClick={handleSubmit}
-            className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-white/10 cyan-glow"
+            className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-foreground font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-foreground/10 cyan-glow"
             disabled={createMutation.isPending || updateMutation.isPending}
           >
             {createMutation.isPending || updateMutation.isPending ? (
               <div className="flex items-center gap-3">
-                <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                <span className="h-4 w-4 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" />
                 <span>Processing...</span>
               </div>
             ) : editingKPI ? (

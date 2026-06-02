@@ -95,16 +95,16 @@ export default function UsersPage() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-white font-display text-glow">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-display text-glow">
             Command Center / Personnel
           </h1>
-          <p className="text-sm text-white/40 font-medium tracking-wide uppercase">
+          <p className="text-sm text-foreground/40 font-medium tracking-wide uppercase">
             System Operators and Access Control Grid
           </p>
         </div>
 
         {isTMMIN && (
-          <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95">
+          <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-foreground font-bold rounded-2xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95">
             <UserPlus className="h-5 w-5 mr-2" />
             Provision Operator
           </Button>
@@ -118,10 +118,10 @@ export default function UsersPage() {
             <Shield className="h-5 w-5" />
           </div>
           <div className="space-y-0.5">
-            <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">
+            <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">
               Active Core
             </p>
-            <p className="text-xl font-black text-white text-glow">
+            <p className="text-xl font-black text-foreground text-glow">
               {users.length} Units
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function UsersPage() {
       {/* User Card Table */}
       <div className="space-y-4">
         {/* Desktop Header */}
-        <div className="hidden lg:grid grid-cols-[2fr_1.5fr_1.5fr_1.5fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+        <div className="hidden lg:grid grid-cols-[2fr_1.5fr_1.5fr_1.5fr_1fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/30">
           <div>Personnel Identity</div>
           <div>Access Protocol (Role)</div>
           <div>Comms Interface (Email)</div>
@@ -144,7 +144,7 @@ export default function UsersPage() {
           {users.map((user) => (
             <div
               key={user.id}
-              className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:blue-glow group"
+              className="glass hover:bg-foreground/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:blue-glow group"
             >
               <div className="grid grid-cols-1 lg:grid-cols-[2fr_1.5fr_1.5fr_1.5fr_1fr_auto] items-center gap-4 lg:gap-6">
                 {/* Identity */}
@@ -153,7 +153,7 @@ export default function UsersPage() {
                     <AvatarBadge
                       user={user}
                       size="md"
-                      className="ring-2 ring-white/10 group-hover:ring-cyan-500/50 transition-all"
+                      className="ring-2 ring-foreground/10 group-hover:ring-cyan-500/50 transition-all"
                     />
                     <div
                       className={cn(
@@ -165,10 +165,10 @@ export default function UsersPage() {
                     />
                   </div>
                   <div className="space-y-0.5">
-                    <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors font-display tracking-tight leading-tight">
+                    <h4 className="font-bold text-foreground group-hover:text-cyan-400 transition-colors font-display tracking-tight leading-tight">
                       {user.name}
                     </h4>
-                    <p className="text-[10px] text-white/20 uppercase tracking-widest">
+                    <p className="text-[10px] text-foreground/20 uppercase tracking-widest">
                       UNIT-ID: {user.id.slice(-6).toUpperCase()}
                     </p>
                   </div>
@@ -183,10 +183,10 @@ export default function UsersPage() {
                         handleRoleChange(user.id, value as UserRole)
                       }
                     >
-                      <SelectTrigger className="h-9 w-full bg-white/5 border-white/10 rounded-xl text-white text-xs font-bold uppercase tracking-widest focus:ring-cyan-500/30">
+                      <SelectTrigger className="h-9 w-full bg-foreground/5 border-foreground/10 rounded-xl text-foreground text-xs font-bold uppercase tracking-widest focus:ring-cyan-500/30">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="glass-darker border-white/10 text-white">
+                      <SelectContent className="glass-darker border-foreground/10 text-foreground">
                         {ALL_ROLES.map((role) => (
                           <SelectItem key={role} value={role}>
                             {role}
@@ -195,14 +195,14 @@ export default function UsersPage() {
                       </SelectContent>
                     </Select>
                   ) : (
-                    <span className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-white/60 uppercase tracking-widest uppercase">
+                    <span className="px-3 py-1 rounded-full bg-foreground/5 border border-foreground/10 text-[10px] font-bold text-foreground/60 uppercase tracking-widest uppercase">
                       {user.role}
                     </span>
                   )}
                 </div>
 
                 {/* Email */}
-                <div className="flex items-center gap-2 text-white/50 group-hover:text-white/80 transition-colors">
+                <div className="flex items-center gap-2 text-foreground/50 group-hover:text-foreground/80 transition-colors">
                   <Mail className="h-3.5 w-3.5 opacity-40 shrink-0" />
                   <span className="text-sm font-medium truncate max-w-[180px]">
                     {user.email}
@@ -210,7 +210,7 @@ export default function UsersPage() {
                 </div>
 
                 {/* Phone */}
-                <div className="flex items-center gap-2 text-white/50">
+                <div className="flex items-center gap-2 text-foreground/50">
                   <Phone className="h-3.5 w-3.5 opacity-40 shrink-0" />
                   <span className="text-sm font-mono tracking-tighter">
                     {user.phone || "N/A"}
@@ -236,7 +236,7 @@ export default function UsersPage() {
                   ) : (
                     <div className="h-10 w-10" />
                   )}
-                  <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
+                  <button className="p-2.5 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
                     <ArrowRight className="h-5 w-5" />
                   </button>
                 </div>

@@ -113,10 +113,10 @@ export default function PersonalJobPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
                 <div className="space-y-1">
-                    <h1 className="text-3xl font-bold tracking-tight text-white font-display text-glow">
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground font-display text-glow">
                         My Missions
                     </h1>
-                    <p className="text-sm text-white/40 font-medium tracking-wide uppercase">
+                    <p className="text-sm text-foreground/40 font-medium tracking-wide uppercase">
                         Operator <span className="text-cyan-400">{currentUser?.name}</span> • Sector Performance Log
                     </p>
                 </div>
@@ -124,7 +124,7 @@ export default function PersonalJobPage() {
                 <div className="flex items-center gap-3">
                     <Button 
                         onClick={() => setCreateOpen(true)} 
-                        className="bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-500 hover:to-indigo-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                        className="bg-gradient-to-r from-blue-600 to-indigo-500 hover:from-blue-500 hover:to-indigo-400 text-foreground font-bold rounded-2xl h-11 px-6 shadow-lg shadow-blue-500/20 transition-all hover:scale-[1.02] active:scale-95"
                     >
                         <Plus className="h-5 w-5 mr-2" />
                         New Mission
@@ -132,7 +132,7 @@ export default function PersonalJobPage() {
                     <Button 
                         onClick={submitProgress} 
                         variant="outline" 
-                        className="glass border-white/10 hover:bg-white/10 text-white font-bold rounded-2xl h-11 px-6 transition-all"
+                        className="glass border-foreground/10 hover:bg-foreground/10 text-foreground font-bold rounded-2xl h-11 px-6 transition-all"
                     >
                         <Send className="h-4 w-4 mr-2" />
                         Push Sync
@@ -143,21 +143,21 @@ export default function PersonalJobPage() {
             {/* Filters Section */}
             <div className="flex flex-col md:flex-row gap-4 px-2">
                 <div className="relative flex-1 group">
-                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 group-focus-within:text-cyan-400 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/30 group-focus-within:text-cyan-400 transition-colors" />
                     <Input 
                         placeholder="Search assigned protocols..." 
                         value={search} 
                         onChange={(e) => setSearch(e.target.value)} 
-                        className="h-11 bg-white/5 border-white/10 rounded-2xl pl-10 text-white placeholder:text-white/20 focus-visible:ring-cyan-500/30"
+                        className="h-11 bg-foreground/5 border-foreground/10 rounded-2xl pl-10 text-foreground placeholder:text-foreground/20 focus-visible:ring-cyan-500/30"
                     />
                 </div>
                 
                 <div className="flex gap-3">
                     <Select value={sourceFilter} onValueChange={setSourceFilter}>
-                        <SelectTrigger className="w-[160px] h-11 bg-white/5 border-white/10 rounded-2xl text-white text-xs font-bold uppercase tracking-widest">
+                        <SelectTrigger className="w-[160px] h-11 bg-foreground/5 border-foreground/10 rounded-2xl text-foreground text-xs font-bold uppercase tracking-widest">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="glass-darker border-white/10 text-white">
+                        <SelectContent className="glass-darker border-foreground/10 text-foreground">
                             <SelectItem value="All">All Sources</SelectItem>
                             <SelectItem value="Assigned">Assigned</SelectItem>
                             <SelectItem value="Personal">Personal</SelectItem>
@@ -165,10 +165,10 @@ export default function PersonalJobPage() {
                     </Select>
 
                     <Select value={statusFilter} onValueChange={setStatusFilter}>
-                        <SelectTrigger className="w-[160px] h-11 bg-white/5 border-white/10 rounded-2xl text-white text-xs font-bold uppercase tracking-widest">
+                        <SelectTrigger className="w-[160px] h-11 bg-foreground/5 border-foreground/10 rounded-2xl text-foreground text-xs font-bold uppercase tracking-widest">
                             <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="glass-darker border-white/10 text-white">
+                        <SelectContent className="glass-darker border-foreground/10 text-foreground">
                             <SelectItem value="All">All Status</SelectItem>
                             <SelectItem value="Not Started">Standby</SelectItem>
                             <SelectItem value="In Progress">Active</SelectItem>
@@ -181,7 +181,7 @@ export default function PersonalJobPage() {
             {/* Mission Cards Grid */}
             <div className="space-y-4">
                 {/* Desktop Header */}
-                <div className="hidden lg:grid grid-cols-[2fr_1fr_1fr_1fr_2fr_1.2fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+                <div className="hidden lg:grid grid-cols-[2fr_1fr_1fr_1fr_2fr_1.2fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/30">
                     <div>Mission Descriptor</div>
                     <div>Origin</div>
                     <div>Target Date</div>
@@ -194,8 +194,8 @@ export default function PersonalJobPage() {
                 <div className="space-y-4">
                     {filteredJobs.length === 0 ? (
                         <div className="glass p-12 rounded-[2rem] text-center border-none">
-                            <Zap className="h-12 w-12 text-white/5 mx-auto mb-4" />
-                            <p className="text-white/20 font-bold uppercase tracking-widest">No active protocols identified</p>
+                            <Zap className="h-12 w-12 text-foreground/5 mx-auto mb-4" />
+                            <p className="text-foreground/20 font-bold uppercase tracking-widest">No active protocols identified</p>
                         </div>
                     ) : (
                         filteredJobs.map((job) => {
@@ -204,16 +204,16 @@ export default function PersonalJobPage() {
                                 <div 
                                     key={job.id}
                                     onClick={() => navigate(`/personal-job/${job.id}`)}
-                                    className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:blue-glow group cursor-pointer"
+                                    className="glass hover:bg-foreground/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:blue-glow group cursor-pointer"
                                 >
                                     <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr_1fr_2fr_1.2fr_auto] items-center gap-4 lg:gap-6">
                                         {/* Name */}
                                         <div className="space-y-1">
-                                            <h4 className="font-bold text-white group-hover:text-cyan-400 transition-colors font-display tracking-tight leading-tight">
+                                            <h4 className="font-bold text-foreground group-hover:text-cyan-400 transition-colors font-display tracking-tight leading-tight">
                                                 {job.name}
                                             </h4>
                                             <div className="flex items-center gap-2">
-                                                <p className="text-[10px] text-white/20 uppercase tracking-widest">TASK-#{job.id.toString().slice(-4)}</p>
+                                                <p className="text-[10px] text-foreground/20 uppercase tracking-widest">TASK-#{job.id.toString().slice(-4)}</p>
                                                 {job.sourceType === "REGULAR" && (
                                                     <span className="text-[8px] text-cyan-400/60 font-bold uppercase tracking-tighter flex items-center gap-1">
                                                         <Zap className="h-2 w-2" /> Protocol
@@ -225,8 +225,8 @@ export default function PersonalJobPage() {
                                         {/* Source */}
                                         <div>
                                             <span className={cn(
-                                                "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-white/5 shadow-inner",
-                                                job.source === "Assigned" ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/20" : "bg-white/5 text-white/40 border-white/5"
+                                                "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-foreground/5 shadow-inner",
+                                                job.source === "Assigned" ? "bg-indigo-500/20 text-indigo-400 border-indigo-500/20" : "bg-foreground/5 text-foreground/40 border-foreground/5"
                                             )}>
                                                 {job.source}
                                             </span>
@@ -234,14 +234,14 @@ export default function PersonalJobPage() {
 
                                         {/* Due Date */}
                                         <div className="space-y-1">
-                                            <p className="text-[10px] text-white/20 uppercase tracking-widest">Expiration</p>
-                                            <span className="text-xs font-bold text-white/70">{job.dueDate}</span>
+                                            <p className="text-[10px] text-foreground/20 uppercase tracking-widest">Expiration</p>
+                                            <span className="text-xs font-bold text-foreground/70">{job.dueDate}</span>
                                         </div>
 
                                         {/* Priority */}
                                         <div>
                                             <span className={cn(
-                                                "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-white/5 shadow-inner",
+                                                "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-foreground/5 shadow-inner",
                                                 job.priority === "High" ? "bg-rose-500/20 text-rose-400 border-rose-500/20" :
                                                 job.priority === "Medium" ? "bg-amber-500/20 text-amber-400 border-amber-500/20" :
                                                 "bg-cyan-500/20 text-cyan-400 border-cyan-500/20"
@@ -253,10 +253,10 @@ export default function PersonalJobPage() {
                                         {/* Progress */}
                                         <div className="space-y-3 pr-4">
                                             <div className="flex justify-between items-end">
-                                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Integrity</span>
-                                                <span className="text-xs font-black text-white text-glow">{progress}%</span>
+                                                <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">Integrity</span>
+                                                <span className="text-xs font-black text-foreground text-glow">{progress}%</span>
                                             </div>
-                                            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                            <div className="h-1.5 w-full bg-foreground/5 rounded-full overflow-hidden">
                                                 <div 
                                                     className="h-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000"
                                                     style={{ width: `${progress}%` }}
@@ -278,7 +278,7 @@ export default function PersonalJobPage() {
                                                     <CheckCircle className="h-5 w-5" />
                                                 </button>
                                             )}
-                                            <button className="p-2.5 rounded-xl bg-white/5 border border-white/10 text-white/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
+                                            <button className="p-2.5 rounded-xl bg-foreground/5 border border-foreground/10 text-foreground/40 group-hover:text-cyan-400 group-hover:bg-cyan-500/10 transition-all">
                                                 <ArrowRight className="h-5 w-5" />
                                             </button>
                                             {job.source === "Personal" && (

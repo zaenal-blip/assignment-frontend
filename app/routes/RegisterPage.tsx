@@ -13,7 +13,7 @@ import {
 import { Eye, EyeOff, UserPlus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { register } from "@/lib/api";
-import background from "../assets/bg.png";
+import background from "../assets/bg.webp";
 import { useUser } from "@/hooks/use-user";
 
 export default function Register() {
@@ -110,23 +110,23 @@ export default function Register() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-12 relative overflow-hidden"
-      //className="flex min-h-screen items-center justify-center lg:justify-end lg:pr-16 bg-cover bg-center bg-no-repeat px-4 py-12 relative overflow-hidden"
+      className="dark flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 py-12 relative overflow-hidden"
+      //className="dark flex min-h-screen items-center justify-center lg:justify-end lg:pr-16 bg-cover bg-center bg-no-repeat px-4 py-12 relative overflow-hidden"
       style={{ backgroundImage: `url(${background})` }}
     >
       <div className="absolute inset-0 bg-black/50" />
 
-      <Card className="w-full max-w-lg relative z-10 border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] text-white overflow-hidden animate-in fade-in zoom-in duration-500">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+      <Card className="w-full max-w-lg relative z-10 border-white/15 bg-black/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] text-foreground overflow-hidden animate-in fade-in zoom-in duration-500">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
         <CardHeader className="space-y-2 text-center pb-2">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 shadow-inner group transition-all duration-300 hover:scale-110">
-            <UserPlus className="h-8 w-8 text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/20 backdrop-blur-md border border-foreground/30 shadow-inner group transition-all duration-300 hover:scale-110">
+            <UserPlus className="h-8 w-8 text-foreground group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
           </div>
           <CardTitle className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">
             Daftar Akun
           </CardTitle>
-          <CardDescription className="text-white/70 font-medium">
+          <CardDescription className="text-foreground/70 font-medium">
             Bergabung dengan AURA
           </CardDescription>
         </CardHeader>
@@ -137,7 +137,7 @@ export default function Register() {
               <div className="space-y-1.5">
                 <Label
                   htmlFor="name"
-                  className="text-xs font-bold uppercase tracking-wider text-white/70 ml-1"
+                  className="text-xs font-bold uppercase tracking-wider text-foreground/70 ml-1"
                 >
                   Nama Lengkap
                 </Label>
@@ -147,7 +147,7 @@ export default function Register() {
                   value={name}
                   onChange={(e) => setName(e.target.value.toUpperCase())}
                   required
-                  className={`h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all rounded-xl ${errors.name ? "border-red-400" : ""}`}
+                  className={`h-11 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all rounded-xl ${errors.name ? "border-red-400" : ""}`}
                 />
                 {errors.name && (
                   <p className="text-[10px] font-bold text-red-400 px-1">
@@ -158,7 +158,7 @@ export default function Register() {
               <div className="space-y-1.5">
                 <Label
                   htmlFor="noReg"
-                  className="text-xs font-bold uppercase tracking-wider text-white/70 ml-1"
+                  className="text-xs font-bold uppercase tracking-wider text-foreground/70 ml-1"
                 >
                   Nomor Registrasi (7 Angka)
                 </Label>
@@ -171,7 +171,7 @@ export default function Register() {
                   value={noReg}
                   onChange={handleNoRegChange}
                   required
-                  className={`h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all rounded-xl ${errors.noReg ? "border-red-400" : ""}`}
+                  className={`h-11 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all rounded-xl ${errors.noReg ? "border-red-400" : ""}`}
                 />
                 {errors.noReg && (
                   <p className="text-[10px] font-bold text-red-400 px-1">
@@ -184,7 +184,7 @@ export default function Register() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="reg-email"
-                className="text-xs font-bold uppercase tracking-wider text-white/70 ml-1"
+                className="text-xs font-bold uppercase tracking-wider text-foreground/70 ml-1"
               >
                 Email
               </Label>
@@ -195,7 +195,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className={`h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all rounded-xl ${errors.email ? "border-red-400" : ""}`}
+                className={`h-11 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all rounded-xl ${errors.email ? "border-red-400" : ""}`}
               />
               {errors.email && (
                 <p className="text-[10px] font-bold text-red-400 px-1">
@@ -207,12 +207,12 @@ export default function Register() {
             <div className="space-y-1.5">
               <Label
                 htmlFor="phone"
-                className="text-xs font-bold uppercase tracking-wider text-white/70 ml-1"
+                className="text-xs font-bold uppercase tracking-wider text-foreground/70 ml-1"
               >
                 Nomor Telepon
               </Label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm font-medium">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/40 text-sm font-medium">
                   +62
                 </span>
                 <Input
@@ -224,7 +224,7 @@ export default function Register() {
                   value={phone}
                   onChange={handlePhoneChange}
                   required
-                  className={`h-11 pl-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all rounded-xl ${errors.phone ? "border-red-400" : ""}`}
+                  className={`h-11 pl-12 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all rounded-xl ${errors.phone ? "border-red-400" : ""}`}
                 />
               </div>
               {errors.phone && (
@@ -238,7 +238,7 @@ export default function Register() {
               <div className="space-y-1.5">
                 <Label
                   htmlFor="reg-password"
-                  className="text-xs font-bold uppercase tracking-wider text-white/70 ml-1"
+                  className="text-xs font-bold uppercase tracking-wider text-foreground/70 ml-1"
                 >
                   Password
                 </Label>
@@ -250,12 +250,12 @@ export default function Register() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className={`h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all rounded-xl ${errors.password ? "border-red-400" : ""}`}
+                    className={`h-11 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all rounded-xl ${errors.password ? "border-red-400" : ""}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white p-1"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground p-1"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -273,7 +273,7 @@ export default function Register() {
               <div className="space-y-1.5">
                 <Label
                   htmlFor="confirm-password"
-                  className="text-xs font-bold uppercase tracking-wider text-white/70 ml-1"
+                  className="text-xs font-bold uppercase tracking-wider text-foreground/70 ml-1"
                 >
                   Konfirmasi
                 </Label>
@@ -284,7 +284,7 @@ export default function Register() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   required
-                  className={`h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all rounded-xl ${errors.confirmPassword ? "border-red-400" : ""}`}
+                  className={`h-11 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all rounded-xl ${errors.confirmPassword ? "border-red-400" : ""}`}
                 />
                 {errors.confirmPassword && (
                   <p className="text-[10px] font-bold text-red-400 px-1">
@@ -297,7 +297,7 @@ export default function Register() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-white/90 hover:scale-[1.01] active:scale-[0.99] transition-all rounded-xl shadow-lg mt-4 flex items-center justify-center gap-2"
+              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-foreground/90 hover:scale-[1.01] active:scale-[0.99] transition-all rounded-xl shadow-lg mt-4 flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -310,12 +310,12 @@ export default function Register() {
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/10 text-center">
-            <p className="text-sm text-white/60">
+          <div className="mt-8 pt-6 border-t border-foreground/10 text-center">
+            <p className="text-sm text-foreground/60">
               Sudah punya akun?{" "}
               <Link
                 to="/login"
-                className="font-bold text-white hover:underline decoration-white/30 underline-offset-4 transition-all"
+                className="font-bold text-foreground hover:underline decoration-foreground/30 underline-offset-4 transition-all"
               >
                 Masuk di sini
               </Link>

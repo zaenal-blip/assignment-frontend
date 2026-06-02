@@ -42,7 +42,7 @@ export function EventCard({ event, progress = 0, taskCount = 0, compact }: Event
             <button
                 onClick={handleClick}
                 className={cn(
-                    "w-full group/card relative overflow-hidden rounded-xl bg-white/[0.03] border border-white/5 transition-all duration-300 hover:scale-[1.03] hover:shadow-lg text-left",
+                    "w-full group/card relative overflow-hidden rounded-xl bg-foreground/[0.03] border border-foreground/5 transition-all duration-300 hover:scale-[1.03] hover:shadow-lg text-left",
                     isProject ? "hover:emerald-glow hover:bg-emerald-500/[0.05]" : "hover:blue-glow hover:bg-blue-500/[0.05]"
                 )}
             >
@@ -53,12 +53,12 @@ export function EventCard({ event, progress = 0, taskCount = 0, compact }: Event
                 )} />
 
                 <div className="p-2 pl-3 flex items-center gap-2.5">
-                    <AvatarBadge user={pic} size="sm" className="ring-1 ring-white/10 shrink-0" />
+                    <AvatarBadge user={pic} size="sm" className="ring-1 ring-foreground/10 shrink-0" />
                     <div className="min-w-0 flex-1">
-                        <h4 className="text-[11px] font-black text-white truncate leading-tight group-hover/card:text-glow">
+                        <h4 className="text-[11px] font-black text-foreground truncate leading-tight group-hover/card:text-glow">
                             {event.name}
                         </h4>
-                        <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest truncate">
+                        <p className="text-[9px] font-bold text-foreground/30 uppercase tracking-widest truncate">
                             {isProject ? "Phase Alpha" : "Event Node"}
                         </p>
                     </div>
@@ -84,7 +84,7 @@ export function EventCard({ event, progress = 0, taskCount = 0, compact }: Event
 
                 <div className="flex items-start justify-between gap-3 relative z-10">
                     <div className="min-w-0 flex-1">
-                        <h3 className="font-black text-white truncate tv:text-tv-base group-hover:text-glow transition-all">
+                        <h3 className="font-black text-foreground truncate tv:text-tv-base group-hover:text-glow transition-all">
                             {event.name}
                         </h3>
                         <div className="flex items-center gap-2 mt-1">
@@ -94,12 +94,12 @@ export function EventCard({ event, progress = 0, taskCount = 0, compact }: Event
                             )}>
                                 {isProject ? "Project" : "Event"}
                             </span>
-                            <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">
+                            <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">
                                 {isProject ? "Protocol Status: ACTIVE" : `${taskCount} Active Tasks`}
                             </p>
                         </div>
                     </div>
-                    <AvatarBadge user={pic} size="sm" className="ring-2 ring-white/10 group-hover:ring-white/30 transition-all" />
+                    <AvatarBadge user={pic} size="sm" className="ring-2 ring-foreground/10 group-hover:ring-foreground/30 transition-all" />
                 </div>
                 {!isProject && <ProgressBar value={progress} size="sm" className="mt-4 opacity-80 group-hover:opacity-100" />}
             </CardContent>

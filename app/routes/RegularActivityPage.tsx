@@ -200,17 +200,17 @@ export default function RegularActivityPage() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 px-2">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold tracking-tight text-white font-display text-glow">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-display text-glow">
             Regular Protocols
           </h1>
-          <p className="text-sm text-white/40 font-medium tracking-wide uppercase">
+          <p className="text-sm text-foreground/40 font-medium tracking-wide uppercase">
             Sustained operations and daily synthesis
           </p>
         </div>
 
         <Button 
           onClick={() => setCreateOpen(true)} 
-          className="bg-gradient-to-r from-emerald-600 to-cyan-500 hover:from-emerald-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-11 px-6 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="bg-gradient-to-r from-emerald-600 to-cyan-500 hover:from-emerald-500 hover:to-cyan-400 text-foreground font-bold rounded-2xl h-11 px-6 shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="h-5 w-5 mr-2" />
           Initialize Protocol
@@ -227,7 +227,7 @@ export default function RegularActivityPage() {
               <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 shadow-inner">
                 <Clock className="h-5 w-5" />
               </div>
-              <h3 className="text-lg font-bold text-white font-display tracking-tight uppercase tracking-[0.1em]">
+              <h3 className="text-lg font-bold text-foreground font-display tracking-tight uppercase tracking-[0.1em]">
                 Live Mission Timeline
               </h3>
             </div>
@@ -242,7 +242,7 @@ export default function RegularActivityPage() {
                     {i < todayActivities.length - 1 && (
                       <div className={cn(
                         "absolute top-[22px] left-[44px] w-[calc(100%+1.5rem)] h-[2px] z-0",
-                        isDone ? "bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-white/10" : "bg-white/10"
+                        isDone ? "bg-gradient-to-r from-emerald-500 via-emerald-500/50 to-white/10" : "bg-foreground/10"
                       )} />
                     )}
 
@@ -252,12 +252,12 @@ export default function RegularActivityPage() {
                         "w-11 h-11 rounded-2xl flex items-center justify-center border-2 transition-all duration-500",
                         isDone 
                           ? "bg-emerald-500/20 border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.3)] scale-110" 
-                          : "bg-white/5 border-white/10"
+                          : "bg-foreground/5 border-foreground/10"
                       )}>
                         {isDone ? (
                           <CheckCircle className="h-5 w-5 text-emerald-400" />
                         ) : (
-                          <div className="h-2 w-2 rounded-full bg-white/20 animate-pulse" />
+                          <div className="h-2 w-2 rounded-full bg-foreground/20 animate-pulse" />
                         )}
                       </div>
                       <div className="flex flex-col">
@@ -273,7 +273,7 @@ export default function RegularActivityPage() {
                         "relative p-5 rounded-[2rem] border transition-all duration-500 group-hover:scale-[1.02]",
                         isDone 
                           ? "bg-emerald-500/5 border-emerald-500/20" 
-                          : "bg-white/5 border-white/10"
+                          : "bg-foreground/5 border-foreground/10"
                       )}
                     >
                       <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-20 transition-opacity">
@@ -284,26 +284,26 @@ export default function RegularActivityPage() {
                         <div className="flex justify-between items-start">
                           <h4 className={cn(
                             "font-bold text-lg font-display tracking-tight transition-colors",
-                            isDone ? "text-emerald-400" : "text-white"
+                            isDone ? "text-emerald-400" : "text-foreground"
                           )}>
                             {a.name}
                           </h4>
                           <StatusBadge status={a.status} className="scale-75 origin-right" />
                         </div>
 
-                        <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                        <div className="flex items-center justify-between pt-2 border-t border-foreground/5">
                           <div className="flex items-center gap-2">
-                            {pic && <AvatarBadge user={pic} size="sm" className="ring-1 ring-white/10" />}
+                            {pic && <AvatarBadge user={pic} size="sm" className="ring-1 ring-foreground/10" />}
                             <div className="flex flex-col">
-                              <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">PIC</span>
-                              <span className="text-[10px] font-bold text-white/60 truncate max-w-[100px]">
+                              <span className="text-[9px] font-bold text-foreground/30 uppercase tracking-widest">PIC</span>
+                              <span className="text-[10px] font-bold text-foreground/60 truncate max-w-[100px]">
                                 {pic?.name}
                               </span>
                             </div>
                           </div>
                           
                           <div className="flex flex-col items-end">
-                            <span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Priority</span>
+                            <span className="text-[9px] font-bold text-foreground/30 uppercase tracking-widest">Priority</span>
                             <span className={cn(
                               "text-[10px] font-bold uppercase",
                               a.priority === "High" ? "text-rose-400" :
@@ -328,31 +328,31 @@ export default function RegularActivityPage() {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row gap-4 px-2">
           <div className="relative flex-1 group">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/30 group-focus-within:text-emerald-400 transition-colors" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/30 group-focus-within:text-emerald-400 transition-colors" />
             <Input
               placeholder="Search active protocols..."
               value={search}
               onChange={(e) => {setSearch(e.target.value); setPage(1);}}
-              className="h-11 bg-white/5 border-white/10 rounded-2xl pl-10 text-white placeholder:text-white/20 focus-visible:ring-emerald-500/30"
+              className="h-11 bg-foreground/5 border-foreground/10 rounded-2xl pl-10 text-foreground placeholder:text-foreground/20 focus-visible:ring-emerald-500/30"
             />
           </div>
           
           <div className="flex gap-3">
             <Select value={categoryFilter} onValueChange={(v) => {setCategoryFilter(v); setPage(1);}}>
-              <SelectTrigger className="w-[160px] h-11 bg-white/5 border-white/10 rounded-2xl text-white text-xs font-bold uppercase tracking-widest">
+              <SelectTrigger className="w-[160px] h-11 bg-foreground/5 border-foreground/10 rounded-2xl text-foreground text-xs font-bold uppercase tracking-widest">
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
-              <SelectContent className="glass-darker border-white/10 text-white">
+              <SelectContent className="glass-darker border-foreground/10 text-foreground">
                 <SelectItem value="all">All Sectors</SelectItem>
                 {categories.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
               </SelectContent>
             </Select>
 
             <Select value={statusFilter} onValueChange={(v) => {setStatusFilter(v); setPage(1);}}>
-              <SelectTrigger className="w-[160px] h-11 bg-white/5 border-white/10 rounded-2xl text-white text-xs font-bold uppercase tracking-widest">
+              <SelectTrigger className="w-[160px] h-11 bg-foreground/5 border-foreground/10 rounded-2xl text-foreground text-xs font-bold uppercase tracking-widest">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent className="glass-darker border-white/10 text-white">
+              <SelectContent className="glass-darker border-foreground/10 text-foreground">
                 <SelectItem value="all">All States</SelectItem>
                 <SelectItem value="Completed">Completed</SelectItem>
                 <SelectItem value="Pending">Pending</SelectItem>
@@ -363,7 +363,7 @@ export default function RegularActivityPage() {
 
         {/* Global Protocol List */}
         <div className="space-y-4">
-          <div className="hidden lg:grid grid-cols-[1.5fr_1fr_0.8fr_1fr_1.2fr_0.8fr_0.8fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+          <div className="hidden lg:grid grid-cols-[1.5fr_1fr_0.8fr_1fr_1.2fr_0.8fr_0.8fr_auto] gap-4 px-8 py-2 text-[10px] font-bold uppercase tracking-[0.3em] text-foreground/30">
             <div>Protocol Name</div>
             <div>Sector</div>
             <div>Frequency</div>
@@ -377,8 +377,8 @@ export default function RegularActivityPage() {
           <div className="space-y-4">
             {paginated.length === 0 ? (
               <div className="glass p-12 rounded-[2rem] text-center border-none">
-                <Hexagon className="h-12 w-12 text-white/5 mx-auto mb-4" />
-                <p className="text-white/20 font-bold uppercase tracking-widest">No matching protocols identified</p>
+                <Hexagon className="h-12 w-12 text-foreground/5 mx-auto mb-4" />
+                <p className="text-foreground/20 font-bold uppercase tracking-widest">No matching protocols identified</p>
               </div>
             ) : (
               paginated.map((a) => {
@@ -387,46 +387,46 @@ export default function RegularActivityPage() {
                 return (
                   <div 
                     key={a.id}
-                    className="glass hover:bg-white/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:emerald-glow group"
+                    className="glass hover:bg-foreground/[0.08] p-4 lg:px-8 lg:py-5 rounded-[2rem] border-none transition-all duration-300 hover:scale-[1.01] hover:emerald-glow group"
                   >
                     <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr_0.8fr_1fr_1.2fr_0.8fr_0.8fr_auto] items-center gap-4 lg:gap-6">
                       <div className="space-y-1">
-                        <h4 className="font-bold text-white group-hover:text-emerald-400 transition-colors font-display tracking-tight leading-tight">
+                        <h4 className="font-bold text-foreground group-hover:text-emerald-400 transition-colors font-display tracking-tight leading-tight">
                           {a.name}
                         </h4>
-                        <p className="text-[10px] text-white/20 uppercase tracking-widest">PROP-#{a.id.toString().padStart(4, '0')}</p>
+                        <p className="text-[10px] text-foreground/20 uppercase tracking-widest">PROP-#{a.id.toString().padStart(4, '0')}</p>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Layers className="h-3 w-3 text-emerald-400/40" />
-                        <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">{a.category}</span>
+                        <span className="text-[10px] font-bold text-foreground/60 uppercase tracking-widest">{a.category}</span>
                       </div>
 
                       <div className="space-y-1">
-                        <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest bg-white/5 px-2 py-0.5 rounded-lg w-fit flex items-center gap-1.5">
+                        <div className="text-[10px] font-bold text-foreground/40 uppercase tracking-widest bg-foreground/5 px-2 py-0.5 rounded-lg w-fit flex items-center gap-1.5">
                           {a.frequency}
                           <Zap className="h-2.5 w-2.5 text-emerald-400/60 animate-pulse" />
                         </div>
-                        <p className="text-[8px] text-white/20 font-bold uppercase tracking-tighter pl-1">
+                        <p className="text-[8px] text-foreground/20 font-bold uppercase tracking-tighter pl-1">
                           Auto-reset {a.frequency.toLowerCase()}
                         </p>
                       </div>
 
                       <div className="flex items-center gap-3">
-                        {pic && <AvatarBadge user={pic} size="sm" className="ring-2 ring-white/5" />}
-                        <span className="text-sm font-semibold text-white/70">{pic?.name || "Unknown"}</span>
+                        {pic && <AvatarBadge user={pic} size="sm" className="ring-2 ring-foreground/5" />}
+                        <span className="text-sm font-semibold text-foreground/70">{pic?.name || "Unknown"}</span>
                       </div>
 
                       <div className="space-y-1">
-                        <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Active Hours</p>
-                        <span className="text-xs font-bold text-white/80 font-mono tracking-tighter">
+                        <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Active Hours</p>
+                        <span className="text-xs font-bold text-foreground/80 font-mono tracking-tighter">
                           {a.startTime} – {a.endTime}
                         </span>
                       </div>
 
                       <div>
                         <span className={cn(
-                          "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-white/5 shadow-inner",
+                          "px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest border border-foreground/5 shadow-inner",
                           a.priority === "High" ? "bg-rose-500/20 text-rose-400 border-rose-500/20" :
                           a.priority === "Medium" ? "bg-amber-500/20 text-amber-400 border-amber-500/20" :
                           "bg-cyan-500/20 text-cyan-400 border-cyan-500/20"
@@ -475,7 +475,7 @@ export default function RegularActivityPage() {
             <button
               disabled={page <= 1}
               onClick={() => setPage(page - 1)}
-              className="p-2.5 rounded-xl glass hover:bg-white/[0.08] disabled:opacity-20 text-white/50 transition-all"
+              className="p-2.5 rounded-xl glass hover:bg-foreground/[0.08] disabled:opacity-20 text-foreground/50 transition-all"
             >
               Previous Sector
             </button>
@@ -485,7 +485,7 @@ export default function RegularActivityPage() {
             <button
               disabled={page >= totalPages}
               onClick={() => setPage(page + 1)}
-              className="p-2.5 rounded-xl glass hover:bg-white/[0.08] disabled:opacity-20 text-white/50 transition-all"
+              className="p-2.5 rounded-xl glass hover:bg-foreground/[0.08] disabled:opacity-20 text-foreground/50 transition-all"
             >
               Next Sector
             </button>
@@ -502,7 +502,7 @@ export default function RegularActivityPage() {
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
               placeholder="e.g. Daily Synthesis Operation"
-              className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all px-4"
+              className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all px-4"
             />
           </div>
           
@@ -510,18 +510,18 @@ export default function RegularActivityPage() {
             <div className="space-y-3">
               <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-400 opacity-80 ml-1">Assigned Sector</Label>
               <Select value={formCategory} onValueChange={setFormCategory}>
-                <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors"><SelectValue /></SelectTrigger>
-                <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
-                  {categories.map((c) => <SelectItem key={c} value={c} className="focus:bg-emerald-500/20 focus:text-white cursor-pointer">{c}</SelectItem>)}
+                <SelectTrigger className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground hover:bg-foreground/10 transition-colors"><SelectValue /></SelectTrigger>
+                <SelectContent className="glass-darker border-foreground/10 text-foreground backdrop-blur-3xl">
+                  {categories.map((c) => <SelectItem key={c} value={c} className="focus:bg-emerald-500/20 focus:text-foreground cursor-pointer">{c}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-3">
               <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-400 opacity-80 ml-1">Cycle Frequency</Label>
               <Select value={formFrequency} onValueChange={setFormFrequency}>
-                <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors"><SelectValue /></SelectTrigger>
-                <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
-                  {frequencies.map((f) => <SelectItem key={f} value={f} className="focus:bg-emerald-500/20 focus:text-white cursor-pointer">{f}</SelectItem>)}
+                <SelectTrigger className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground hover:bg-foreground/10 transition-colors"><SelectValue /></SelectTrigger>
+                <SelectContent className="glass-darker border-foreground/10 text-foreground backdrop-blur-3xl">
+                  {frequencies.map((f) => <SelectItem key={f} value={f} className="focus:bg-emerald-500/20 focus:text-foreground cursor-pointer">{f}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
@@ -534,7 +534,7 @@ export default function RegularActivityPage() {
                 type="time"
                 value={formStartTime}
                 onChange={(e) => setFormStartTime(e.target.value)}
-                className="bg-white/5 border-white/10 rounded-xl h-12 text-white [color-scheme:dark] focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all font-mono"
+                className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground [color-scheme:dark] focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all font-mono"
               />
             </div>
             <div className="space-y-3">
@@ -543,7 +543,7 @@ export default function RegularActivityPage() {
                 type="time"
                 value={formEndTime}
                 onChange={(e) => setFormEndTime(e.target.value)}
-                className="bg-white/5 border-white/10 rounded-xl h-12 text-white [color-scheme:dark] focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all font-mono"
+                className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground [color-scheme:dark] focus:border-emerald-500/50 focus:ring-emerald-500/20 transition-all font-mono"
               />
             </div>
           </div>
@@ -552,19 +552,19 @@ export default function RegularActivityPage() {
             <div className="space-y-3">
               <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-400 opacity-80 ml-1">Operational Priority</Label>
               <Select value={formPriority} onValueChange={setFormPriority}>
-                <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors"><SelectValue /></SelectTrigger>
-                <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
-                  {["Low", "Medium", "High"].map((p) => <SelectItem key={p} value={p} className="focus:bg-emerald-500/20 focus:text-white cursor-pointer">{p}</SelectItem>)}
+                <SelectTrigger className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground hover:bg-foreground/10 transition-colors"><SelectValue /></SelectTrigger>
+                <SelectContent className="glass-darker border-foreground/10 text-foreground backdrop-blur-3xl">
+                  {["Low", "Medium", "High"].map((p) => <SelectItem key={p} value={p} className="focus:bg-emerald-500/20 focus:text-foreground cursor-pointer">{p}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-3">
               <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-emerald-400 opacity-80 ml-1">Lead Operator (PIC)</Label>
               <Select value={formPic} onValueChange={setFormPic} disabled={!isLeaderOrUp}>
-                <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors"><SelectValue /></SelectTrigger>
-                <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
+                <SelectTrigger className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground hover:bg-foreground/10 transition-colors"><SelectValue /></SelectTrigger>
+                <SelectContent className="glass-darker border-foreground/10 text-foreground backdrop-blur-3xl">
                   {usersList.filter((u) => u.role !== "Yang punya TMMIN").map((u) => (
-                    <SelectItem key={u.id} value={String(u.id)} className="focus:bg-emerald-500/20 focus:text-white cursor-pointer">{u.name} ({u.role})</SelectItem>
+                    <SelectItem key={u.id} value={String(u.id)} className="focus:bg-emerald-500/20 focus:text-foreground cursor-pointer">{u.name} ({u.role})</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -573,12 +573,12 @@ export default function RegularActivityPage() {
 
           <Button
             onClick={handleCreate}
-            className="w-full h-14 rounded-2xl bg-gradient-to-r from-emerald-600 via-cyan-500 to-emerald-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-white/10 emerald-glow"
+            className="w-full h-14 rounded-2xl bg-gradient-to-r from-emerald-600 via-cyan-500 to-emerald-600 bg-[length:200%_auto] hover:bg-right text-foreground font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-emerald-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-foreground/10 emerald-glow"
             disabled={createJobMutation.isPending}
           >
             {createJobMutation.isPending ? (
               <div className="flex items-center gap-3">
-                <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                <span className="h-4 w-4 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" />
                 <span>Constructing...</span>
               </div>
             ) : "Finalize Protocol Initialization"}
