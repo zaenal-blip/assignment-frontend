@@ -1,12 +1,7 @@
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { AvatarBadge } from "@/components/AvatarBadge";
+import { ConfirmModal } from "@/components/ConfirmModal";
+import { StatusBadge } from "@/components/StatusBadge";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -14,24 +9,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { StatusBadge } from "@/components/StatusBadge";
-import { AvatarBadge } from "@/components/AvatarBadge";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { deleteUser, getStoredUser, getUsers, updateUser } from "@/lib/api";
+import { cn } from "@/lib/utils";
+import type { User, UserRole } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Trash2,
-  Shield,
+  ArrowRight,
   Mail,
   Phone,
-  ArrowRight,
+  Shield,
+  Trash2,
   UserPlus,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { getUsers, getStoredUser, updateUser, deleteUser } from "@/lib/api";
-import type { User, UserRole } from "@/types";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useState } from "react";
 import { Navigate } from "react-router";
-import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const ALL_ROLES: UserRole[] = [
   "Member",
@@ -44,6 +37,10 @@ export default function UsersPage() {
   const isMobile = useIsMobile();
   const currentUser = getStoredUser();
   const queryClient = useQueryClient();
+
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleteUserId, setDeleteUserId] = useState<string | null>(null);
+  const [deleteUserName, setDeleteUserName] = useState<string>("");
 
   const isTMMIN = currentUser?.role === "Yang punya TMMIN";
 
@@ -85,8 +82,16 @@ export default function UsersPage() {
   });
 
   const handleDeleteUser = (userId: string, userName: string) => {
-    if (confirm(`Apakah Anda yakin ingin menghapus user ${userName}?`)) {
-      deleteMutation.mutate(userId);
+    setDeleteUserId(userId);
+    setDeleteUserName(userName);
+    setDeleteOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteUserId) {
+      deleteMutation.mutate(deleteUserId);
+      setDeleteOpen(false);
+      setDeleteUserId(null);
     }
   };
 
@@ -245,6 +250,16 @@ export default function UsersPage() {
           ))}
         </div>
       </div>
+
+      <ConfirmModal
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onConfirm={confirmDelete}
+        title="Hapus Core Operator"
+        description={`Apakah Anda yakin ingin menghapus user ${deleteUserName}? Tindakan ini tidak dapat dibatalkan.`}
+        confirmText="Hapus User"
+        variant="destructive"
+      />
     </div>
   );
 }
