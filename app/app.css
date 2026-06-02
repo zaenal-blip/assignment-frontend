@@ -5,9 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --font-sans: "Inter", "Poppins", ui-sans-serif, system-ui, sans-serif,
+  --font-sans: "Inter Variable", "Inter", "Poppins", ui-sans-serif, system-ui, sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-display: "Poppins", "Inter", sans-serif;
+  --font-display: "Poppins", "Inter Variable", "Inter", sans-serif;
 }
 
 @layer base {
