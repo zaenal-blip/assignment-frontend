@@ -133,7 +133,7 @@ import { useLocation, useNavigate } from "react-router";
 import { getStoredUser, clearStoredUser, type AppUser } from "@/lib/api";
 import { useUser } from "@/hooks/use-user";
 import { AvatarBadge } from "@/components/AvatarBadge";
-import tpsLogo from "@/assets/tps3.png";
+import tpsLogo from "@/assets/tps3.webp";
 import { useState, useEffect } from "react";
 import {
   Sidebar,
@@ -181,22 +181,19 @@ export function AppSidebar() {
   return (
     <Sidebar
       collapsible="icon"
-      className="bg-gradient-to-b from-[#0b1220] via-[#0a1120] to-[#020617]
-backdrop-blur-3xl
-border-r border-cyan-500/10
-shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration-500 ease-in-out"
+      className="bg-sidebar backdrop-blur-3xl border-r border-sidebar-border/50 text-sidebar-foreground transition-all duration-500 ease-in-out"
       onMouseEnter={() => !isPinned && setOpen(true)}
       onMouseLeave={() => !isPinned && setOpen(false)}
     >
       {/* Brand Header */}
-      <SidebarHeader className="border-b border-white/5 px-4 py-8 bg-transparent relative group">
+      <SidebarHeader className="border-b border-sidebar-border/50 px-4 py-8 bg-transparent relative group">
         <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity hidden lg:block z-50">
           <button
             onClick={() => setIsPinned(!isPinned)}
             className={`p-1.5 rounded-xl transition-all duration-300 ${
               isPinned
-                ? "bg-cyan-500/20 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.3)] ring-1 ring-cyan-500/30"
-                : "text-white/20 hover:bg-white/10 hover:text-white"
+                ? "bg-primary/20 text-primary shadow-[0_0_15px_rgba(var(--primary),0.3)] ring-1 ring-primary/30"
+                : "text-sidebar-foreground/20 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             }`}
             title={isPinned ? "Unpin Sidebar" : "Pin Sidebar"}
           >
@@ -209,7 +206,7 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
         </div>
         {!collapsed ? (
           <div className="flex items-center gap-4 px-2 transition-all duration-300">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 via-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/30 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-500">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 via-cyan-400 to-blue-600 shadow-lg shadow-cyan-500/30 ring-1 ring-foreground/20 group-hover:scale-105 transition-transform duration-500">
               <img
                 src={tpsLogo}
                 alt="TPS logo"
@@ -217,17 +214,17 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <h1 className="text-lg font-extrabold tracking-tight text-white uppercase truncate font-display bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
+              <h1 className="text-lg font-extrabold tracking-tight text-sidebar-foreground uppercase truncate font-display">
                 AURA
               </h1>
-              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-cyan-400/80">
+              <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-primary/80">
                 Management System
               </p>
             </div>
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 ring-1 ring-white/20 transition-all duration-500 hover:scale-110 shadow-lg shadow-cyan-500/20">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-cyan-600 to-blue-600 ring-1 ring-foreground/20 transition-all duration-500 hover:scale-110 shadow-lg shadow-cyan-500/20">
               <img
                 src={tpsLogo}
                 alt="TPS logo"
@@ -242,8 +239,8 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
       <SidebarContent className="px-3 py-6 bg-transparent no-scrollbar">
         <SidebarGroup>
           {!collapsed && (
-            <p className="mb-6 px-4 text-[10px] font-black uppercase tracking-[0.4em] text-white/20 flex items-center gap-2">
-              <span className="h-[1px] w-4 bg-white/10" />
+            <p className="mb-6 px-4 text-[10px] font-black uppercase tracking-[0.4em] text-sidebar-foreground/20 flex items-center gap-2">
+              <span className="h-[1px] w-4 bg-sidebar-border/50" />
               Main Menu
             </p>
           )}
@@ -280,8 +277,8 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
                           className={`relative group flex items-center gap-3.5 rounded-xl px-4 py-3.5 transition-all duration-300
                           ${
                             isActive
-                              ? "bg-cyan-500/10 border border-cyan-400/20 text-white shadow-[0_0_20px_rgba(34,211,238,0.15)]"
-                              : "text-white/40 hover:bg-white/5 hover:text-white hover:translate-x-1"
+                              ? "bg-sidebar-primary/10 border border-sidebar-primary/20 text-sidebar-primary shadow-[0_0_20px_rgba(var(--sidebar-primary),0.15)]"
+                              : "text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:translate-x-1"
                           }`}
                         >
                           {isActive && (
@@ -291,13 +288,13 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
                           <div className="relative flex items-center justify-center">
                             <item.icon
                               className={`h-5 w-5 shrink-0 transition-all duration-300
-                            ${isActive ? "text-cyan-400 scale-110 drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]" : "text-white/40 group-hover:text-white group-hover:scale-110"}`}
+                            ${isActive ? "text-sidebar-primary scale-110" : "text-sidebar-foreground/60 group-hover:text-sidebar-accent-foreground group-hover:scale-110"}`}
                             />
                           </div>
 
                           {!collapsed && (
                             <span
-                              className={`truncate text-[14px] tracking-wide transition-all duration-300 ${isActive ? "font-bold text-white" : "font-medium"}`}
+                              className={`truncate text-[14px] tracking-wide transition-all duration-300 ${isActive ? "font-bold text-sidebar-primary" : "font-medium"}`}
                             >
                               {item.title}
                             </span>
@@ -321,23 +318,23 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
       {/* User Footer */}
       <SidebarFooter className="p-4 bg-transparent mt-auto">
         {!collapsed ? (
-          <div className="flex flex-col gap-3 rounded-2xl bg-gradient-to-b from-white/10 to-white/5 p-4 border border-white/10 shadow-xl group/user overflow-hidden transition-all duration-300 hover:border-white/20">
+          <div className="flex flex-col gap-3 rounded-2xl bg-sidebar-accent/30 p-4 border border-sidebar-border/50 shadow-xl group/user overflow-hidden transition-all duration-300 hover:border-sidebar-border">
             <div className="flex items-center gap-3">
               <div className="relative group/avatar">
                 <AvatarBadge
                   user={displayUser}
                   size="sm"
                   showRole={false}
-                  className="ring-2 ring-white/10 group-hover/user:ring-cyan-500/50 transition-all duration-500"
+                  className="ring-2 ring-sidebar-border group-hover/user:ring-primary/50 transition-all duration-500"
                 />
                 <div className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-500 border-2 border-[#1a1f2e] group-hover/user:scale-110 transition-transform" />
               </div>
               <div className="flex flex-1 flex-col min-w-0">
-                <span className="truncate text-sm font-bold text-white font-display tracking-tight group-hover/user:text-cyan-100 transition-colors">
+                <span className="truncate text-sm font-bold text-sidebar-foreground font-display tracking-tight group-hover/user:text-sidebar-primary transition-colors">
                   {displayUser.name}
                 </span>
-                <span className="truncate text-[9px] uppercase font-bold text-cyan-400/60 tracking-widest flex items-center gap-1">
-                  <div className="h-1 w-1 rounded-full bg-cyan-400/60" />
+                <span className="truncate text-[9px] uppercase font-bold text-sidebar-primary/60 tracking-widest flex items-center gap-1">
+                  <div className="h-1 w-1 rounded-full bg-sidebar-primary/60" />
                   {displayUser.role}
                 </span>
               </div>
@@ -348,26 +345,26 @@ shadow-[inset_-1px_0_0_rgba(56,189,248,0.08)] text-white transition-all duration
                 clearStoredUser();
                 navigate("/login");
               }}
-              className="flex items-center justify-center gap-2 w-full mt-1 rounded-xl py-2 text-xs font-bold text-white/40 transition-all duration-300 hover:bg-rose-500/10 hover:text-rose-400 border border-white/5 hover:border-rose-500/20 group/logout"
+              className="flex items-center justify-center gap-2 w-full mt-1 rounded-xl py-2 text-xs font-bold text-sidebar-foreground/40 transition-all duration-300 hover:bg-destructive/10 hover:text-destructive border border-sidebar-border/20 hover:border-destructive/20 group/logout"
             >
               <LogOut className="h-3.5 w-3.5 transition-transform group-hover/logout:-translate-x-1" />
               Sign Out
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center gap-4 py-4 bg-white/5 rounded-2xl border border-white/10">
+          <div className="flex flex-col items-center gap-4 py-4 bg-sidebar-accent/30 rounded-2xl border border-sidebar-border/50">
             <AvatarBadge
               user={displayUser}
               size="sm"
               showRole={false}
-              className="ring-2 ring-white/10 hover:ring-cyan-500/50 transition-all"
+              className="ring-2 ring-sidebar-border/50 hover:ring-sidebar-primary/50 transition-all"
             />
             <button
               onClick={() => {
                 clearStoredUser();
                 navigate("/login");
               }}
-              className="rounded-xl p-3 text-white/20 transition-all hover:bg-rose-500/20 hover:text-rose-400 border border-transparent hover:border-rose-500/20"
+              className="rounded-xl p-3 text-sidebar-foreground/20 transition-all hover:bg-destructive/20 hover:text-destructive border border-transparent hover:border-destructive/20"
               title="Logout"
             >
               <LogOut className="h-4 w-4" />

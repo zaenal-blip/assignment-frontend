@@ -79,8 +79,8 @@ export function CalendarBoard({ events, projects }: CalendarBoardProps) {
             className={cn(
                 "px-6 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300",
                 activeFilter === type 
-                    ? "bg-white/20 text-white shadow-[0_0_15px_rgba(255,255,255,0.1)] scale-105" 
-                    : "text-white/40 hover:text-white/60 hover:bg-white/5"
+                    ? "bg-foreground/20 text-foreground shadow-[0_0_15px_rgba(255,255,255,0.1)] scale-105" 
+                    : "text-foreground/40 hover:text-foreground/60 hover:bg-foreground/5"
             )}
         >
             {label}
@@ -92,12 +92,12 @@ export function CalendarBoard({ events, projects }: CalendarBoardProps) {
             {/* Header Area */}
             <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 shadow-inner">
+                    <div className="h-12 w-12 rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-600 dark:text-cyan-400 shadow-inner">
                         <CalendarIcon className="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-black text-white font-display tracking-tight text-glow">Event Calendar</h2>
-                        <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Protocol Schedule & Milestones</p>
+                        <h2 className="text-2xl font-black text-foreground font-display tracking-tight text-glow">Event Calendar</h2>
+                        <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Protocol Schedule & Milestones</p>
                     </div>
                 </div>
 
@@ -109,15 +109,15 @@ export function CalendarBoard({ events, projects }: CalendarBoardProps) {
                 </div>
 
                 {/* Month Navigation */}
-                <div className="glass flex items-center gap-6 px-6 py-2 rounded-2xl border-white/5">
-                    <button onClick={prev} className="p-1 rounded-full text-white/40 hover:text-white hover:bg-white/10 transition-all">
+                <div className="glass flex items-center gap-6 px-6 py-2 rounded-2xl border-foreground/5">
+                    <button onClick={prev} className="p-1 rounded-full text-foreground/40 hover:text-foreground hover:bg-foreground/10 transition-all">
                         <ChevronLeft className="h-5 w-5" />
                     </button>
                     <div className="min-w-[120px] text-center">
-                        <span className="text-lg font-black text-white font-display uppercase tracking-tighter">{monthName}</span>
-                        <span className="ml-2 text-sm font-bold text-cyan-400/50">{year}</span>
+                        <span className="text-lg font-black text-foreground font-display uppercase tracking-tighter">{monthName}</span>
+                        <span className="ml-2 text-sm font-bold text-cyan-600/50 dark:text-cyan-400/50">{year}</span>
                     </div>
-                    <button onClick={next} className="p-1 rounded-full text-white/40 hover:text-white hover:bg-white/10 transition-all">
+                    <button onClick={next} className="p-1 rounded-full text-foreground/40 hover:text-foreground hover:bg-foreground/10 transition-all">
                         <ChevronRight className="h-5 w-5" />
                     </button>
                 </div>
@@ -126,16 +126,16 @@ export function CalendarBoard({ events, projects }: CalendarBoardProps) {
             {/* Calendar Grid */}
             <div className="glass overflow-hidden rounded-[2.5rem] border-none shadow-2xl">
                 {/* Weekday Names */}
-                <div className="grid grid-cols-7 bg-white/5 backdrop-blur-md border-b border-white/10">
+                <div className="grid grid-cols-7 bg-foreground/5 backdrop-blur-md border-b border-foreground/10">
                     {DAYS.map((day) => (
-                        <div key={day} className="px-2 py-5 text-center text-[10px] font-black uppercase tracking-[0.3em] text-white/30">
+                        <div key={day} className="px-2 py-5 text-center text-[10px] font-black uppercase tracking-[0.3em] text-foreground/30">
                             {day}
                         </div>
                     ))}
                 </div>
 
                 {/* Days Grid */}
-                <div className="grid grid-cols-7 gap-px bg-white/5">
+                <div className="grid grid-cols-7 gap-px bg-foreground/5">
                     {calendarDays.map((day, idx) => {
                         const isToday =
                             day !== null &&
@@ -148,7 +148,7 @@ export function CalendarBoard({ events, projects }: CalendarBoardProps) {
                             <div
                                 key={idx}
                                 className={cn(
-                                    "min-h-[140px] bg-[#0c0d1e]/40 p-3 transition-all duration-500 hover:bg-white/[0.05] group/day relative overflow-hidden",
+                                    "min-h-[140px] bg-card/60 p-3 transition-all duration-500 hover:bg-foreground/[0.05] group/day relative overflow-hidden",
                                     day === null && "bg-transparent opacity-10"
                                 )}
                             >
@@ -161,7 +161,7 @@ export function CalendarBoard({ events, projects }: CalendarBoardProps) {
                                                     "inline-flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black transition-all duration-500 relative z-10",
                                                     isToday 
                                                         ? "bg-gradient-to-tr from-cyan-500 to-blue-600 text-white shadow-[0_0_15px_rgba(34,211,238,0.4)] scale-110" 
-                                                        : "text-white/40 group-hover/day:text-white group-hover/day:bg-white/10"
+                                                        : "text-foreground/40 group-hover/day:text-foreground group-hover/day:bg-foreground/10"
                                                 )}
                                             >
                                                 {day}

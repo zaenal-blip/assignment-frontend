@@ -43,23 +43,23 @@ function HighlightCard({ icon, title, items }: HighlightCardProps) {
     <Card className="glass border-none animate-fade-in group">
       <CardContent className="p-4 tv:p-6">
         <div className="flex items-center gap-2 mb-4">
-          <div className="p-2 rounded-xl bg-white/5 border border-white/10 group-hover:bg-cyan-500/20 transition-colors">
+          <div className="p-2 rounded-xl bg-foreground/5 border border-foreground/10 group-hover:bg-cyan-500/20 transition-colors">
             {icon}
           </div>
-          <h4 className="font-semibold text-white tv:text-tv-base">{title}</h4>
+          <h4 className="font-semibold text-foreground tv:text-tv-base">{title}</h4>
         </div>
         <div className="space-y-3">
           {items.map((item, i) => (
             <div
               key={i}
               onClick={item.onClick}
-              className="flex items-center justify-between gap-3 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-white/5 border border-transparent hover:border-white/10 group/item"
+              className="flex items-center justify-between gap-3 p-2.5 rounded-xl cursor-pointer transition-all hover:bg-foreground/5 border border-transparent hover:border-foreground/10 group/item"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium truncate text-white/90 tv:text-tv-sm group-hover/item:text-cyan-400 transition-colors">
+                <p className="text-sm font-medium truncate text-foreground/90 tv:text-tv-sm group-hover/item:text-cyan-400 transition-colors">
                   {item.label}
                 </p>
-                <p className="text-[10px] text-white/40 uppercase tracking-wider font-semibold mt-0.5">
+                <p className="text-[10px] text-foreground/40 uppercase tracking-wider font-semibold mt-0.5">
                   {item.sub}
                 </p>
               </div>
@@ -178,7 +178,7 @@ export function HighlightSection({ events, tasks }: HighlightSectionProps) {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold text-white/40 mb-4 tv:text-tv-xl">
+      <h2 className="text-lg font-semibold text-foreground/40 mb-4 tv:text-tv-xl">
         Highlight Information
       </h2>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3 tv:gap-6">

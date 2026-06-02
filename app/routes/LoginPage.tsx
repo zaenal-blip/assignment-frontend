@@ -13,7 +13,7 @@ import {
 import { Eye, EyeOff, LogIn, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { login } from "@/lib/api";
-import background from "../assets/bg.png";
+import background from "../assets/bg.webp";
 import { useUser } from "@/hooks/use-user";
 
 export default function Login() {
@@ -54,24 +54,24 @@ export default function Login() {
 
   return (
     <div
-      className="flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 relative overflow-hidden"
-      //className="flex min-h-screen items-center justify-center lg:justify-end lg:pr-24 bg-cover bg-center bg-no-repeat px-4 relative overflow-hidden"
+      className="dark flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-4 relative overflow-hidden"
+      //className="dark flex min-h-screen items-center justify-center lg:justify-end lg:pr-24 bg-cover bg-center bg-no-repeat px-4 relative overflow-hidden"
       style={{ backgroundImage: `url(${background})` }}
     >
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-black/50" />
 
-      <Card className="w-full max-w-md relative z-10 border-white/20 bg-white/10 backdrop-blur-xl shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] text-white overflow-hidden animate-in fade-in zoom-in duration-500">
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+      <Card className="w-full max-w-md relative z-10 border-white/15 bg-black/40 backdrop-blur-2xl shadow-[0_8px_32px_0_rgba(0,0,0,0.5)] text-foreground overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
 
         <CardHeader className="space-y-2 text-center pb-2">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 shadow-inner group transition-all duration-300 hover:scale-110">
-            <LogIn className="h-8 w-8 text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/20 backdrop-blur-md border border-foreground/30 shadow-inner group transition-all duration-300 hover:scale-110">
+            <LogIn className="h-8 w-8 text-foreground group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
           </div>
           <CardTitle className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-white to-white/70">
             AURA
           </CardTitle>
-          <CardDescription className="text-white/70 font-medium">
+          <CardDescription className="text-foreground/70 font-medium">
             Masuk ke akun Anda untuk melanjutkan
           </CardDescription>
         </CardHeader>
@@ -81,7 +81,7 @@ export default function Login() {
             <div className="space-y-2">
               <Label
                 htmlFor="noReg"
-                className="text-sm font-semibold tracking-wide text-white/90 ml-1"
+                className="text-sm font-semibold tracking-wide text-foreground/90 ml-1"
               >
                 NoReg (Nomor Registrasi)
               </Label>
@@ -96,13 +96,13 @@ export default function Login() {
                   setNoReg(e.target.value.replace(/\D/g, "").slice(0, 7))
                 }
                 required
-                className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all duration-200 rounded-xl"
+                className="h-12 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all duration-200 rounded-xl"
               />
             </div>
             <div className="space-y-2">
               <Label
                 htmlFor="password"
-                className="text-sm font-semibold tracking-wide text-white/90 ml-1"
+                className="text-sm font-semibold tracking-wide text-foreground/90 ml-1"
               >
                 Password
               </Label>
@@ -114,12 +114,12 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:bg-white/10 focus:border-white/30 transition-all duration-200 rounded-xl pr-12"
+                  className="h-12 bg-foreground/5 border-foreground/10 text-foreground placeholder:text-foreground/30 focus:bg-foreground/10 focus:border-foreground/30 transition-all duration-200 rounded-xl pr-12"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/50 hover:text-white transition-colors p-1"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/50 hover:text-foreground transition-colors p-1"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -132,7 +132,7 @@ export default function Login() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-white/90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl shadow-lg mt-2 flex items-center justify-center gap-2"
+              className="w-full h-12 text-lg font-bold bg-white text-blue-950 hover:bg-foreground/90 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 rounded-xl shadow-lg mt-2 flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -145,12 +145,12 @@ export default function Login() {
             </Button>
           </form>
 
-          <div className="mt-8 pt-6 border-t border-white/10 text-center">
-            <p className="text-sm text-white/60">
+          <div className="mt-8 pt-6 border-t border-foreground/10 text-center">
+            <p className="text-sm text-foreground/60">
               Belum punya akun?{" "}
               <Link
                 to="/register"
-                className="font-bold text-white hover:underline decoration-white/30 underline-offset-4 transition-all"
+                className="font-bold text-foreground hover:underline decoration-foreground/30 underline-offset-4 transition-all"
               >
                 Daftar sekarang
               </Link>
@@ -162,9 +162,9 @@ export default function Login() {
         </CardContent>
       </Card>
 
-      {/* Decorative elements */}
-      <div className="absolute top-[10%] right-[10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[10%] left-[10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none" />
+      {/* Decorative elements - GPU composited layer */}
+      <div className="absolute top-[10%] right-[10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none will-change-transform" />
+      <div className="absolute bottom-[10%] left-[10%] w-64 h-64 bg-blue-500/20 rounded-full blur-[100px] pointer-events-none will-change-transform" />
     </div>
   );
 }

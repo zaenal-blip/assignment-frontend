@@ -16,21 +16,21 @@ export function StatCard({ icon: Icon, label, value, accent }: StatCardProps) {
                 <div
                     className={cn(
                         "flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-transform duration-500 group-hover:rotate-[10deg] tv:h-20 tv:w-20",
-                        accent ? "bg-white/10" : "bg-cyan-500/10"
+                        accent ? "bg-foreground/10" : "bg-cyan-500/10"
                     )}
                 >
-                    <Icon className={cn("h-7 w-7 tv:h-10 tv:w-10", accent ? "text-white" : "text-cyan-400")} />
+                    <Icon className={cn("h-7 w-7 tv:h-10 tv:w-10", accent ? "text-foreground" : "text-cyan-400")} />
                 </div>
                 <div className="min-w-0">
-                    <p className="text-xs font-medium uppercase tracking-wider text-white/50 tv:text-tv-sm mb-0.5">
+                    <p className="text-xs font-medium uppercase tracking-wider text-foreground/50 tv:text-tv-sm mb-0.5">
                         {label}
                     </p>
-                    <p className="text-3xl font-bold text-white tv:text-tv-3xl tracking-tight">
+                    <p className="text-3xl font-bold text-foreground tv:text-tv-3xl tracking-tight">
                         {value}
                     </p>
                 </div>
                 {/* Decorative background element */}
-                <div className="absolute -right-4 -bottom-4 h-24 w-24 rounded-full bg-white/5 blur-2xl pointer-events-none group-hover:bg-cyan-400/10 transition-colors" />
+                <div className="absolute -right-4 -bottom-4 h-24 w-24 rounded-full bg-foreground/5 blur-2xl pointer-events-none group-hover:bg-cyan-400/10 transition-colors" />
             </CardContent>
         </Card>
     );

@@ -112,7 +112,7 @@ export default function ProjectDetailPage() {
             <Button 
                 variant="ghost" 
                 onClick={() => navigate("/projects")} 
-                className="group flex items-center gap-2 px-4 py-2 rounded-xl text-white/50 hover:text-white hover:bg-white/5 transition-all w-fit"
+                className="group flex items-center gap-2 px-4 py-2 rounded-xl text-foreground/50 hover:text-foreground hover:bg-foreground/5 transition-all w-fit"
             >
                 <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
                 <span className="text-xs font-bold uppercase tracking-widest">Back to Projects</span>
@@ -125,35 +125,35 @@ export default function ProjectDetailPage() {
                 <div className="relative flex flex-col lg:flex-row lg:items-start justify-between gap-10">
                     <div className="space-y-6 max-w-2xl">
                         <div className="space-y-2">
-                            <h2 className="text-4xl font-extrabold text-white font-display tracking-tight text-glow leading-tight">
+                            <h2 className="text-4xl font-extrabold text-foreground font-display tracking-tight text-glow leading-tight">
                                 {project.name}
                             </h2>
                             <div className="flex flex-wrap items-center gap-3">
                                 <StatusBadge 
                                     status={project.status} 
                                     className={cn(
-                                        "px-4 py-1 rounded-full font-bold text-[10px] uppercase tracking-widest border border-white/10 shadow-inner",
+                                        "px-4 py-1 rounded-full font-bold text-[10px] uppercase tracking-widest border border-foreground/10 shadow-inner",
                                         project.status === "Active" ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" :
                                         project.status === "Completed" ? "bg-blue-500/20 text-blue-400 border-blue-500/30" :
                                         "bg-rose-500/20 text-rose-400 border-rose-500/30"
                                     )}
                                 />
-                                <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] px-3 border-l border-white/10">
+                                <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.2em] px-3 border-l border-foreground/10">
                                     Project ID: #{project.id.toString().padStart(4, '0')}
                                 </span>
                             </div>
                         </div>
 
-                        <p className="text-base text-white/60 leading-relaxed font-medium">
+                        <p className="text-base text-foreground/60 leading-relaxed font-medium">
                             {project.description}
                         </p>
 
                         <div className="flex flex-wrap items-center gap-8 pt-2">
                             <div className="space-y-1">
-                                <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Timeline</p>
+                                <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Timeline</p>
                                 <div className="flex items-center gap-2">
                                     <CalendarIcon className="h-3.5 w-3.5 text-cyan-400/60" />
-                                    <span className="text-sm font-bold text-white/80">
+                                    <span className="text-sm font-bold text-foreground/80">
                                         {formatDate(project.startDate)} — {formatDate(project.endDate)}
                                     </span>
                                 </div>
@@ -161,10 +161,10 @@ export default function ProjectDetailPage() {
 
                             {owner && (
                                 <div className="space-y-1">
-                                    <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">Project Lead</p>
+                                    <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">Project Lead</p>
                                     <div className="flex items-center gap-3">
-                                        <AvatarBadge user={owner} size="sm" className="ring-2 ring-white/10" />
-                                        <span className="text-sm font-bold text-white/80">{owner.name}</span>
+                                        <AvatarBadge user={owner} size="sm" className="ring-2 ring-foreground/10" />
+                                        <span className="text-sm font-bold text-foreground/80">{owner.name}</span>
                                     </div>
                                 </div>
                             )}
@@ -172,25 +172,25 @@ export default function ProjectDetailPage() {
                     </div>
 
                     <div className="lg:w-72 space-y-4">
-                        <div className="p-6 rounded-3xl bg-white/5 border border-white/10 shadow-inner space-y-4">
+                        <div className="p-6 rounded-3xl bg-foreground/5 border border-foreground/10 shadow-inner space-y-4">
                             <div className="flex justify-between items-end">
                                 <div className="space-y-0.5">
-                                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Total Health</p>
-                                    <h3 className="text-3xl font-black text-white text-glow">{progress}%</h3>
+                                    <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-widest">Total Health</p>
+                                    <h3 className="text-3xl font-black text-foreground text-glow">{progress}%</h3>
                                 </div>
                                 <div className="text-[10px] font-bold text-cyan-400/60 uppercase text-right">
                                     {completedActivities}/{totalActivities} <br/> Activities
                                 </div>
                             </div>
                             
-                            <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden p-[1px]">
+                            <div className="h-2.5 w-full bg-foreground/5 rounded-full overflow-hidden p-[1px]">
                                 <div 
                                     className="h-full rounded-full bg-gradient-to-r from-blue-600 to-cyan-400 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(34,211,238,0.4)]"
                                     style={{ width: `${progress}%` }}
                                 />
                             </div>
 
-                            <p className="text-[10px] font-bold text-white/20 text-center uppercase tracking-[0.1em]">
+                            <p className="text-[10px] font-bold text-foreground/20 text-center uppercase tracking-[0.1em]">
                                 Project Completion Progress
                             </p>
                         </div>
@@ -204,8 +204,8 @@ export default function ProjectDetailPage() {
                         <Plus className="h-5 w-5" />
                     </div>
                     <div className="space-y-0.5">
-                        <h3 className="text-xl font-bold text-white font-display tracking-tight">Tasks Queue</h3>
-                        <p className="text-[10px] font-bold text-white/20 uppercase tracking-widest">
+                        <h3 className="text-xl font-bold text-foreground font-display tracking-tight">Tasks Queue</h3>
+                        <p className="text-[10px] font-bold text-foreground/20 uppercase tracking-widest">
                             {projectTasks.length} Identified Operations
                         </p>
                     </div>
@@ -214,7 +214,7 @@ export default function ProjectDetailPage() {
                 {isManager && (
                     <Button 
                         onClick={() => setModalOpen(true)} 
-                        className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold rounded-2xl h-12 px-8 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
+                        className="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-foreground font-bold rounded-2xl h-12 px-8 shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-95"
                     >
                         <Plus className="h-5 w-5 mr-2" />
                         Initialize Task
@@ -236,19 +236,19 @@ export default function ProjectDetailPage() {
                             value={taskName} 
                             onChange={(e) => setTaskName(e.target.value)} 
                             placeholder="Enter task objective..." 
-                            className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
+                            className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all px-4"
                         />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-3">
                             <Label className="text-[11px] font-bold uppercase tracking-[0.2em] text-cyan-400 opacity-80 ml-1">Assign Operator</Label>
                             <Select value={picId} onValueChange={setPicId}>
-                                <SelectTrigger className="bg-white/5 border-white/10 rounded-xl h-12 text-white hover:bg-white/10 transition-colors">
+                                <SelectTrigger className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground hover:bg-foreground/10 transition-colors">
                                     <SelectValue placeholder="Select PIC" />
                                 </SelectTrigger>
-                                <SelectContent className="glass-darker border-white/10 text-white backdrop-blur-3xl">
+                                <SelectContent className="glass-darker border-foreground/10 text-foreground backdrop-blur-3xl">
                                     {users.filter(u => u.status === "Active" && u.role !== "Yang punya TMMIN").map((u) => (
-                                        <SelectItem key={u.id} value={String(u.id)} className="focus:bg-cyan-500/20 focus:text-white cursor-pointer">{u.name} ({u.role})</SelectItem>
+                                        <SelectItem key={u.id} value={String(u.id)} className="focus:bg-cyan-500/20 focus:text-foreground cursor-pointer">{u.name} ({u.role})</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -260,21 +260,21 @@ export default function ProjectDetailPage() {
                                     <Button
                                         variant="outline"
                                         className={cn(
-                                            "w-full justify-start text-left font-normal h-12 rounded-xl bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-white/20 transition-all",
-                                            !dueDate && "text-white/20"
+                                            "w-full justify-start text-left font-normal h-12 rounded-xl bg-foreground/5 border-foreground/10 text-foreground hover:bg-foreground/10 hover:border-foreground/20 transition-all",
+                                            !dueDate && "text-foreground/20"
                                         )}
                                     >
                                         <CalendarIcon className="mr-2 h-4 w-4 text-cyan-400" />
                                         {dueDate ? format(dueDate, "PPP") : "Pick due date"}
                                     </Button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0 glass-darker border-white/10 text-white backdrop-blur-3xl" align="start">
+                                <PopoverContent className="w-auto p-0 glass-darker border-foreground/10 text-foreground backdrop-blur-3xl" align="start">
                                     <Calendar
                                         mode="single"
                                         selected={dueDate}
                                         onSelect={setDueDate}
                                         initialFocus
-                                        className="text-white"
+                                        className="text-foreground"
                                     />
                                 </PopoverContent>
                             </Popover>
@@ -285,14 +285,14 @@ export default function ProjectDetailPage() {
                         <div className="space-y-3 max-h-48 overflow-y-auto pr-2 no-scrollbar">
                             {checklistItems.map((item, index) => (
                                 <div key={index} className="flex items-center gap-2 animate-fade-in group/item">
-                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white/5 border border-white/10 text-[10px] font-bold text-cyan-400 group-hover/item:border-cyan-500/50 transition-colors shadow-inner">
+                                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-foreground/5 border border-foreground/10 text-[10px] font-bold text-cyan-400 group-hover/item:border-cyan-500/50 transition-colors shadow-inner">
                                         {index + 1}
                                     </div>
                                     <Input
                                         placeholder={`Activity protocol ${index + 1}`}
                                         value={item}
                                         onChange={(e) => updateChecklistItem(index, e.target.value)}
-                                        className="bg-white/5 border-white/10 rounded-xl h-12 text-white placeholder:text-white/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all font-medium"
+                                        className="bg-foreground/5 border-foreground/10 rounded-xl h-12 text-foreground placeholder:text-foreground/20 focus:border-cyan-500/50 focus:ring-cyan-500/20 transition-all font-medium"
                                     />
                                     {checklistItems.length > 1 && (
                                         <Button 
@@ -311,19 +311,19 @@ export default function ProjectDetailPage() {
                             variant="outline" 
                             size="sm" 
                             onClick={addChecklistItem} 
-                            className="w-full h-12 rounded-xl bg-white/5 border-dashed border-white/20 text-white/40 hover:text-white hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all gap-2 group/add"
+                            className="w-full h-12 rounded-xl bg-foreground/5 border-dashed border-foreground/20 text-foreground/40 hover:text-foreground hover:border-cyan-500/50 hover:bg-cyan-500/5 transition-all gap-2 group/add"
                         >
                             <Plus className="h-4 w-4 group-hover/add:rotate-90 transition-transform" /> Add Protocol Step
                         </Button>
                     </div>
                     <Button 
-                        className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-white font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-white/10 cyan-glow" 
+                        className="w-full h-14 rounded-2xl bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] hover:bg-right text-foreground font-black text-xs uppercase tracking-[0.2em] shadow-lg shadow-cyan-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] mt-6 border border-foreground/10 cyan-glow" 
                         onClick={handleCreateTask}
                         disabled={taskMutation.isPending}
                     >
                         {taskMutation.isPending ? (
                             <div className="flex items-center gap-3">
-                                <span className="h-4 w-4 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+                                <span className="h-4 w-4 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" />
                                 <span>Initializing...</span>
                             </div>
                         ) : "Finalize Mission Protocol"}

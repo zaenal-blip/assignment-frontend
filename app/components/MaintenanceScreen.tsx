@@ -10,7 +10,7 @@ import {
   ArrowLeft,
   RefreshCw,
 } from "lucide-react";
-import bgImage from "@/assets/bg.png";
+import bgImage from "@/assets/bg.webp";
 
 const TARGET_MS = 1000 * 60 * 60 * 4; // 4 hours countdown
 

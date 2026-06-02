@@ -34,7 +34,7 @@ export function DatePicker({
             className={cn(
               "w-full justify-start text-left font-normal pr-10 min-h-[44px] transition-all",
               "border-slate-300 hover:border-primary focus-visible:ring-primary/20",
-              "bg-gray-600 text-white shadow-sm hover:bg-slate-50",
+              "bg-gray-600 text-foreground shadow-sm hover:bg-slate-50",
               !date && "text-muted-foreground",
               className,
             )}
