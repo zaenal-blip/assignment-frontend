@@ -33,13 +33,9 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.gstatic.com",
     crossOrigin: "anonymous",
   },
-  // Non-blocking font load: use media=print trick, onLoad swaps to all
   {
     rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Poppins:wght@400;500;600;700&display=swap",
-    /* @ts-ignore - media trick to avoid render-blocking */
-    media: "print",
-    onLoad: "this.media='all'",
+    href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap",
   },
 ];
 
