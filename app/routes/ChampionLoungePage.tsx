@@ -319,10 +319,16 @@ export default function ChampionLoungePage() {
                         <p className="text-green-700 font-medium">{scannedParticipant.code}</p>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 text-sm bg-white p-3 rounded-lg border border-green-100">
+                    <div className="grid grid-cols-3 gap-4 text-sm bg-white p-3 rounded-lg border border-green-100">
                        <div>
                          <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Area</p>
                          <p className="font-medium text-gray-800">{scannedParticipant.area || "-"}</p>
+                       </div>
+                       <div>
+                         <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Table</p>
+                         <p className={`font-bold ${scannedParticipant.tableNo ? 'text-[#E60012]' : 'text-blue-600'}`}>
+                           {scannedParticipant.tableNo ? `Table No. ${scannedParticipant.tableNo}` : "Free Table"}
+                         </p>
                        </div>
                        <div>
                          <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Check-in Time</p>
@@ -347,11 +353,19 @@ export default function ChampionLoungePage() {
                         <p className="text-red-700 font-medium">Ticket: {scannedParticipant.code}</p>
                       </div>
                     </div>
-                    <div className="bg-white p-3 rounded-lg border border-red-100 text-center">
-                       <p className="text-gray-500 text-sm">Previous check-in time:</p>
-                       <p className="font-bold text-red-600 text-xl">
-                          {scannedParticipant.checkInTime ? new Date(scannedParticipant.checkInTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "-"}
-                       </p>
+                    <div className="grid grid-cols-2 gap-4 bg-white p-3 rounded-lg border border-red-100 text-center">
+                       <div>
+                         <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Table</p>
+                         <p className={`font-bold ${scannedParticipant.tableNo ? 'text-[#E60012]' : 'text-blue-600'}`}>
+                           {scannedParticipant.tableNo ? `Table No. ${scannedParticipant.tableNo}` : "Free Table"}
+                         </p>
+                       </div>
+                       <div>
+                         <p className="text-gray-500 text-xs uppercase tracking-wider font-semibold mb-1">Previous Check-in</p>
+                         <p className="font-bold text-red-600">
+                            {scannedParticipant.checkInTime ? new Date(scannedParticipant.checkInTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "-"}
+                         </p>
+                       </div>
                     </div>
                   </div>
                 ) : (
@@ -517,7 +531,10 @@ export default function ChampionLoungePage() {
                 </div>
                 <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">WELCOME</h2>
                 <h3 className="text-3xl font-bold text-green-600 mb-1">{scannedParticipant.name}</h3>
-                <p className="text-lg font-medium text-gray-500 mb-6">{scannedParticipant.area || "-"}</p>
+                <p className="text-lg font-medium text-gray-500 mb-2">{scannedParticipant.area || "-"}</p>
+                <div className={`inline-block border px-4 py-1 rounded-full font-bold mb-6 ${scannedParticipant.tableNo ? 'bg-red-50 text-[#E60012] border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'}`}>
+                  {scannedParticipant.tableNo ? `Table No. ${scannedParticipant.tableNo}` : "Free Table"}
+                </div>
                 
                 <div className="inline-block bg-green-50 border border-green-200 rounded-full px-6 py-2 text-green-800 font-bold tracking-wide uppercase text-sm mb-4">
                   Check-In Success
@@ -541,7 +558,10 @@ export default function ChampionLoungePage() {
                   <XCircle className="h-12 w-12 text-white" />
                 </div>
                 <h2 className="text-3xl font-extrabold text-red-700 tracking-tight mb-2">Already Checked In</h2>
-                <h3 className="text-2xl font-bold text-gray-900 mb-6">{scannedParticipant.name}</h3>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{scannedParticipant.name}</h3>
+                <div className={`inline-block border px-4 py-1 rounded-full font-bold mb-6 text-sm ${scannedParticipant.tableNo ? 'bg-red-50 text-[#E60012] border-red-200' : 'bg-blue-50 text-blue-600 border-blue-200'}`}>
+                  {scannedParticipant.tableNo ? `Table No. ${scannedParticipant.tableNo}` : "Free Table"}
+                </div>
                 
                 <div className="bg-red-50 border border-red-100 rounded-xl p-4 mb-4">
                   <p className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-1">Previous Check-in</p>

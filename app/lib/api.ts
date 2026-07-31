@@ -824,6 +824,7 @@ export interface BackendQccParticipant {
     singkatan: string | null;
     area: string | null;
     code: string;
+    tableNo: string | null;
     status: string;
     checkInTime: string | null;
     createdAt: string;
