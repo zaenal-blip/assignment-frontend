@@ -817,6 +817,42 @@ export async function updateHoshinKPI(
     return toAppHoshinKPI(result);
 }
 
+// --- QCC Participants ---
+export interface BackendQccParticipant {
+    id: number;
+    name: string;
+    singkatan: string | null;
+    area: string | null;
+    code: string;
+    status: string;
+    checkInTime: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface QccData {
+    stats: {
+        total: number;
+        checkedIn: number;
+        waiting: number;
+    };
+    participants: BackendQccParticipant[];
+}
+
+export async function getQccParticipants(): Promise<QccData> {
+    return request<QccData>("/qcc", {
+        headers: getAuthHeaders(),
+    });
+}
+
+export async function scanQccParticipant(code: string): Promise<{ success: boolean; status: string; participant?: BackendQccParticipant; message?: string }> {
+    return request<any>("/qcc/scan", {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify({ code }),
+    });
+}
+
 export async function deleteHoshinKPI(id: string): Promise<void> {
     await request(`/hoshin/${id}`, {
         method: "DELETE",
