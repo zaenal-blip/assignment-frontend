@@ -9,7 +9,8 @@ import {
   Clock, 
   TrendingUp, 
   Scan,
-  Camera
+  Camera,
+  RefreshCw
 } from "lucide-react";
 import { Link } from "react-router";
 import { Scanner } from "@yudiel/react-qr-scanner";
@@ -45,6 +46,7 @@ export default function ChampionLoungePage() {
   const [scanState, setScanState] = useState<"idle" | "scanning" | "success" | "error" | "not_found">("idle");
   const [scannedParticipant, setScannedParticipant] = useState<BackendQccParticipant | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [cameraMode, setCameraMode] = useState<"environment" | "user">("environment");
   const inputRef = useRef<HTMLInputElement>(null);
   
   // Audio refs
@@ -249,6 +251,7 @@ export default function ChampionLoungePage() {
              {/* Camera Preview Placeholder / Active Area */}
              <div className="bg-[#0F172A] rounded-xl flex-1 min-h-[250px] lg:min-h-0 flex items-center justify-center relative overflow-hidden shadow-inner group border-4 border-gray-800">
                 <Scanner 
+                   constraints={{ facingMode: cameraMode }}
                    onScan={(result) => {
                      if (result && result.length > 0) {
                         processScanCode(result[0].rawValue);
@@ -266,6 +269,18 @@ export default function ChampionLoungePage() {
                   </div>
                 )}
                 
+                {/* Camera Toggle Button */}
+                <button 
+                  onClick={() => setCameraMode(prev => prev === "environment" ? "user" : "environment")}
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 bg-black/50 hover:bg-black/80 text-white p-3 rounded-full backdrop-blur-sm transition-all border border-white/20 shadow-lg flex items-center gap-2"
+                  title="Switch Camera"
+                >
+                  <RefreshCw className="h-5 w-5" />
+                  <span className="text-xs font-bold uppercase tracking-wider hidden sm:inline">
+                    {cameraMode === "environment" ? "Back Cam" : "Front Cam"}
+                  </span>
+                </button>
+
                 {/* Hidden Input for Physical Scanner */}
                 <form onSubmit={handleScanSubmit} className="absolute opacity-0 pointer-events-none">
                   <input
