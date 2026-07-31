@@ -190,7 +190,7 @@ export default function ChampionLoungePage() {
     .slice(0, 5);
 
   return (
-    <div className="h-screen bg-[#F5F7FA] text-[#1F2937] font-sans relative overflow-hidden flex flex-col">
+    <div className="min-h-screen lg:h-screen bg-[#F5F7FA] text-[#1F2937] font-sans relative flex flex-col overflow-x-hidden overflow-y-auto lg:overflow-hidden">
       <HexagonBackground />
       
       {/* Toyota Decorative Red Lines */}
@@ -230,12 +230,12 @@ export default function ChampionLoungePage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 container mx-auto p-4 md:p-4 max-w-[1600px] flex flex-col lg:flex-row gap-4 md:gap-6 relative z-10 min-h-0 overflow-hidden">
+      <main className="flex-1 container mx-auto p-4 md:p-4 max-w-[1600px] flex flex-col lg:flex-row gap-4 md:gap-6 relative z-10 min-h-0 lg:overflow-hidden overflow-visible">
         
         {/* Left Column - Scanner */}
-        <div className="w-full lg:w-[40%] flex flex-col gap-4 md:gap-6 min-h-0 pb-4 md:pb-0">
+        <div className="w-full lg:w-[40%] flex flex-col gap-4 md:gap-6 lg:min-h-0 pb-4 md:pb-0">
           {/* Scanner Card */}
-          <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-5 md:p-6 flex flex-col relative overflow-hidden flex-1 min-h-0">
+          <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 p-5 md:p-6 flex flex-col relative overflow-hidden flex-1 min-h-[400px] lg:min-h-0">
              {/* Subtle top red line on card */}
              <div className="absolute top-0 left-0 w-full h-1 bg-[#E60012]/80" />
              
@@ -247,7 +247,7 @@ export default function ChampionLoungePage() {
              </div>
 
              {/* Camera Preview Placeholder / Active Area */}
-             <div className="bg-[#0F172A] rounded-xl flex-1 min-h-0 flex items-center justify-center relative overflow-hidden shadow-inner group border-4 border-gray-800">
+             <div className="bg-[#0F172A] rounded-xl flex-1 min-h-[250px] lg:min-h-0 flex items-center justify-center relative overflow-hidden shadow-inner group border-4 border-gray-800">
                 <Scanner 
                    onScan={(result) => {
                      if (result && result.length > 0) {
@@ -385,7 +385,7 @@ export default function ChampionLoungePage() {
         </div>
 
         {/* Right Column - Stats & Table */}
-        <div className="w-full lg:w-[60%] flex flex-col gap-4 md:gap-6 min-h-0">
+        <div className="w-full lg:w-[60%] flex flex-col gap-4 md:gap-6 lg:min-h-0 pb-10 lg:pb-0">
           
           {/* Statistic Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -396,7 +396,7 @@ export default function ChampionLoungePage() {
           </div>
 
           {/* Participant Table */}
-          <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex-1 flex flex-col overflow-hidden relative min-h-0">
+          <div className="bg-white rounded-[20px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 flex-1 flex flex-col overflow-hidden relative min-h-[400px] lg:min-h-0">
              <div className="p-3 md:p-4 border-b border-gray-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-white z-10">
                 <h2 className="text-lg md:text-xl font-bold text-gray-800">Participant List</h2>
                 
