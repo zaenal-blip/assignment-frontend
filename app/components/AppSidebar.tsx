@@ -126,6 +126,7 @@ import {
   Users,
   LogOut,
   Target,
+  Trophy,
 } from "lucide-react";
 
 import { NavLink } from "@/components/NavLink";
@@ -154,6 +155,7 @@ const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Projects", url: "/projects", icon: FolderKanban },
   { title: "Events", url: "/events", icon: CalendarDays },
+  { title: "Champion Lounge", url: "/champion-lounge", icon: Trophy },
   { title: "Regular Activity", url: "/regular-activity", icon: ClipboardCheck },
   { title: "Personal Job", url: "/personal-job", icon: ClipboardList },
   { title: "KPI Hoshin", url: "/hoshin", icon: Target },
